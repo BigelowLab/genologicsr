@@ -1,86 +1,4 @@
-   
-#' Reference class for Lims instance
-#' @name LimsRefClass
-#' @family Lims
-NULL
-LimsRefClass <- setRefClass('Lims',
-   fields = list(
-      version = 'character',
-      baseuri = 'character',
-      auth = 'ANY',
-      handle = 'ANY',
-      NSMAP = 'character')
-)  
-
-
-#' Print a pretty summary
-NULL
-LimsRefClass$methods(
-   show = function(){
-      cat("Reference Class:", methods::classLabel(class(.self)), "\n")
-      cat("  version:", .self$version, "\n")
-      cat("  baseuri:", .self$baseuri, "\n")
-      cat("  valid_session:", .self$validate_session(), "\n")
-   }) # show
-
-#' Validate the session by testing the version
-#' 
-#' @name LimsRefClass_validate_session
-#' @return logical, TRUE if OK
-NULL
-LimsRefClass$methods(
-   validate_session = function(){
-      ok <- TRUE
-      x <- httr::GET(.self$baseuri, handle = .self$handle, .self$auth)
-      if (httr::status_code(x) != 200) {
-         warning("response has non-200 status code")
-         print(x)
-         ok <- FALSE
-      }
-      ok
-   })
-
-
-#' GET a resource
-#'
-#' @name LimsRefClass_GET
-#' @param uri the uri to get
-#' @return XML node - possible an error node or NULL
-NULL
-LimsRefClass$methods(
-   GET = function(uri){
-      r <- httr::GET(uri, handle = handle, authenticate(.self$username, .self$password))
-      if ( (class(r) != 'response') ){
-         warning("error in response")
-         print(r)
-         return(NULL)
-      }
-      if (status_code(r) != 200){
-         warning("response code not 200")
-         print(r)
-         return(NULL)
-      }   
-      x <- xmlRoot(content(r, type = "text/xml"))
-      if (inherits(x, "try-error")){
-         x <- .self$create_exception(message = "error parsing content with xmlRoot")
-      }
-      invisible(x)  
-   }) #GET
-
-
-#' Create an exception node
-#' @param message chracter, some error message
-#' @return xmlNode
-LimsRefClass$methods(
-   create_exception = function(message = 'Unspecified exception'){
-      x <- newXMLNode("exception", 
-         namespaceDefinitions = .self$NSMAP[['exc']], 
-         namespace = 'exc')
-      x <- addChildren(x, kids = list(newXMLNode("message", message)) )
-      x
-   }) #create_exception
-#### methods above
-#### functions below
+# misc.R
 
 #' Read a configuration file
 #' @param filename the name of the file
@@ -136,37 +54,42 @@ get_config <- function(x, section, name, default = NULL){
    return(default)
 } # get_config
 
-
-#' Instantiate a LimsRefClass object
-#'
-#' @param configfile character, the fully qualified path to the config file
-#' @return a LimsRefClass instance or NULL
-Lims <- function(configfile){
-   if (missing(configfile)) stop("configfile is required")
-   if (!file.exists(configfile[1])) stop("configfile not found:", configfile[1])
-   x <- try(read_config(configfile[1]))
-   if (inherits(x, "try-error")) stop("Error reading config file")
-   
-   X <- LimsRefClass$new()
-   X$handle <- NULL
-   X$field("version", get_config(x, "genologics", "VERSION", default = ""))
-   buri <- get_config(x, "genologics", "BASEURI", default = "")
-   if (nchar(buri) == 0) stop("base uri not found in config file")
-   X$field("baseuri", file.path(buri, "api", X$version))
-   X$field('auth', 
-      authenticate(get_config(x, "genologics", "USERNAME", default = ""),
-                   get_config(x, "genologics", "PASSWORD", default = "") 
-      ) )
-   X$field("handle", httr::handle(buri))
-   X$NSMAP <- get_NSMAP()
-   if (!X$validate_session()) {
-      warning("API session failed validation")
-      #return(NULL)
-   } 
-   X
+#' Split a uri around the "?" or other character
+#' 
+#' @export
+#' @param uri character, the uri to split
+#' @param around character,the character to split around
+#' @param fixed see \code{\link{strsplit}}
+#' @param index numeric, by default only the leading portion of the input is
+#' returned
+#' @return character of the input preceding the 'around' character
+splituri <- function(uri, around = "?", fixed = TRUE, index = 1){
+   if (!is.character(uri)) {stop("URI must be character")}
+   sapply(strsplit(uri, around, fixed = fixed), '[', index)
 }
 
-#' Namespace map
+
+#' Create an unresolved file node
+#' 
+#' @export
+#' @family Lims
+#' @param attached_to character uri of the artifact to attach the file to
+#' @param original_location character, the fully qualified path of the original file
+#' @param namespace character the namespace for the resource
+#' @return XML::xmlNode
+create_file_node <- function(attached_to = "", original_location = "",
+   namespace = 'file'){
+   nsr <- get_NSMAP()[namespace[1]]
+   newXMLNode(namespace[1],
+      namespace = namespace[1],
+      namespaceDefinitions = nsr,
+      .children = list(
+         newXMLNode("attached-to", attached_to),
+         newXMLNode("original-location", original_location)) )
+}
+      
+#' Retrieve the Genologics namespace map
+#' @export
 #' @family Lims
 #' @return a named vector of xmlNameSpaces
 get_NSMAP <- function(){ 

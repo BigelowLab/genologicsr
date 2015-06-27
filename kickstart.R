@@ -7,7 +7,13 @@ library(httr)
 configfile <- "~/.clarityrc"
 
 path <- "/Users/Shared/code/R/others/gls"
-sfiles <- "Lims.R"
+sfiles <- c("misc.R", "Lims.R")
 for (sf in sfiles) source(file.path(path, sf))
 
-lims <- Lims(configfile)
+X <- Lims(configfile)
+
+filelimsid <- '92-1554'
+
+x <- X$getByLimsid(filelimsid)
+
+ok <- X$DELETE(x[[1]])
