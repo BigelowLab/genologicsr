@@ -3,24 +3,24 @@
 #' @name LimsRefClass
 #' @family Lims
 NULL
-LimsRefClass <- setRefClass('Lims',
+LimsRefClass <- setRefClass('LimsRefClass',
    fields = list(
       version = 'character',
       baseuri = 'character',
       auth = 'ANY',
-      handle = 'ANY',
-      NSMAP = 'character')
+      handle = 'ANY')
 )  
 
 
 #' Print a pretty summary
+#' @param prefix character - perhaps number of spaces to prefix the output 
 NULL
 LimsRefClass$methods(
-   show = function(){
-      cat("Reference Class:", methods::classLabel(class(.self)), "\n")
-      cat("  version:", .self$version, "\n")
-      cat("  baseuri:", .self$baseuri, "\n")
-      cat("  valid_session:", .self$validate_session(), "\n")
+   show = function(prefix = ""){
+      cat(prefix, "Reference Class:", methods::classLabel(class(.self)), "\n", sep = "")
+      cat(prefix, "  version: ", .self$version, "\n", sep = "")
+      cat(prefix, "  baseuri: ", .self$baseuri, "\n", sep = "")
+      cat(prefix, "  valid_session: ", .self$validate_session(), "\n", sep = "")
    }) # show
 
 #' Validate the session by testing the version
@@ -52,7 +52,7 @@ LimsRefClass$methods(
    check = function(rsp, msg = NULL){
       w <- httr::warn_for_status(rsp)
       if (!is.logical(w)) print(rsp)
-      x <- XML::xmlRoot(content(rsp, type = "text/xml"))
+      x <- try(XML::xmlRoot(content(rsp, type = "text/xml")))
       if (inherits(x, "try-error")){
          x <- .self$create_exception(message = "error parsing response content with xmlRoot")
       }
@@ -93,19 +93,27 @@ LimsRefClass$methods(
 #' PUT a resource
 #'
 #' @family Lims
-#' @param node xmlNode to put
+#' @param x xmlNode to put
 #' @param ... further arguments for httr::PUT
 #' @return xmlNode
 NULL
 LimsRefClass$methods(
-   PUT = function(node, ...){
-      if (missing(xmlNode)) stop("LimsRefClass$PUT node is required")
-      uri <- splituri(xmlAttrs(node)["uri"])
-      body <- gsub("\n", "", toString.XMLNode(node))
+   PUT = function(x, ...){
+      if (missing(x)) stop("LimsRefClass$PUT: node is required")
+      
+      if (inherits(x, "NodeRefClass")){
+         uri <- x$uri
+         body <- x$toString()
+      } else if (is_xmlNode(x)) {
+         uri <- trimuri(xmlAttrs(x)[['uri']])
+         body <- toString(x)
+      } else {
+         stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
+      }
       r <- httr::PUT(uri,  
          ..., 
          body = body, 
-         config = list(add_headers(content_type_xml)), 
+         content_type_xml(), 
          .self$auth,
          handle = .self$handle) 
       .self$check(r)
@@ -115,19 +123,17 @@ LimsRefClass$methods(
 #' POST a resource
 #'
 #' @family Lims
-#' @param node XML::xmlNode to POST
+#' @param x XML::xmlNode to POST
 #' @param ... further arguments for httr::POST
 #' @return XML::xmlNode
 NULL
 LimsRefClass$methods(
-   POST = function(node, ...){
-      if (missing(xmlNode)) stop("LimsRefClass$POST node is required")
-      uri <- splituri(xmlAttrs(node)["uri"])
-      body <- gsub("\n", "", toString.XMLNode(node))
-      r <- httr::POST(uri, 
+   POST = function(x, ...){
+      if (missing(x)) stop("LimsRefClass$POST node is required")
+      r <- httr::POST(x$uri, 
          ..., 
-         body = body, 
-         config = list(add_headers(content_type_xml)),
+         body = x$toString(), 
+         content_type_xml(),
          .self$auth,
          handle = .self$handle) 
       .self$check(r)
@@ -138,14 +144,14 @@ LimsRefClass$methods(
 #' Typically this is a file (resource = 'files')
 #' 
 #' @family Lims
-#' @param node XML::xmlNode to DELETE, generally a file node
+#' @param x XML::xmlNode to DELETE, generally a file node
 #' @param ... further arguments for httr::DELETE
 #' @return logical
 NULL
 LimsRefClass$methods(
-   DELETE = function(node, ...){
-      if (missing(node)) stop("LimsRefClass$DELETE node is required")
-      uri <- splituri(xmlAttrs(node)["uri"])
+   DELETE = function(x, ...){
+      if (missing(x)) stop("LimsRefClass$DELETE node is required")
+      uri <- trimuri(xmlAttrs(x)["uri"])
       r <- httr::DELETE(uri, 
          ...,  
          .self$auth,
@@ -169,24 +175,24 @@ LimsRefClass$methods(
 #' return the resolved file resource
 #      
 #' @family Lims
-#' @param node XML::xmlNode of the artifact to attach to 
+#' @param x XML::xmlNode of the artifact to attach to 
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
 #' @return XML::xmlNode
 NULL
 LimsRefClass$methods(
-   PUSH = function(node, ..., filename = ""){
-      if (missing(xmlNode)) stop("LimsRefClass$PUSH node is required")
+   PUSH = function(x, ..., filename = ""){
+      if (missing(x)) stop("LimsRefClass$PUSH node is required")
       if (!file.exists(filename[1])) stop("LimsRefClass$PUSH file not found:", filename[1])
-      attached_to_uri <- splituri(xmlAttrs(node)["uri"])
+      attached_to_uri <- trimuri(xmlAttrs(x)["uri"])
       # if the artifact node has a file element
       # then we need to DELETE it
-      if (is.null(node[["file"]]) == FALSE) {
-         fileuri <- xmlAttrs(node[["file"]])["uri"]
+      if (is.null(x[["file"]]) == FALSE) {
+         fileuri <- xmlAttrs(x[["file"]])["uri"]
          ok <- .self$DELETE(fileuri)
          if (!ok) {
-            x <- create_exception_node(message = "LimsRefClass$PUSH: Unable to delete existing file")
-            return(x)
+            e <- create_exception_node(message = "LimsRefClass$PUSH: Unable to delete existing file")
+            return(e)
          }
       }
       #' create an unresolved file resource
@@ -197,7 +203,7 @@ LimsRefClass$methods(
       resolved_node <- httr::POST(resolved_node, body = body)
       
       
-   }) # POST
+   }) # PUSH
 
 
 #' Retrieve a resource by limsid
@@ -207,7 +213,10 @@ LimsRefClass$methods(
 #' @param resource character, one resource to search, by default 'artifacts'
 #' @return a list of XML::xmlNode objects
 LimsRefClass$methods(
-   getByLimsid = function(limsid, resource = 'artifacts', ...){
+   getByLimsid = function(limsid, 
+      resource = c("artifacts", "artifactgroups", "containers", "labs", "instruments", 
+         "processes", "processtemplates", "projects", "researchers", "samples", 
+         "configuration/udfs", "configuration/udts", "files")[1], ...){
       uri <- file.path(.self$baseuri, resource[1], limsid)
       lapply(uri, .self$GET, ...)
    })
@@ -237,7 +246,6 @@ Lims <- function(configfile){
                    get_config(x, "genologics", "PASSWORD", default = "") 
       ) )
    X$field("handle", httr::handle(buri))
-   X$NSMAP <- get_NSMAP()
    if (!X$validate_session()) {
       warning("API session failed validation")
       #return(NULL)

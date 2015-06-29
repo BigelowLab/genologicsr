@@ -1,5 +1,49 @@
 # misc.R
 
+
+#' Return a vector of unique names from a objeect.  The object must have the
+#' methods for \code{names}
+#'
+#' @export
+#' @param x the object
+#' @return a vector of unqiue names or NULL
+unames <- function(x){
+   unique(names(x))
+} 
+
+
+#' Test if an object inherits from XML::XMLAbstractNode
+#'
+#' @export
+#' @param x object to test
+#' @param classname character, the class name to test against, by default 'XMLAbstractNode'
+#' @return logical
+is_xmlNode <- function(x, classname = 'XMLAbstractNode'){
+   inherits(x, classname)
+}
+
+#' Convert XML::xmlNode to character
+#' 
+#' @export
+#' @param x xmlNode
+#' @return character
+xmlString <- function(x){
+   gsub("\n","", XML::toString.XMLNode(x))
+}
+
+
+#' Test XML::xmlNode is an exception
+#'
+#' @export
+#' @param node object to test
+#' @param space the namespace to test
+#' @return logical
+is_exception <- function(x, space = 'exc'){
+   is_xmlNode(x) && ("exc" %in% names(xmlNamespace(x)) )
+}
+
+
+
 #' Read a configuration file
 #' @param filename the name of the file
 #' @return a name list with one element per section
@@ -54,7 +98,8 @@ get_config <- function(x, section, name, default = NULL){
    return(default)
 } # get_config
 
-#' Split a uri around the "?" or other character
+#' Split a uri around the "?" or other character.  For example, 
+#' \code{trimuri(http://www.uri.org?where=foo)} returns \code{http://www.uri.org}.
 #' 
 #' @export
 #' @param uri character, the uri to split
@@ -63,7 +108,7 @@ get_config <- function(x, section, name, default = NULL){
 #' @param index numeric, by default only the leading portion of the input is
 #' returned
 #' @return character of the input preceding the 'around' character
-splituri <- function(uri, around = "?", fixed = TRUE, index = 1){
+trimuri <- function(uri, around = "?", fixed = TRUE, index = 1){
    if (!is.character(uri)) {stop("URI must be character")}
    sapply(strsplit(uri, around, fixed = fixed), '[', index)
 }
