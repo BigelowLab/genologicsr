@@ -77,16 +77,31 @@ LimsRefClass$methods(
 #'
 #' @name LimsRefClass_GET
 #' @param uri character the uri to get
-#' @param ... further arguments for httr::GET
+#' @param ... further arguments for httr::GET including \code{query} list
+#' @param depaginate logical, if TRUE then pool paginated nodes into one
 #' @return XML::xmlNode - possibly an error node
 NULL
 LimsRefClass$methods(
-   GET = function(uri, ...){
-      r <- httr::GET(uri, 
+   GET = function(uri=.self$baseuri, ..., depaginate = TRUE){
+      x <- httr::GET(uri, 
          ..., 
          .self$auth,
          handle = handle)
-     .self$check(r) 
+      
+      x <- .self$check(x) 
+      if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
+         uri <- xmlAttrs(x[['next-page']])[['uri']]
+         doNext <- TRUE
+         while(doNext){
+            y <- .self$check(httr::GET(uri, .self$auth, handle = handle))
+            children <- !(names(y) %in% c("previous-page", "next-page"))
+            if (any(children)) x <- addChildren(x, kids = y[children])
+            doNext <- "next-page" %in% names(y)
+            if (doNext) uri <- xmlAttrs(y[["next-page"]])[["uri"]]
+         } # doNext while loop
+         x <- removeChildren(x, kids = x["next-page"]) 
+      }
+      return(x)
    }) #GET
 
 
@@ -208,12 +223,12 @@ LimsRefClass$methods(
 
 #' Retrieve a resource by limsid
 #' 
-#' @name LimsefClass_getByLimsid
+#' @name LimsRefClass_get_byLimsid
 #' @param lismid character, one or more limsids
 #' @param resource character, one resource to search, by default 'artifacts'
 #' @return a list of XML::xmlNode objects
 LimsRefClass$methods(
-   getByLimsid = function(limsid, 
+   get_byLimsid = function(limsid, 
       resource = c("artifacts", "artifactgroups", "containers", "labs", "instruments", 
          "processes", "processtemplates", "projects", "researchers", "samples", 
          "configuration/udfs", "configuration/udts", "files")[1], ...){
@@ -221,12 +236,79 @@ LimsRefClass$methods(
       lapply(uri, .self$GET, ...)
    })
 
+
+#' Get one or more containers by name, state, etc
+#' 
+#' @name LimsRefClass_get_containers
+#' @param name a character vector of one or more names
+#' @param type character of one or more container types ("384 well plate", etc)
+#' @param state character of one or more contain states ("Discarded", "Populated",...)
+#' @param last_modified a character vector of last modification dates. 
+#' @return a named list of container XML::xmlNode
+LimsRefClass$methods(
+   get_containers = function(name = NULL, type = NULL, state = NULL,
+   last_modified = NULL, resource = "containers" ){
+      query = list()
+      if (!is.null(name)) query[['name']] <- name
+      if (!is.null(type)) query[['type']] <- type
+      if (!is.null(state)) query[['state']] <- state
+      if (!is.null(last_modified)) query[['last-modified']] <- last_modified     
+      x <- .self$GET(file.path(.self$baseuri, resource), query = query)
+      lapply(xmlChildren(x) function(x) Container$new(x, .self))
+   })
+
+
 #### methods above
 #### functions below
+
+#' Retrieve a batch resource
+#'
+#' @export
+#' @param uri character vector of one or more uri
+#' @param relative resource name
+#' @param resource character
+#' @param asList logical, if TRUE return a named list of Artifacts
+#' @param all logical, by default we remove duplicates
+batch_retrieve <- function(uri, lims,
+   rel = c("artifacts", "containers", "files", "samples" )[1],
+   resource = file.path(rel, "batch", "retrieve"), 
+   asList = TRUE,
+   all = FALSE, ...){
+   
+   if (length(uri) == 0) stop("batch_uri: uri has zero-length")
+   
+   # does the user want ALL including duplicates?
+   # if so then save the IDs for later
+   if (all) limsid_all <- basename(uri)
+   uri <- uri[!duplicated(uri)]
+
+   # create new nodes for each uri requested
+   linkNodes <- lapply(uri, 
+      function(x, rel=rel, name = "link") {
+         XML::newXMLNode(name = name, attrs = list(uri = x, rel=rel)) 
+      } )
+   
+   # make the request node with uri request children
+   batchNode <- XML::newXMLNode("links",
+      namespace = "ri",
+      namespaceDefinitions = c("ri" = "http://genologics.com/ri"),
+      .children = linkNodes)
+   
+   URI <- file.path(lims$baseuri, resource)
+   r <- httr::POST(URI, ..., body = xmlString(batchNode), lims$auth, handle = lims$handle)
+   x <- lims$check(r)
+   if (!is_exception(x)){
+   
+   
+   }
+   invisible(x) 
+   
+} # batch_retrieve
 
 
 #' Instantiate a LimsRefClass object
 #'
+#' @export
 #' @param configfile character, the fully qualified path to the config file
 #' @return a LimsRefClass instance or NULL
 Lims <- function(configfile){
