@@ -1,7 +1,5 @@
 # Process.R
 
-#Initialization methods need some care in design. The generator for a reference class will be called with no arguments, for example when copying the object. To ensure that these calls do not fail, the method must have defaults for all arguments or check for missing(). The method should include ... as an argument and pass this on via $callSuper() (or $initFields() if you know that your superclasses have no initialization methods). This allows future class definitions that subclass this class, with additional fields.
-
 ProcessRefClass <- setRefClass("ProcessRefClass",
    contains = "NodeRefClass")
 

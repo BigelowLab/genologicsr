@@ -64,6 +64,7 @@ NodeRefClass$methods(
       cat(prefix, "Reference Class: ", methods::classLabel(class(.self)), "\n", sep = "")
       .self$lims$show(prefix = paste0(prefix, "   "))
       cat(prefix, "  uri: ", .self$uri, "\n", sep = "")
+      cat(prefix, "  namespace: ", paste(names(.self$ns), collapse = " "), "\n", sep = "")
       cat(prefix, "  node populated: ", is_xmlNode(.self$node), "\n", sep = "")
       cat(prefix, "  node children: ", paste(unames(.self$node), collapse = " "), "\n", sep = "")
    }) #show
@@ -154,5 +155,80 @@ NodeRefClass$methods(
    }) # toString
    
    
+#' Get the contents of a UDF field
+#' 
+#' @family Node
+#' @param name character one or more names 
+#' @param as_type character, the data type to return: default, numeric, character, etc.
+#' @return list of field values, assigned NA when the field is missing
+NULL
+NodeRefClass$methods(
+   get_field = function(name){
+      get_udfs(.self$node, name)       
+   }) # get_field
+
 #' Get an instance of NodeRefClass
 Node <- getRefClass("NodeRefClass")
+
+############## methods above
+############## functions below
+
+
+
+#' Set one or more UDF fields in an xmlNode
+#' 
+#' @export
+#' @family Node
+#' @param x XML::xmlNode
+#' @param v a list of one or more udf vectors
+#'    each udf vector must have \code{name}, \code{type} and \code{value}
+#' @return the updated xmlNode
+set_udfs <- function(x, v){
+
+
+}
+
+#' Extract a named list of udf vectors from an xmlNode
+#' 
+#' @export
+#' @family Node
+#' @param x XML::xmlNode possibly bearing udf fields
+#' @return a named list of lists where each sublist is comprised of 
+#'    \itemize{
+#'       \item name character
+#'       \item type character
+#'       \item value data type varies
+#'    }
+#'  Or empty list if the xmlNode has no fields
+extract_udfs <- function(x){
+   stopifnot(is_xmlNode(x))
+   ff <- x['field']
+   if (is.null(ff)){
+      r <- list()
+   } else {
+      r <- lapply(ff, function(x){
+         att <- xmlAttrs(x)
+         nm <- att[['name']]
+         typ <- att[['type']]
+         val <- as(xmlValue(x), udf_type2R(typ))
+         list(name = nm, type = typ, value = val )
+         })  
+      names(r) <- sapply(r, "[[", "name")  
+   }
+   return(r)
+}
+
+#' Retrieve the values of one or more udfs
+#' 
+#' @export
+#' @family Node
+#' @param x XML::xmlNode object
+#' @param name character one or more names 
+#' @return named list of field values.  If no fields exists then NULL is return.
+#' If a name is missing then 
+get_udfs <- function(x, name){
+   r <- extract_udfs(x) 
+   lapply(r[name], '[[', 'value')
+}
+     
+

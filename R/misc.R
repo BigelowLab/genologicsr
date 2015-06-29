@@ -132,6 +132,27 @@ create_file_node <- function(attached_to = "", original_location = "",
          newXMLNode("attached-to", attached_to),
          newXMLNode("original-location", original_location)) )
 }
+
+
+#' Retrieve a named vector of UDF types to R types
+#' @export
+#' @family Node
+#' @param x character of the UDF type
+#' @return named character vector if equivalent R types
+udf_type2R <- function(x){
+   lut <- c(
+      'String' = 'character',
+      'Text' = 'character',
+      'Boolean' = 'logical',
+      'Numeric' = 'numeric',
+      'Date' = 'character',
+      'URI' = 'character')
+   if (!missing(x)){
+      return(lut[x])
+   } else {
+      return(lut)
+   }
+}
       
 #' Retrieve the Genologics namespace map
 #' @export
