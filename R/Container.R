@@ -27,17 +27,18 @@ ContainerRefClass$methods(
       cat(prefix, "  name: ", .self$name, "\n", sep = "")
       cat(prefix, "  type: ", .self$type, "\n", sep = "")
       cat(prefix, "  state: ", .self$state, "\n", sep = "")
-      cat(prefix, "  occupied wells: ", .self$occupied_wells(), sep = "")
+      cat(prefix, "  occupied wells: ", .self$n_occupied(), 
+         " (", .self$n_empty(), " empty)\n", sep = "")
    })  
    
 #' Retrieve the occupied well count
 #'
 #' @family Container
-#' @name ContainerRefNode_occupied_wells
+#' @name ContainerRefNode_n_occupied
 #' @return numeric
 NULL
 ContainerRefClass$methods(
-   occupied_wells = function(){
+   n_occupied = function(){
       nd <- .self$node[['occupied-wells']]
       if (!is.null(nd)) {
          x <- as.numeric(XML::xmlValue(nd))
@@ -47,6 +48,32 @@ ContainerRefClass$methods(
       x
    }) #occupied_wells
    
+#' Retrieve the empty well count
+#'
+#' @family Container
+#' @name ContainerRefNode_n_empty
+#' @return numeric
+NULL
+ContainerRefClass$methods(
+   n_empty = function(){
+      .self$n_wells() - .self$n_occupied()
+   }) #empty_wells
+   
+#' Retrieve the well count (occupied + empty)
+#'
+#' @family Container
+#' @name ContainerRefNode_n_wells
+#' @return numeric
+NULL
+ContainerRefClass$methods(
+   n_wells = function(){
+      if ( (length(.self$type) == 0) || (nchar(.self$type) == 0) ) return(NA)
+      switch(.self$type,
+         '384 well plate' = 384,
+         '96 well plate' = 96,
+         '12 well plate' = 12,
+         1)
+   }) #n_wells  
 
 #' Retrieve a named vector of placements uri
 #' 
@@ -56,9 +83,9 @@ ContainerRefClass$methods(
 NULL
 ContainerRefClass$methods(
    get_placements = function(wstyle = "A:1"){
-      uri <- sapply(.self$node['placement'], function(x) XML::xmlAttrs(x)[['uri']])
-      names(uri) <- sapply(.self$node['placement'], XML::xmlValue)
-      invisible(uri)
+      puri <- sapply(.self$node['placement'], function(x) XML::xmlAttrs(x)[['uri']])
+      names(puri) <- sapply(.self$node['placement'], XML::xmlValue)
+      invisible(puri)
    })
 
 #' Retrieve a named list of artifact XML:xmlNode
@@ -69,6 +96,6 @@ ContainerRefClass$methods(
 NULL
 ContainerRefClass$methods(
    get_artifacts = function(wstyle = "A:1"){
-      uri <- .self$get_placements()
-      SS <- .self$lims(file.path(.self$lims$baseuri, "artifacts", "batch", "retrieve")
+      puri <- .self$get_placements()
+      
    })

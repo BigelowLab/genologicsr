@@ -63,10 +63,10 @@ NodeRefClass$methods(
    show = function(prefix = ""){
       cat(prefix, "Reference Class: ", methods::classLabel(class(.self)), "\n", sep = "")
       .self$lims$show(prefix = paste0(prefix, "   "))
-      cat(prefix, "  uri: ", .self$uri, "\n", sep = "")
-      cat(prefix, "  namespace: ", paste(names(.self$ns), collapse = " "), "\n", sep = "")
-      cat(prefix, "  node populated: ", is_xmlNode(.self$node), "\n", sep = "")
-      cat(prefix, "  node children: ", paste(unames(.self$node), collapse = " "), "\n", sep = "")
+      cat(prefix, "  Node uri: ", .self$uri, "\n", sep = "")
+      cat(prefix, "  Node namespace: ", paste(names(.self$ns), collapse = " "), "\n", sep = "")
+      #cat(prefix, "  Node populated: ", is_xmlNode(.self$node), "\n", sep = "")
+      cat(prefix, "  Node children: ", paste(unames(.self$node), collapse = " "), "\n", sep = "")
    }) #show
 
    

@@ -6,18 +6,24 @@ library(httr)
 
 configfile <- "~/.clarityrc"
 
+# source in the correct order - because of inheritance issue
 path <- "/Users/Shared/code/R/others/genologicsR/R"
-sfiles <- list.files(path, full.names = TRUE)
-for (sf in sfiles) { source(sf)}
+sfiles <- c("misc.R", "Lims.R", "Node.R","Container.R", 
+   "File.R", "Process.R", "Sample.R", "Udf.R")
+for (sf in sfiles) source(file.path(path, sf))
 
 lims <- Lims(configfile)
 
-
+# CONTAINER
 node <- lims$get_byLimsid("27-1", resource = "containers")[[1]]
 C <- Container$new(node, lims)
 
+# or equivalently
+C <- lims$get_byLimsid("27-1", resource = "containers", asNode = TRUE)[[1]]
 
-nodes <- lims$get_containers(name = 'BEN_1')
+# get containers by name
+CC <- lims$get_containers(name = c("Liz_test_1", "Liz_test_2") )
+
 
 
 # PROCESS
@@ -28,6 +34,13 @@ P$PUT()
 
 # SAMPLE
 node<- lims$get_byLimsid("FER101A1", resource = 'samples')[[1]]
-S <- Node$new(node = node, lims = lims)
+S <- Sample$new(node = node, lims = lims)
+
+# or equivalently
+S <- lims$get_byLimsid("FER101A1", resource = 'samples', asNode = TRUE)[[1]]
+
+# get samples by projectlimsid (or name, or projectname)
+S <- lims$get_samples(projectlimsid = "FER101")
+
 
 # change something in S and then S$PUT()

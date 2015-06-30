@@ -18,13 +18,32 @@ NULL
 LimsRefClass$methods(
    show = function(prefix = ""){
       cat(prefix, "Reference Class:", methods::classLabel(class(.self)), "\n", sep = "")
-      cat(prefix, "  version: ", .self$version, "\n", sep = "")
-      cat(prefix, "  baseuri: ", .self$baseuri, "\n", sep = "")
-      cat(prefix, "  valid_session: ", .self$validate_session(), "\n", sep = "")
+      cat(prefix, "  Lims version: ", .self$version, "\n", sep = "")
+      cat(prefix, "  Lims baseuri: ", .self$baseuri, "\n", sep = "")
+      cat(prefix, "  Lims valid session: ", .self$validate_session(), "\n", sep = "")
    }) # show
 
+
+#' Build a uri staring with the baseuri
+#'
+#' @family Lims
+#' @param ... one or more character segments to append to the base
+#' @param base character, the base uri, if NULL then use this object's baseuri property
+#' @return character uri
+#' @examples 
+#' \dontrun{
+#'    my_uri <- ref$uri("containers")
+#' }
+NULL
+LimsRefClass$methods(
+   uri = function(..., base = NULL){
+      stub = if(is.null(base)) .self$baseuri else base[1]
+      file.path(stub, ...)
+   })
+   
 #' Validate the session by testing the version
 #' 
+#' @family Lims
 #' @name LimsRefClass_validate_session
 #' @return logical, TRUE if OK
 NULL
@@ -65,7 +84,7 @@ LimsRefClass$methods(
 LimsRefClass$methods(
    create_exception = function(message = 'Unspecified exception'){
       x <- XML::newXMLNode("exception", 
-         namespaceDefinitions = .self$NSMAP[['exc']], 
+         namespaceDefinitions = get_NSMAP()[['exc']], 
          namespace = 'exc')
       x <- XML::addChildren(x, kids = list(XML::newXMLNode("message", message)) )
       x
@@ -79,10 +98,11 @@ LimsRefClass$methods(
 #' @param uri character the uri to get
 #' @param ... further arguments for httr::GET including \code{query} list
 #' @param depaginate logical, if TRUE then pool paginated nodes into one
+#' @param asNode logical, if TRUE return a class that inherits NodeRefClass 
 #' @return XML::xmlNode - possibly an error node
 NULL
 LimsRefClass$methods(
-   GET = function(uri=.self$baseuri, ..., depaginate = TRUE){
+   GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = FALSE){
       x <- httr::GET(uri, 
          ..., 
          .self$auth,
@@ -101,7 +121,10 @@ LimsRefClass$methods(
          } # doNext while loop
          x <- removeChildren(x, kids = x["next-page"]) 
       }
-      return(x)
+      
+      if (asNode) x <- parse_node(x, .self)
+      
+      invisible(x)
    }) #GET
 
 
@@ -247,16 +270,55 @@ LimsRefClass$methods(
 #' @return a named list of container XML::xmlNode
 LimsRefClass$methods(
    get_containers = function(name = NULL, type = NULL, state = NULL,
-   last_modified = NULL, resource = "containers" ){
+   last_modified = NULL){
+      resource <- 'containers'
       query = list()
       if (!is.null(name)) query[['name']] <- name
       if (!is.null(type)) query[['type']] <- type
       if (!is.null(state)) query[['state']] <- state
-      if (!is.null(last_modified)) query[['last-modified']] <- last_modified     
+      if (!is.null(last_modified)) query[['last-modified']] <- last_modified
+      if(length(query) == 0) 
+         stop("LimsRefClass$get_containers please specify at leatst one or more of name, type, state or last_modified")
+      query <- build_query(query)
       x <- .self$GET(file.path(.self$baseuri, resource), query = query)
-      lapply(xmlChildren(x) function(x) Container$new(x, .self))
+      # lapply(xmlChildren(x) function(x) Container$new(x, .self))
+      if (!is_exception(x)){
+         uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
+         x <- batch_retrieve(uri, .self, rel = 'containers')
+         x <- lapply(x, function(x) Container.new(x, .self))
+         names(x) <- sapply(x, '[[', 'name')
+      }
+      invisible(x)
    })
 
+#' Get one or more samples using queries on name, projectlimsid, projectname
+#' It is possible to also filter the query on UDF values but it may be easier to
+#  do that after getting the samples - see \url{http://genologics.com/developer}
+#' 
+#' @name LimsRefClass_get_samples
+#' @param name a character vector of one or more names
+#' @param projectlimsid character of one or more projectlimsid values
+#' @param projectname character of one or more projectname values
+#' @return a named list of container XML::xmlNode
+LimsRefClass$methods(
+   get_samples = function(name = NULL, projectlimsid = NULL, projectname = NULL){
+      resource <- 'samples'
+      query = list()
+      if (!is.null(name)) query[['name']] <- name
+      if (!is.null(projectlimsid)) query[['projectlimsid']] <- projectlimsid
+      if (!is.null(projectname)) query[['projectname']] <- projectname
+      if(length(query) == 0) 
+         stop("LimsRefClass$get_samples please specify at least one or more of name, projectlimsid or projectname")
+      query <- build_query(query)
+      x <- .self$GET(file.path(.self$baseuri, resource), query = query)
+      if (!is_exception(x)){
+         uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
+         x <- batch_retrieve(uri, .self, rel = 'samples')
+         x <- lapply(x, function(x) Sample(x, .self))
+         names(x) <- sapply(x, '[[', 'name')
+      }
+      invisible(x)
+   })
 
 #### methods above
 #### functions below
@@ -268,25 +330,25 @@ LimsRefClass$methods(
 #' @param relative resource name
 #' @param resource character
 #' @param asList logical, if TRUE return a named list of Artifacts
-#' @param all logical, by default we remove duplicates
+#' @param all logical, by default we remove duplicates set this to TRUE to retrieve all, ignored if \code{asList = FALSE}
 batch_retrieve <- function(uri, lims,
    rel = c("artifacts", "containers", "files", "samples" )[1],
    resource = file.path(rel, "batch", "retrieve"), 
    asList = TRUE,
-   all = FALSE, ...){
+   rm_dups = TRUE, ...){
    
    if (length(uri) == 0) stop("batch_uri: uri has zero-length")
    
    # does the user want ALL including duplicates?
    # if so then save the IDs for later
-   if (all) limsid_all <- basename(uri)
+   if (!rm_dups) limsid_all <- basename(uri)
    uri <- uri[!duplicated(uri)]
 
    # create new nodes for each uri requested
    linkNodes <- lapply(uri, 
       function(x, rel=rel, name = "link") {
          XML::newXMLNode(name = name, attrs = list(uri = x, rel=rel)) 
-      } )
+      }, rel = rel)
    
    # make the request node with uri request children
    batchNode <- XML::newXMLNode("links",
@@ -295,16 +357,60 @@ batch_retrieve <- function(uri, lims,
       .children = linkNodes)
    
    URI <- file.path(lims$baseuri, resource)
-   r <- httr::POST(URI, ..., body = xmlString(batchNode), lims$auth, handle = lims$handle)
+   r <- httr::POST(URI, ..., body = xmlString(batchNode), 
+      add_headers(c("Content-Type"="application/xml")),
+      lims$auth, handle = lims$handle)
    x <- lims$check(r)
-   if (!is_exception(x)){
-   
-   
+   if (!is_exception(x) && asList){
+      singleName <- switch(rel,
+         "artifacts" = "artifact",
+         "containers" = "container",
+         "samples" = "sample",
+         "files" = "file",
+         rel)
+      nm <- switch(singleName,
+         'artifact' = 'art',
+         'container' = 'con',
+         'sample' = 'smp',
+         'file' = 'file')
+         
+      nmspc <- xmlNamespace(x)
+      x <- x[singleName]
+      # transfer the the xmlnamespace to each child node
+      uristub = get_NSMAP()[[nm]]
+      x <- lapply(x, function(x, 
+            nm=structure(uristub, .Names = nm, class = "XMLNamespace")) {
+                  XML::xmlNamespace(x) <- nm; 
+                  x}, 
+            nm = nmspc)
+      if (!rm_dups) {
+         # name each node
+         names(x) <- sapply(x, function(x) XML::xmlAttrs(x)["limsid"])
+         # rebuild the list with duplicates
+         x <- x[limsid_all]
+      }
    }
    invisible(x) 
    
 } # batch_retrieve
 
+#' Convert a node to an object inheriting from NodeRefClass 
+#'
+#' @family Lims Node
+#' @param node XML::xmlNode
+#' @param lims LimsRefClass object
+parse_node <- function(node, lims){
+
+   if (!is_xmlNode(node)) stop("assign_node: node must be XML::xmlNode")
+   if (!inherits(lims, 'LimsRefClass')) stop("assign_node: lims must be LimsRefClass")
+
+   nm <- names(XML::xmlNamespace(node))[1]
+   switch(nm,
+      'prc' = Process$new(node, lims),
+      'con' = Container$new(node, lims),
+      'smp' = Sample$new(node,lims),
+      Node$new(node, lims))
+}
 
 #' Instantiate a LimsRefClass object
 #'

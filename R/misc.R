@@ -1,6 +1,26 @@
 # misc.R
 
 
+#' Prepares a contribution to a query list - see \code{modify_url}
+#'
+#' @export
+#' @param x a named list like \code{list(name=c("boo", "foo"), type = "shoe")}
+#' @return character like "name=boo&name=foo$type=shoe"
+build_query <- function(x){
+   if (!is.list(x)) stop("build_query: x must be a list")
+   nm <- names(x)
+   if (length(nm) == 0) stop("build_query: x must be a named list")
+   # create a character vector, iterate along the input transforming each element
+   # to the name1=value&name2=value
+   # then join the whole shooting match
+   s <- vector(mode = 'character', length = length(x))
+   for (i in seq_along(x)){
+      n <- nm[i]
+      s[i] <- paste(paste(gsub("_","-", n), curl::curl_escape(x[[n]]), sep = "="), collapse = "&")
+   }
+   paste(s, collapse = "&")
+}
+   
 #' Return a vector of unique names from a objeect.  The object must have the
 #' methods for \code{names}
 #'
