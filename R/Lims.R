@@ -285,7 +285,7 @@ LimsRefClass$methods(
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'containers')
-         x <- lapply(x, function(x) Container.new(x, .self))
+         x <- lapply(x, function(x) Container$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
       }
       invisible(x)
@@ -314,7 +314,7 @@ LimsRefClass$methods(
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'samples')
-         x <- lapply(x, function(x) Sample(x, .self))
+         x <- lapply(x, function(x) Sample$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
       }
       invisible(x)
