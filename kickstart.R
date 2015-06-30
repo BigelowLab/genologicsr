@@ -4,15 +4,13 @@
 library(XML)
 library(httr)
 
-configfile <- "~/.clarityrc"
-
 # source in the correct order - because of inheritance issue
 path <- "/Users/Shared/code/R/others/genologicsR/R"
 sfiles <- c("misc.R", "Lims.R", "Node.R","Container.R", 
    "File.R", "Process.R", "Sample.R", "Udf.R")
 for (sf in sfiles) source(file.path(path, sf))
 
-lims <- Lims(configfile)
+lims <- Lims(configfile = "~/.clarityrc")
 
 # CONTAINER
 node <- lims$get_byLimsid("27-1", resource = "containers")[[1]]
@@ -39,8 +37,6 @@ S <- Sample$new(node = node, lims = lims)
 # or equivalently
 S <- lims$get_byLimsid("FER101A1", resource = 'samples', asNode = TRUE)[[1]]
 
-# get samples by projectlimsid (or name, or projectname)
+# get samples by projectlimsid (or name, or projectname) - takes a while as there 
+# are 96 of these
 S <- lims$get_samples(projectlimsid = "FER101")
-
-
-# change something in S and then S$PUT()

@@ -12,7 +12,10 @@ Like the python [genologics](https://github.com/SciLifeLab/genologics) module, g
 
 + **LimsRefClass** provides uniform inteface for basic GET, PUT, POST, DELETE transactions as wells as hybrid queries and requests get_containers, get_samples, get_processes, get_artifacts, getByLimsid, etc.
     
-+ **NodeRefClass** contains an instance of LimsRefClass as well as XML::xmlNode to provide uniform access to behaviors GET, PUT, POST etc. as well as access to attributes and child elements.
++ **NodeRefClass** contains an instance of LimsRefClass as well as XML::xmlNode to provide uniform access to behaviors GET, PUT, POST etc. as well as access to attributes and child elements. The following inherit from NodeRefClass.
 
-+ **ProcessRefClass** a specialized NodeRefClass for processes
+++ **ProcessRefClass** 
 
+++ **ContainerRefClass** 
+
+++ **SampleRefClass**
