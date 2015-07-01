@@ -6,13 +6,19 @@ library(httr)
 
 # source in the correct order - because of inheritance issue
 path <- "/Users/Shared/code/R/others/genologicsR/R"
-sfiles <- c("misc.R", "Lims.R", "Node.R","Container.R", 
-   "File.R", "Process.R", "Sample.R", "Udf.R")
+sfiles <- c("misc.R", "Lims.R", "Node.R","Artifact.R", "Container.R", 
+   "File.R", "Process.R", "Sample.R", "Udf.R", "Researcher.R")
 for (sf in sfiles) source(file.path(path, sf))
 
 lims <- Lims(configfile = "~/.clarityrc")
 
 # CONTAINER
+
+C <- lims$get_byLimsid("27-1", resource = "containers", asNode = TRUE)[[1]]
+AA <- C$get_artifacts()
+SS <- C$get_samples()
+
+
 node <- lims$get_byLimsid("27-1", resource = "containers")[[1]]
 C <- Container$new(node, lims)
 # or equivalently

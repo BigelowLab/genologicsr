@@ -8,7 +8,7 @@ NodeRefClass <- setRefClass("NodeRefClass",
       ns = 'ANY',
       node = 'ANY')
    )
- 
+
 Node <- getRefClass("NodeRefClass")  
 
 #' Called when the object is instantiated.  NodeRefClass is a convenience wrapper
@@ -26,8 +26,8 @@ NodeRefClass$methods(
          return(callSuper(...))
       }
       
-      if (!inherits(lims, "LimsRefClass")) 
-         stop("NodeRefClass$initialize lims is must be of class LimsRefClass")
+      if (!inherits(lims, "LimsRefClass") && !is.null(lims) ) 
+         stop("NodeRefClass$initialize lims is must be of class LimsRefClass or NULL")
       
       .self$field('lims', lims)
       
@@ -47,8 +47,8 @@ NodeRefClass$methods(
       .self$field('ns', XML::xmlNamespace(.self$node))
       
       atts <- XML::xmlAttrs(.self$node)
-      .self$field('uri', trimuri(atts[['uri']]))
-      .self$field('limsid', atts[['limsid']])
+      if ('uri' %in% names(atts)) .self$field('uri', trimuri(atts[['uri']]))
+      if ('limsid' %in% names(atts)) .self$field('limsid', atts[['limsid']])
    
       callSuper(...)
    }) # new
@@ -62,11 +62,11 @@ NULL
 NodeRefClass$methods(
    show = function(prefix = ""){
       cat(prefix, "Reference Class: ", methods::classLabel(class(.self)), "\n", sep = "")
-      .self$lims$show(prefix = paste0(prefix, "   "))
+      #.self$lims$show(prefix = paste0(prefix, "   "))
       cat(prefix, "  Node uri: ", .self$uri, "\n", sep = "")
-      cat(prefix, "  Node namespace: ", paste(names(.self$ns), collapse = " "), "\n", sep = "")
+      #cat(prefix, "  Node namespace: ", paste(names(.self$ns), collapse = " "), "\n", sep = "")
       #cat(prefix, "  Node populated: ", is_xmlNode(.self$node), "\n", sep = "")
-      cat(prefix, "  Node children: ", paste(unames(.self$node), collapse = " "), "\n", sep = "")
+      cat(prefix, "  Node children: ", paste(.self$unames(), collapse = " "), "\n", sep = "")
    }) #show
 
    
@@ -92,7 +92,20 @@ NodeRefClass$methods(
    }) # update
 
 
-#' GET un update of this node
+#' Determine if http transactions (GET, PATCH, POST, HEAD, PUT, and DELETE) 
+#' are possible for this Node
+#' 
+#' @family Node
+#' @name NodeRefClass_has_lims
+#' @return logical
+NULL
+NodeRefClass$methods(
+   has_lims = function(){
+      !is.null(.self$lims)
+   }) #has_lims
+
+
+#' GET an update of this node
 #' 
 #' @family Node
 #' @name NodeRefClass_GET
@@ -100,6 +113,7 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    GET = function(...){
+      if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for GET")
       r <- .self$lims$GET(.self$uri, ...)
       ok <- TRUE
       if (!is_exception(r)) {
@@ -118,6 +132,7 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    PUT = function(...){
+      if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for PUT")
       r <- .self$lims$PUT(.self, ...)
       ok <- TRUE
       if (!is_exception(r)) {
@@ -125,6 +140,29 @@ NodeRefClass$methods(
       } else {
          cat("NodeRefClass: PUT exception\n")
          cat("NodeRefClass: node not updated because...\n")
+         cat(xmlValue(r[['message']]), "\n")
+         ok <- FALSE
+      }
+      ok
+   }) # PUT
+
+#' DELETE this node 
+#'
+#' @family Node
+#' @name NodeRefClass_DELETE
+#' @return logical if successful then TRUE
+NULL
+NodeRefClass$methods(
+   DELETE = function(...){
+      if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for DELETE")
+      r <- .self$lims$DELETE(.self$node, ...)
+      ok <- TRUE
+      if (!is_exception(r)) {
+         .self$node <- NULL
+         .self$lims <- NULL
+      } else {
+         cat("NodeRefClass: DELETE exception\n")
+         cat("NodeRefClass: node not deleted because...\n")
          cat(xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
@@ -140,9 +178,8 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods( 
    unames = function(){ 
-      unames(.self$node) 
+      if (is_xmlNode(.self$node)) unique(names(.self$node)) else ""
    })
-
 
 #' Convert the node to string
 #'
@@ -154,6 +191,28 @@ NodeRefClass$methods(
       gsub("\n","", XML::toString.XMLNode(.self$node))
    }) # toString
    
+#' Determine if this node has a child, test by name of XML::xmlNode reference
+#'
+#' @family Node
+#' @name NodeRefClass_has_child
+#' @param x one or more names to test or one or more XML::xmlNode objects
+#' @return logical vector, named if \code{x} is character
+NodeRefClass$methods(
+   has_child = function(x){
+      if (inherits(x, "character")){
+         u <- .self$unames()
+         ok <- x %in% u
+         names(ok) <- x
+      } else {
+         # this is what I want, but %in% doesn't operate on lists
+         # x <- x %in% xmlChildren(.self$node)
+         # so instead we loop through comparing xmlparent this this node
+         ok <- sapply(x, function(x, p=NULL) {
+               identical(p,xmlParent(x))
+            }, p = .self$node)   
+      }
+      ok
+   })
    
 #' Get the contents of a UDF field
 #' 
@@ -167,8 +226,40 @@ NodeRefClass$methods(
       get_udfs(.self$node, name)       
    }) # get_field
 
-#' Get an instance of NodeRefClass
-Node <- getRefClass("NodeRefClass")
 
+#' Get the value of the type field or ""
+#' 
+#' @family Node
+#' @name NodeRefClass_get_type
+#' @return character the type name or "" if none
+NULL
+NodeRefClass$methods(
+   get_type = function(){
+      get_childvalue(.self$node, "type")
+   })
+
+#' Get the value of the name field or ""
+#' 
+#' @family Node
+#' @param NodeRefClass_get_type
+#' @return named character vector of the name or "" if none
+NULL
+NodeRefClass$methods(
+   get_name = function(){
+      get_childvalue(.self$node, "name")
+   })
+   
 ############## methods above
 ############## functions below
+
+#' Retrieve the value of a child node(s)
+#'
+#' @export
+#' @param x XML::xmlNode 
+#' @param name the name of the child(ren)
+#' @return named character vector of child values, possibly ""
+get_childvalue <- function(x, name){
+   sapply(name, function(nm,x=NULL){
+         if (nm %in% names(x)) XML::xmlValue(x[[name]]) else ""
+      }, x = x)
+}

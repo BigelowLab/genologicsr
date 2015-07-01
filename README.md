@@ -10,6 +10,8 @@ The arrival of [GLS API v2](http://genologics.com/developer) and Clarity LIMS it
 
 Like the python [genologics](https://github.com/SciLifeLab/genologics) module, genologicsR provides reference classes to manage tansactions with LIMS and to work with the xml data representing database entities (files, sample, artifacts, processes, field, etc.).
 
+Once of the nicer features of this is that the portion of the wrapper that handles the http transactions is isolated from working with the content (xml formed data).  So, future switches to other http transfer tools (away from httr and/or curl R packages) can be handled behind and opaque interface.  It's like changing your postal carrier without causing disrupting your mail service.
+
 + **LimsRefClass** provides uniform inteface for basic GET, PUT, POST, DELETE transactions as wells as hybrid queries and requests get_containers, get_samples, get_processes, get_artifacts, getByLimsid, etc.
 
 ```

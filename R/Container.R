@@ -88,14 +88,35 @@ ContainerRefClass$methods(
       invisible(puri)
    })
 
-#' Retrieve a named list of artifact XML:xmlNode
+#' Retrieve a named list of artifact XML:xmlNode or ArtifactRefClass objects
 #' 
 #' @family Container
 #' @name ContainerRefNode_get_artifacts
-#' @return a named vector of artifact XML:xmlNode
+#' @param asNode logical if TURE cast the result to ArtifactRefClass
+#' @return a named vector of artifact XML:xmlNode or ArtifactRefClass objects
 NULL
 ContainerRefClass$methods(
-   get_artifacts = function(wstyle = "A:1"){
+   get_artifacts = function(){
+      puri <- .self$get_placements() 
+      AA <- .self$lims$retrieve(puri,rel = 'artifacts', asNode = TRUE)
+      names(AA) <- sapply(.self$node['placement'], XML::xmlValue)
+      invisible(AA)
+   })
+   
+
+#' Retrieve a named list of artifact XML:xmlNode or SampleRefClass
+#' 
+#' @family Container
+#' @name ContainerRefNode_get_samples
+#' @param asNode logical if TURE cast the result to SampleRefClass
+#' @return a named vector of sample XML:xmlNode or SampleRefClass objects
+NULL
+ContainerRefClass$methods(
+   get_samples = function(asNode = TRUE){
       puri <- .self$get_placements()
-      
+      AA <- .self$lims$retrieve(puri, rel = 'artifacts', asNode = asNode)
+      suri <- sapply(AA, function(x) x$get_sample(form = "uri"))
+      SS <- .self$lims$retrieve(suri, rel = 'samples', asNode = asNode)
+      names(SS) <- sapply(.self$node['placement'], XML::xmlValue)
+      invisible(SS)
    })

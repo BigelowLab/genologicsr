@@ -12,10 +12,10 @@ SampleRefClass <- setRefClass("SampleRefClass",
    methods = list(
       initialize = function(...){
          callSuper(...)
-         .self$name = xmlValue(.self$node[['name']])
-         .self$type = xmlValue(.self$node[['type']])
-         .self$date_received = xmlValue(.self$node[['date-received']]) 
-         .self$date_completed = xmlValue(.self$node[['date-completed']]) 
+         .self$name = .self$get_name()
+         .self$type = .self$get_type()
+         .self$date_received =  get_childvalue(.self$node, 'date-received') 
+         .self$date_completed = get_childvalue(.self$node, 'date-completed')
          .self$biosource = .self$get_biosource()
       })
    )

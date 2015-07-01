@@ -12,7 +12,7 @@ ProcessRefClass$methods(
       callSuper(prefix = prefix)
       cat(prefix, "  date-run: ", .self$date_run(), "\n", sep = "")
       cat(prefix, "  technician: ", .self$technician(), "\n", sep = "")
-      cat(prefix, "  type: ", .self$type(), "\n", sep = "")
+      cat(prefix, "  type: ", .self$get_type(), "\n", sep = "")
    })
    
 #' Retrieve the date run as string or POSIXct
@@ -52,13 +52,13 @@ ProcessRefClass$methods(
       x
    }) #technician
    
-#' Retrieve the process type
+#' Retrieve the process type, overrides NodeRefClass_get_type
 #'
 #' @param form 'name', or 'uri'
 #' @return character or "" if not available
 NULL
 ProcessRefClass$methods(
-   type = function(form = c("name", "uri")[1]){
+   get_type = function(form = c("name", "uri")[1]){
       typenode <- .self$node[['type']]
       if (!is.null(typenode)) {
          x <- switch(form,
@@ -68,6 +68,6 @@ ProcessRefClass$methods(
          x <- ""
       }
       x
-   }) #type
+   }) #get_type
    
 Process <- getRefClass("ProcessRefClass")

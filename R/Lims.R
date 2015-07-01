@@ -70,7 +70,10 @@ LimsRefClass$methods(
 LimsRefClass$methods(
    check = function(rsp, msg = NULL){
       w <- httr::warn_for_status(rsp)
-      if (!is.logical(w)) print(rsp)
+      if (!is.logical(w)) {
+         print(rsp)
+         print(content(rsp))
+      }
       x <- try(XML::xmlRoot(content(rsp, type = "text/xml")))
       if (inherits(x, "try-error")){
          x <- .self$create_exception(message = "error parsing response content with xmlRoot")
@@ -144,14 +147,14 @@ LimsRefClass$methods(
          body <- x$toString()
       } else if (is_xmlNode(x)) {
          uri <- trimuri(xmlAttrs(x)[['uri']])
-         body <- toString(x)
+         body <- XML::toString.XMLNode(x)
       } else {
          stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
       }
       r <- httr::PUT(uri,  
          ..., 
          body = body, 
-         content_type_xml(), 
+         httr::content_type_xml(), 
          .self$auth,
          handle = .self$handle) 
       .self$check(r)
@@ -171,7 +174,7 @@ LimsRefClass$methods(
       r <- httr::POST(x$uri, 
          ..., 
          body = x$toString(), 
-         content_type_xml(),
+         httr::content_type_xml(),
          .self$auth,
          handle = .self$handle) 
       .self$check(r)
@@ -189,14 +192,26 @@ NULL
 LimsRefClass$methods(
    DELETE = function(x, ...){
       if (missing(x)) stop("LimsRefClass$DELETE node is required")
-      uri <- trimuri(xmlAttrs(x)["uri"])
+      
+      if (inherits(x, "NodeRefClass")){
+         uri <- x$uri
+         #body <- x$toString()
+      } else if (is_xmlNode(x)) {
+         uri <- trimuri(xmlAttrs(x)[['uri']])
+         #body <- XML::toString.XMLNode(x)
+      } else {
+         stop("LimsRefClass$DELETE: x must be xmlNode or NodeRefClass")
+      }
       r <- httr::DELETE(uri, 
          ...,  
+         #body = body,
+         #httr::content_type_xml(),
          .self$auth,
          handle = .self$handle)
       if (status_code(r) != 204){
          warn("LimsRefClass$DELETE unknown issue")
          print(r)
+         print(content(r))
       }
       invisible(status_code(r) == 204)
    }) # POST
@@ -246,10 +261,12 @@ LimsRefClass$methods(
 
 #' Retrieve a resource by limsid
 #' 
+#' @family Lims 
 #' @name LimsRefClass_get_byLimsid
 #' @param lismid character, one or more limsids
 #' @param resource character, one resource to search, by default 'artifacts'
 #' @return a list of XML::xmlNode objects
+NULL
 LimsRefClass$methods(
    get_byLimsid = function(limsid, 
       resource = c("artifacts", "artifactgroups", "containers", "labs", "instruments", 
@@ -262,12 +279,14 @@ LimsRefClass$methods(
 
 #' Get one or more containers by name, state, etc
 #' 
+#' @family Lims Container
 #' @name LimsRefClass_get_containers
 #' @param name a character vector of one or more names
 #' @param type character of one or more container types ("384 well plate", etc)
 #' @param state character of one or more contain states ("Discarded", "Populated",...)
 #' @param last_modified a character vector of last modification dates. 
 #' @return a named list of container XML::xmlNode
+NULL
 LimsRefClass$methods(
    get_containers = function(name = NULL, type = NULL, state = NULL,
    last_modified = NULL){
@@ -295,11 +314,13 @@ LimsRefClass$methods(
 #' It is possible to also filter the query on UDF values but it may be easier to
 #  do that after getting the samples - see \url{http://genologics.com/developer}
 #' 
+#' @family Lims Sample
 #' @name LimsRefClass_get_samples
 #' @param name a character vector of one or more names
 #' @param projectlimsid character of one or more projectlimsid values
 #' @param projectname character of one or more projectname values
 #' @return a named list of container XML::xmlNode
+NULL
 LimsRefClass$methods(
    get_samples = function(name = NULL, projectlimsid = NULL, projectname = NULL){
       resource <- 'samples'
@@ -310,13 +331,66 @@ LimsRefClass$methods(
       if(length(query) == 0) 
          stop("LimsRefClass$get_samples please specify at least one or more of name, projectlimsid or projectname")
       query <- build_query(query)
-      x <- .self$GET(file.path(.self$baseuri, resource), query = query)
+      x <- .self$GET(.self$uri(resource), query = query)
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'samples')
          x <- lapply(x, function(x) Sample$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
       }
+      invisible(x)
+   })
+
+
+#' Retrieve a list of ResearcherRefNodes or a data.frame of the good stuff
+#' 
+#' @family Lims Researcher
+#' @name LimsRefClass_get_researchers
+#' @param username character a vector of one or more user names like 'btupper' etc.
+#' @return a list of  ResearcherRefClass, a data frame or NULL
+NULL
+LimsRefClass$methods(
+   get_researchers = function(username = NULL, asDataFrame = TRUE){
+   
+      resource <- 'researchers'
+      query = if(is.null(username)) NULL else build_query(list(username=username))
+      
+      RR <- lims$GET(.self$uri(resource), query = query)
+      rr <- RR['researcher']
+      if (length(rr) == 0) return(NULL)
+      uri <- sapply(rr, function(x) xmlAttrs(x)[['uri']])
+      x <- lapply(uri, function(x, lims = NULL) {
+            lims$GET(x, asNode = TRUE)
+         }, lims = lims)
+      if (asDataFrame){
+         x <- data.frame (name = sapply(x, function(x) x$name),
+            username = sapply(x, function(x) x$username),
+            initials = sapply(x, function(x) x$initials),
+            email = sapply(x, function(x) x$email),
+            stringsAsFactors = FALSE, 
+            row.names = sapply(x, function(x) x$username))
+      }
+      invisible(x)
+   })
+
+
+
+#' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
+#'
+#' @family Lims Node
+#' @name LimsRefClass_retrieve
+#' @param uri a vector of one or more uri for atomic entities in the GLS API
+#' @param rel the relative name space into the "batch/retrieve" 
+#' @param asNode logical, if TRUE parse to the correct node type
+#' @return a list of XML::xmlNode or NodeRefClass objects
+NULL
+LimsRefClass$methods(
+   retrieve = function(uri, rel = c("artifacts", "samples", "containers", "files")[1], 
+      asNode = FALSE){
+      if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
+         stop("LimsRefClass$retrieve rel must be one of artifacts, files, samples or containers")
+      x <- batch_retrieve(uri, .self, rel = rel[1])   
+      if (asNode) x <- lapply(x, parse_node, .self)
       invisible(x)
    })
 
@@ -391,7 +465,6 @@ batch_retrieve <- function(uri, lims,
       }
    }
    invisible(x) 
-   
 } # batch_retrieve
 
 #' Convert a node to an object inheriting from NodeRefClass 
@@ -406,9 +479,11 @@ parse_node <- function(node, lims){
 
    nm <- names(XML::xmlNamespace(node))[1]
    switch(nm,
+      'art' = Artifact$new(node, lims),
       'prc' = Process$new(node, lims),
       'con' = Container$new(node, lims),
       'smp' = Sample$new(node,lims),
+      'res' = Researcher$new(node, lims),
       Node$new(node, lims))
 }
 
