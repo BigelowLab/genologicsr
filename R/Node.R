@@ -124,7 +124,7 @@ NodeRefClass$methods(
          .self$update(r)
       } else {
          cat("NodeRefClass: PUT exception\n")
-         cat("NodeRefClass: node not updated becauee...\n")
+         cat("NodeRefClass: node not updated because...\n")
          cat(xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
