@@ -170,7 +170,8 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    POST = function(x, ...){
-      if (missing(x)) stop("LimsRefClass$POST node is required")
+      if (missing(x) || !is_xmlNode(x) || ! inherits(x,"NodeRefClass")) 
+         stop("LimsRefClass$POST x as NodeRefClass is required")
       r <- httr::POST(x$uri, 
          ..., 
          body = x$toString(), 
@@ -476,15 +477,17 @@ parse_node <- function(node, lims){
 
    if (!is_xmlNode(node)) stop("assign_node: node must be XML::xmlNode")
    if (!inherits(lims, 'LimsRefClass')) stop("assign_node: lims must be LimsRefClass")
+   
+   nm <- xmlName(node)[1]
+   switch(name,
+       'artifact' = Artifact$new(node, lims),
+       'process' = Process$new(node, lims),
+       'container' = Container$new(node, lims),
+       'sample' = Sample$new(node,lims),
+       'input-output-map' = InputOutputMap$new(node, lims),
+       'researcher' = Researcher$new(node, lims),
+       Node$new(node, lims))
 
-   nm <- names(XML::xmlNamespace(node))[1]
-   switch(nm,
-      'art' = Artifact$new(node, lims),
-      'prc' = Process$new(node, lims),
-      'con' = Container$new(node, lims),
-      'smp' = Sample$new(node,lims),
-      'res' = Researcher$new(node, lims),
-      Node$new(node, lims))
 }
 
 #' Instantiate a LimsRefClass object

@@ -37,7 +37,7 @@ NodeRefClass$methods(
             
       } else if (is.character(node)){
       
-         if (inherits(lims, 'LimsRefClass'){
+         if (inherits(lims, 'LimsRefClass')){
             .self$field("node", lims$GET( trimuri(node[1]) ) )
          } else {
             stop("NodeRefClass$new: if node is a uri then lims must not be NULL")
@@ -140,7 +140,6 @@ NodeRefClass$methods(
          .self$update(r)
       } else {
          cat("NodeRefClass: PUT exception\n")
-         cat("NodeRefClass: node not updated because...\n")
          cat(xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
@@ -163,7 +162,6 @@ NodeRefClass$methods(
          .self$lims <- NULL
       } else {
          cat("NodeRefClass: DELETE exception\n")
-         cat("NodeRefClass: node not deleted because...\n")
          cat(xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
@@ -171,6 +169,30 @@ NodeRefClass$methods(
    }) # PUT
    
    
+#' POST this node
+#' 
+#' @family Node
+#' @name NodeRefClass_POST
+#' @return logical, TRUE if successful
+NULL
+NodeRefClass$methods(
+   POST = function(...){
+      if (!.self$has_lims()) stop("NodeRefClass$POST lims not available for DELETE")
+      r <- .self$lims$POST(.self$node, ...)
+      ok <- TRUE
+      if (!is_exception(r)) {
+         .self$update(r)
+      } else {
+         cat("NodeRefClass: DELETE exception\n")
+         cat("NodeRefClass: node not deleted because...\n")
+         cat(xmlValue(r[['message']]), "\n")
+         ok <- FALSE
+      }
+      ok
+ 
+   }) #POST
+
+
 #' Retrieve a vector of unique child names
 #'
 #' @family Node

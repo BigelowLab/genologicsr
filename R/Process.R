@@ -3,6 +3,8 @@
 ProcessRefClass <- setRefClass("ProcessRefClass",
    contains = "NodeRefClass")
 
+Process <- getRefClass("ProcessRefClass")
+
 #' Show
 #' 
 #' @family Node Process
@@ -70,4 +72,57 @@ ProcessRefClass$methods(
       x
    }) #get_type
    
-Process <- getRefClass("ProcessRefClass")
+#' Get the parent_process assocated with this process
+#'
+#' @family Process
+#' @name ProcessRefClass_get_parent_process
+#' @param form character flag of type to return "Node" or "uri"
+#' @return XML::xmlNode (or NULL) or the uri (or "")
+ProcessRefClass$methods(
+   get_parent_process = function(form = c("Node", "uri")[2]){
+      if (!.self$has_child("parent-process")){
+         x <- switch(tolower(form),
+            "uri" = "",
+            NULL)
+         return(x)
+      }
+      thisuri <- trimuri(xmlAttrs(.self$node[["parent-process"]])[['uri']])
+      if (tolower(form == "uri")){
+         x <- thisuri
+      } else {
+         x <- .self$lims$GET(thisuri, asNode = TRUE)
+      }
+      invisible(x)
+   })  
+
+#' Get the input-output-maps as InputOutputMapRefClass or a data.frame
+#'
+#' @family Process InputOutputMap
+#' @name ProcessRefClass_get_inputoutputmap
+#' @param asDataFrame logical, if TRUE then return a data.frame
+#' @return a list of InputOutputMapRefClass or a data.frame or NULL if not available
+ProcessRefClass$methods(
+   get_inputoutputmap = function(asDataFrame = TRUE){
+      if (!is_xmlNode(.self$node) || !.self$has_child("input-output-map')) {
+         return(NULL)
+      }      
+      x <- lapply(.self$node['input-output-map'], function(x, lims = NULL){
+            InputOutputMap$new(x, lims)
+         }, lims = .self$lims)
+      if (asDataFrame){
+         inputlimsid <- sapply(x, "[[", "input_limsid")
+         x <- data.frame(
+               input_limsid = inputlimsid,
+               input_uri = sapply(x, "[[", "input_uri"),
+               post_process_uri = sapply(x, "[[", "post_process_uri"),
+               output_limsid = sapply(x, "[[", "output_limsid"),
+               output_uri = sapply(x, "[[", "output_uri"),
+               output_generation_type = sapply(x, "[[", "output_generation_type"),
+               output_type = sapply(x, "[[", "output_type"),
+               stringsAsFactors = FALSE, 
+               rownames = inputlimsid)
+      }
+      invisible(x)
+   })
+   
+   

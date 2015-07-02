@@ -30,6 +30,15 @@ ContainerRefClass$methods(
       cat(prefix, "  Container occupied wells: ", .self$n_occupied(), 
          " (", .self$n_empty(), " empty)\n", sep = "")
    })  
+
+#' POST is disallowed for containers
+#' @family Container
+#' @name ContainerRefNode_POST
+NULL
+ContainerRefClass$methods(
+   POST = function(){
+      cat("ContainerRefClass_POST in not a permitted transaction\n")
+   })
    
 #' Retrieve the occupied well count
 #'
@@ -79,10 +88,11 @@ ContainerRefClass$methods(
 #' 
 #' @family Container
 #' @name ContainerRefNode_get_placements
-#' @return a named vector of placements
+#' @return a named vector of placements, possibly an empty charcater vector
 NULL
 ContainerRefClass$methods(
-   get_placements = function(wstyle = "A:1"){
+   get_placements = function(){
+      if ( !.self$has_child("placement") ) return(charcater())
       puri <- sapply(.self$node['placement'], function(x) XML::xmlAttrs(x)[['uri']])
       names(puri) <- sapply(.self$node['placement'], XML::xmlValue)
       invisible(puri)
@@ -120,3 +130,4 @@ ContainerRefClass$methods(
       names(SS) <- sapply(.self$node['placement'], XML::xmlValue)
       invisible(SS)
    })
+   

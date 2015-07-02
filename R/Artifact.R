@@ -15,6 +15,8 @@ ArtifactRefClass <- setRefClass("ArtifactRefClass",
 
 Artifact <- getRefClass("ArtifactRefClass")
 
+
+
 #' Show
 #' 
 #' @family Node Artifact
@@ -30,6 +32,26 @@ ArtifactRefClass$methods(
       cat(prefix, "  Artifact qc-flag: ", .self$qc_flag(), "\n", sep = "")
       cat(prefix, "  Artifact working-flag: ", .self$working_flag(), "\n", sep = "")
    })  
+
+
+#' POST is disallowed for artifacts
+#' @family Artifact
+#' @name ArtifactRefNode_POST
+NULL
+ArtifactRefClass$methods(
+   POST = function(){
+      cat("ArtifactRefClass_POST in not a permitted transaction\n")
+   })
+
+#' DELETE is disallowed for artifacts
+#' @family Artifact
+#' @name ArtifactRefNode_DELETE
+NULL
+ArtifactRefClass$methods(
+   DELETE = function(){
+      cat("ArtifactRefClass_DELETE in not a permitted transaction\n")
+   })
+   
 
 #' Get a pretty string representing the location
 #' 
@@ -73,10 +95,10 @@ ArtifactRefClass$methods(
 #'
 #' @family Artifact
 #' @name ArtifactRefClass_get_parent_process
-#' @param form character flag of type to return "xmlNode" or "uri"
+#' @param form character flag of type to return "Node" or "uri"
 #' @return XML::xmlNode (or NULL) or the uri (or "")
 ArtifactRefClass$methods(
-   get_parent_process = function(form = c("xmlNode", "uri")){
+   get_parent_process = function(form = c("Node", "uri")[2]){
       if (!.self$has_child("parent-process")){
          x <- switch(tolower(form),
             "uri" = "",
@@ -99,7 +121,7 @@ ArtifactRefClass$methods(
 #' @param form character flag of type to return "xmlNode" or "uri"
 #' @return XML::xmlNode (or NULL) or the uri (or "")
 ArtifactRefClass$methods(
-   get_sample = function(form = c("xmlNode", "uri")){
+   get_sample = function(form = c("Node", "uri")[2]){
       if (!.self$has_child("sample")){
          x <- switch(tolower(form[1]),
             "uri" = "",
