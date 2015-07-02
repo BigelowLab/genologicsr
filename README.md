@@ -20,6 +20,7 @@ See the [wiki](https://github.com/BigelowLab/genologicsR/wiki) for details
 #### R package requirements
 
 [XML](http://cran.r-project.org/web/packages/XML/index.html)
+
 [httr](http://cran.r-project.org/web/packages/httr/index.html)
 
 #### Installation

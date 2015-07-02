@@ -74,6 +74,17 @@ ResearcherRefClass$methods(
       cat("ResearcherRefClass_DELETE please use the user interface to delete a user\n")
    }) #DELETE
 
+#' Override the POST method to push user to use the GUI
+#' 
+#' @family Researcher
+#' @name ResearcherRefClass_POST
+#' @return NULL invisibly
+NULL
+ResearcherRefClass$methods(
+   POST = function(){
+      cat("ResearcherRefClass_POST is disabled\n")
+   }) #POST
+   
 ##### Methods above
 ##### Functions below
 
