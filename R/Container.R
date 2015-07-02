@@ -24,10 +24,10 @@ NULL
 ContainerRefClass$methods(
    show = function(prefix = ""){
       callSuper(prefix = prefix)
-      cat(prefix, "  name: ", .self$name, "\n", sep = "")
-      cat(prefix, "  type: ", .self$type, "\n", sep = "")
-      cat(prefix, "  state: ", .self$state, "\n", sep = "")
-      cat(prefix, "  occupied wells: ", .self$n_occupied(), 
+      cat(prefix, "  Container name: ", .self$name, "\n", sep = "")
+      cat(prefix, "  Container type: ", .self$type, "\n", sep = "")
+      cat(prefix, "  Container state: ", .self$state, "\n", sep = "")
+      cat(prefix, "  Container occupied wells: ", .self$n_occupied(), 
          " (", .self$n_empty(), " empty)\n", sep = "")
    })  
    

@@ -37,7 +37,11 @@ NodeRefClass$methods(
             
       } else if (is.character(node)){
       
-         .self$field("node", lims$GET( trimuri(node[1]) ) )
+         if (inherits(lims, 'LimsRefClass'){
+            .self$field("node", lims$GET( trimuri(node[1]) ) )
+         } else {
+            stop("NodeRefClass$new: if node is a uri then lims must not be NULL")
+         }
          
       } else {
       
@@ -62,10 +66,7 @@ NULL
 NodeRefClass$methods(
    show = function(prefix = ""){
       cat(prefix, "Reference Class: ", methods::classLabel(class(.self)), "\n", sep = "")
-      #.self$lims$show(prefix = paste0(prefix, "   "))
       cat(prefix, "  Node uri: ", .self$uri, "\n", sep = "")
-      #cat(prefix, "  Node namespace: ", paste(names(.self$ns), collapse = " "), "\n", sep = "")
-      #cat(prefix, "  Node populated: ", is_xmlNode(.self$node), "\n", sep = "")
       cat(prefix, "  Node children: ", paste(.self$unames(), collapse = " "), "\n", sep = "")
    }) #show
 
@@ -80,15 +81,15 @@ NULL
 NodeRefClass$methods(
    update = function(x){
    
-      if (is_exception(x)) stop("NodeRefClass$update input must be non-exception XML::xmlNode")
-      
+      if (!is_xmlNode(x) || is_exception(x)) 
+         stop("NodeRefClass$update input must be non-exception XML::xmlNode")
+
       .self$field('node', x)
-      
-       .self$field('ns', xmlNamespace(.self$node))
+      .self$field('ns', xmlNamespace(.self$node))
        
       atts <- xmlAttrs(.self$node)
       .self$field('uri', trimuri(atts[['uri']]))
-      .self$field('limsid', atts[['limsid']])
+      if ('limsid' %in% names(atts)) .self$field('limsid', atts[['limsid']])
    }) # update
 
 
@@ -114,7 +115,7 @@ NULL
 NodeRefClass$methods(
    GET = function(...){
       if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for GET")
-      r <- .self$lims$GET(.self$uri, ...)
+      r <- .self$lims$GET(.self$uri, ..., asNode = FALSE)
       ok <- TRUE
       if (!is_exception(r)) {
          .self$update(r)

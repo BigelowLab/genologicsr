@@ -10,9 +10,9 @@ NULL
 ProcessRefClass$methods(
    show = function(prefix = ""){
       callSuper(prefix = prefix)
-      cat(prefix, "  date-run: ", .self$date_run(), "\n", sep = "")
-      cat(prefix, "  technician: ", .self$technician(), "\n", sep = "")
-      cat(prefix, "  type: ", .self$get_type(), "\n", sep = "")
+      cat(prefix, "  Process date-run: ", .self$date_run(), "\n", sep = "")
+      cat(prefix, "  Process technician: ", .self$technician(), "\n", sep = "")
+      cat(prefix, "  Process type: ", .self$get_type(), "\n", sep = "")
    })
    
 #' Retrieve the date run as string or POSIXct

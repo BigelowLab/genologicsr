@@ -105,7 +105,7 @@ LimsRefClass$methods(
 #' @return XML::xmlNode - possibly an error node
 NULL
 LimsRefClass$methods(
-   GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = FALSE){
+   GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = TRUE){
       x <- httr::GET(uri, 
          ..., 
          .self$auth,
@@ -381,12 +381,12 @@ LimsRefClass$methods(
 #' @name LimsRefClass_retrieve
 #' @param uri a vector of one or more uri for atomic entities in the GLS API
 #' @param rel the relative name space into the "batch/retrieve" 
-#' @param asNode logical, if TRUE parse to the correct node type
+#' @param asNode logical, if TRUE parse to the appropriate node type
 #' @return a list of XML::xmlNode or NodeRefClass objects
 NULL
 LimsRefClass$methods(
    retrieve = function(uri, rel = c("artifacts", "samples", "containers", "files")[1], 
-      asNode = FALSE){
+      asNode = TRUE){
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
          stop("LimsRefClass$retrieve rel must be one of artifacts, files, samples or containers")
       x <- batch_retrieve(uri, .self, rel = rel[1])   
