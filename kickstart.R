@@ -6,8 +6,8 @@ library(httr)
 
 # source in the correct order - because of inheritance issue
 path <- "/Users/Shared/code/R/others/genologicsR/R"
-sfiles <- c("misc.R", "Lims.R", "Node.R","Artifact.R", "Container.R", 
-   "File.R", "Process.R", "Sample.R", "Udf.R", "Researcher.R")
+sfiles <- c("misc.R", "Lims.R", "Node.R","Artifact.R","Sample.R", "Container.R", 
+   "File.R", "InputOutputMap.R", "Process.R",  "Udf.R", "Researcher.R")
 for (sf in sfiles) source(file.path(path, sf))
 
 lims <- Lims(configfile = "~/.clarityrc")

@@ -78,6 +78,7 @@ ProcessRefClass$methods(
 #' @name ProcessRefClass_get_parent_process
 #' @param form character flag of type to return "Node" or "uri"
 #' @return XML::xmlNode (or NULL) or the uri (or "")
+NULL
 ProcessRefClass$methods(
    get_parent_process = function(form = c("Node", "uri")[2]){
       if (!.self$has_child("parent-process")){
@@ -101,15 +102,18 @@ ProcessRefClass$methods(
 #' @name ProcessRefClass_get_inputoutputmap
 #' @param asDataFrame logical, if TRUE then return a data.frame
 #' @return a list of InputOutputMapRefClass or a data.frame or NULL if not available
+NULL
 ProcessRefClass$methods(
    get_inputoutputmap = function(asDataFrame = TRUE){
-      if (!is_xmlNode(.self$node) || !.self$has_child("input-output-map')) {
+      
+      if (!is_xmlNode(.self$node) || !.self$has_child('input-output-map')) {
          return(NULL)
       }      
       x <- lapply(.self$node['input-output-map'], function(x, lims = NULL){
             InputOutputMap$new(x, lims)
          }, lims = .self$lims)
-      if (asDataFrame){
+         
+      if (asDataFrame == TRUE){
          inputlimsid <- sapply(x, "[[", "input_limsid")
          x <- data.frame(
                input_limsid = inputlimsid,
@@ -125,4 +129,81 @@ ProcessRefClass$methods(
       invisible(x)
    })
    
+
+
+#' Get either the input or the output artifacts (or both!) as NodeRefClass or uri
+#' 
+#' @family Process
+#' @name ProcessRefClass_get_artifacts
+#' @param what either 'input', 'output' or 'both'
+#' @param form character of either 'Node' or 'uri'
+#' @param a list of ArtifactRefClass objects or uri unless \code{what} is both in which case
+#'    a list is returned with 'input' and 'output' elements
+NULL
+ProcessRefClass$methods(
+   get_artifacts = function(what = c("input", "output", "both")[1],
+      form = c("Node", "uri")[1]){
+      
+      iom <- .self$get_inputoutputmap(asDataFrame = TRUE)
+      what <- tolower(what[1])
+      form <- tolower(form[1])
+      
+      if (what == "input"){
+      
+         x <- iom[,'input_uri']
+         if (form == "node"){
+            x <- .self$lims$batchretrieve(x, rel = 'artifacts')
+         }
+         
+      } else if (what == "output"){
+      
+         x <- iom[,'output_uri']
+         if (form == "node"){
+            x <- .self$lims$batchretrieve(x, rel = 'artifacts')
+         }
+         
+      } else {  # both!
+      
+         input <- iom[,'input_uri']
+         output <- iom[,'output_uri']
+         if (form == "node"){
+            input <- .self$lims$batchretrieve(input, rel = 'artifacts', rm_dups = FALSE)
+            output <- .self$lims$batchretrieve(output, rel = 'artifacts', rm_dups = FALSE)
+         }
+         x <- list(input = input, output = output)      
+      }
+         
+      invisible(x)
+   }) # get_artifacts
+
+######## methods above
+######## functions below
+
+#' Create a process node used for process creation
+#'
+#' @family Process
+#' @export
+#' @param type character, the name of the process ("FACS-2", ...)
+#' @param technician character,the uri of the technician
+#' @param dateRun character, the date of the run
+#' @param instrument character, optional, the URI of the instrument
+#' @param xmlns named character vector, see \code{\link{newXMLNode}}
+#' @param ... further arguments for \code{\link{newXMLNode}} including child nodes
+#' @return xmlNode of type 'process'
+create_process_node <- function(type = "processTypeName",
+      technician = "researcherURI",
+      dateRun = format(Sys.Date(), "%Y-%m-%d"),
+      instrument = NULL, ... ){
    
+   x <- newXMLNode("process",
+      newXMLNode("type", type),
+      newXMLNode("date-run", dateRun),
+      newXMLNode("technician", attrs = c(uri=technician)),
+      ...,
+      namespaceDefinitions = get_NSMAP()[c("udf", "prx", "inst")], 
+      namespace = "prx") 
+   if (!is.null(instrument))  x <- addChildren(x,
+         kids = list(newXMLNode("instrument", 
+            attrs = list(uri=instrument))) )
+   x
+}

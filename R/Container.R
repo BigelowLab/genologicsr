@@ -108,7 +108,7 @@ NULL
 ContainerRefClass$methods(
    get_artifacts = function(){
       puri <- .self$get_placements() 
-      AA <- .self$lims$retrieve(puri,rel = 'artifacts', asNode = TRUE)
+      AA <- .self$lims$batchretrieve(puri,rel = 'artifacts', asNode = TRUE)
       names(AA) <- sapply(.self$node['placement'], XML::xmlValue)
       invisible(AA)
    })
@@ -124,9 +124,9 @@ NULL
 ContainerRefClass$methods(
    get_samples = function(asNode = TRUE){
       puri <- .self$get_placements()
-      AA <- .self$lims$retrieve(puri, rel = 'artifacts', asNode = asNode)
+      AA <- .self$lims$batchretrieve(puri, rel = 'artifacts', asNode = asNode)
       suri <- sapply(AA, function(x) x$get_sample(form = "uri"))
-      SS <- .self$lims$retrieve(suri, rel = 'samples', asNode = asNode)
+      SS <- .self$lims$batchretrieve(suri, rel = 'samples', asNode = asNode)
       names(SS) <- sapply(.self$node['placement'], XML::xmlValue)
       invisible(SS)
    })

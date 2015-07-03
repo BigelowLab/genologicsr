@@ -282,10 +282,10 @@ LimsRefClass$methods(
 #' 
 #' @family Lims Container
 #' @name LimsRefClass_get_containers
-#' @param name a character vector of one or more names
-#' @param type character of one or more container types ("384 well plate", etc)
-#' @param state character of one or more contain states ("Discarded", "Populated",...)
-#' @param last_modified a character vector of last modification dates. 
+#' @param optional name a character vector of one or more names
+#' @param optional type character of one or more container types ("384 well plate", etc)
+#' @param optional state character of one or more contain states ("Discarded", "Populated",...)
+#' @param optional last_modified a character vector of last modification date in YYYY-MM-DDThh:mm:ssTZD format
 #' @return a named list of container XML::xmlNode
 NULL
 LimsRefClass$methods(
@@ -317,9 +317,9 @@ LimsRefClass$methods(
 #' 
 #' @family Lims Sample
 #' @name LimsRefClass_get_samples
-#' @param name a character vector of one or more names
-#' @param projectlimsid character of one or more projectlimsid values
-#' @param projectname character of one or more projectname values
+#' @param optional name a character vector of one or more names
+#' @param optional projectlimsid character of one or more projectlimsid values
+#' @param optional projectname character of one or more projectname values
 #' @return a named list of container XML::xmlNode
 NULL
 LimsRefClass$methods(
@@ -347,13 +347,14 @@ LimsRefClass$methods(
 #' 
 #' @family Lims Researcher
 #' @name LimsRefClass_get_researchers
-#' @param username character a vector of one or more user names like 'btupper' etc.
+#' @param optional username character a vector of one or more user names like 'btupper' etc.
 #' @return a list of  ResearcherRefClass, a data frame or NULL
 NULL
 LimsRefClass$methods(
    get_researchers = function(username = NULL, asDataFrame = TRUE){
    
       resource <- 'researchers'
+      
       query = if(is.null(username)) NULL else build_query(list(username=username))
       
       RR <- lims$GET(.self$uri(resource), query = query)
@@ -362,7 +363,7 @@ LimsRefClass$methods(
       uri <- sapply(rr, function(x) xmlAttrs(x)[['uri']])
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
-         }, lims = lims)
+         }, lims = .self)
       if (asDataFrame){
          x <- data.frame (name = sapply(x, function(x) x$name),
             username = sapply(x, function(x) x$username),
@@ -375,22 +376,62 @@ LimsRefClass$methods(
    })
 
 
+#' Get one or more Processes - does not leverage /batch/retrieve resources
+#' but provides similar behavior.
+#'
+#' @family Lims Process
+#' @name LimsRefClass_get_processes
+#' @param last_modified optional character vector in YYYY-MM-DDThh:mm:ssTZD format
+#' @param type optional character of the process type
+#' @param inputartifactlimsid optional character of an input artifact limsid
+#' @param technamefirst optional technician's first name
+#' @param technamelast optional technician's last name
+#' @param projectname optional project name
+#' @return a list of ProcessRefClass or NULL
+LimsRefClass$methods(
+   get_processes = function(last_modified = NULL, type = NULL, 
+      inputartifactlimsid = NULL, technamefirst = NULL, technamelast = NULL,
+      projectname = NULL){
+      
+      resources <- 'processes'
+      
+      query <- list()
+      if (!is.null(last_modified)) query[["last-modified"]] <- last_modified
+      if (!is.null(type)) query[["type"]] <- type
+      if (!is.null(inputartifactlimsid)) query[["inputartifactlimsid"]] <- inputartifactlimsid
+      if (!is.null(technamefirst)) query[["technamefirst"]] <- technamefirst
+      if (!is.null(technamelast)) query[["technamelast"]] <- technamelast
+      if (!is.null(projectname)) query[["projectname"]] <- projectname
+      if (!is.null(query)) query <- build_query(query)
+   
+      x <- lims$GET(.self$uri(resource), query = query)
+      if (length(xmlChildren(x))) return(NULL)
+      
+      uri <- sapply(x, function(x) xmlAttrs(x)[['uri']])
+      x <- lapply(uri, function(x, lims = NULL) {
+            lims$GET(x, asNode = TRUE)
+         }, lims = .self)
+      
+      invisible(x)
+   }) # get_processes
 
 #' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
 #'
 #' @family Lims Node
-#' @name LimsRefClass_retrieve
+#' @name LimsRefClass_batchretrieve
 #' @param uri a vector of one or more uri for atomic entities in the GLS API
 #' @param rel the relative name space into the "batch/retrieve" 
 #' @param asNode logical, if TRUE parse to the appropriate node type
+#' @param rm_dups logical, if TRUE then remove duplicates
+#' @param ... further arguments for \code{batch_retrieve}
 #' @return a list of XML::xmlNode or NodeRefClass objects
 NULL
 LimsRefClass$methods(
-   retrieve = function(uri, rel = c("artifacts", "samples", "containers", "files")[1], 
-      asNode = TRUE){
+   batchretrieve = function(uri, rel = c("artifacts", "samples", "containers", "files")[1], 
+      rm_dups = TRUE, asNode = TRUE, ...){
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
-         stop("LimsRefClass$retrieve rel must be one of artifacts, files, samples or containers")
-      x <- batch_retrieve(uri, .self, rel = rel[1])   
+         stop("LimsRefClass$batchrretrieve rel must be one of artifacts, files, samples or containers")
+      x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
       if (asNode) x <- lapply(x, parse_node, .self)
       invisible(x)
    })
@@ -406,6 +447,8 @@ LimsRefClass$methods(
 #' @param resource character
 #' @param asList logical, if TRUE return a named list of Artifacts
 #' @param all logical, by default we remove duplicates set this to TRUE to retrieve all, ignored if \code{asList = FALSE}
+#' @param ... further arguments
+#' @return a list of NodeRefClass
 batch_retrieve <- function(uri, lims,
    rel = c("artifacts", "containers", "files", "samples" )[1],
    resource = file.path(rel, "batch", "retrieve"), 
@@ -458,7 +501,7 @@ batch_retrieve <- function(uri, lims,
                   XML::xmlNamespace(x) <- nm; 
                   x}, 
             nm = nmspc)
-      if (!rm_dups) {
+      if (rm_dups == FALSE) {
          # name each node
          names(x) <- sapply(x, function(x) XML::xmlAttrs(x)["limsid"])
          # rebuild the list with duplicates
@@ -479,7 +522,7 @@ parse_node <- function(node, lims){
    if (!inherits(lims, 'LimsRefClass')) stop("assign_node: lims must be LimsRefClass")
    
    nm <- xmlName(node)[1]
-   switch(name,
+   switch(nm,
        'artifact' = Artifact$new(node, lims),
        'process' = Process$new(node, lims),
        'container' = Container$new(node, lims),
