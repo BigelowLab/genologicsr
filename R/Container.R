@@ -131,3 +131,28 @@ ContainerRefClass$methods(
       invisible(SS)
    })
    
+###### methods above
+###### functions below
+
+#' Create a containers details node assembled from one or more container XML::xmlNode
+#' See \url{http://genologics.com/files/permanent/API/latest/data_con.html#element_details}
+#' 
+#' @export
+#' @param x one or more XML::xmlNode for container or ContainerRefClass objects
+#' @param a containers details XML:xmlNode node
+create_containers_details <- function(x){
+   
+   if (!is.list(x)) x <- list(x)
+   
+   if (inherits(x[[1]], "ContainerRefClass")){
+      x <- lapply(x, "[[", "node")      
+   }
+   
+   nm <- sapply(x, xmlName)
+   if (!all(tolower(nm) == "container")) stop("create_container_details: input nodes must be of type container")
+   
+   newXMLNode("details",
+      namespace = "con",
+      namespaceDefinitions = get_NSMAP()['con'],
+      .children = x)
+} # create_containers_details

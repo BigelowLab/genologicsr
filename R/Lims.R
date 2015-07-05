@@ -436,6 +436,23 @@ LimsRefClass$methods(
       invisible(x)
    })
 
+
+
+#' Update one or more Nodes (artifacts, samples, containers only)
+#'
+#' @family Lims Node
+#' @name LimsRefClass_batchupdate
+#' @param x one of more NodeRefClass or subclass objects
+#' @param asNode logical, if TRUE return NodeRefClass objects otherwise XML::xmlNode
+#' @param ... further arguments for batch_update
+NULL
+
+LimsRefClass$methods(
+   batchupdate = function(x)
+   })
+
+
+
 #### methods above
 #### functions below
 
@@ -511,6 +528,12 @@ batch_retrieve <- function(uri, lims,
    invisible(x) 
 } # batch_retrieve
 
+
+#' Update a batch of XML::xmlNodes
+
+
+
+
 #' Convert a node to an object inheriting from NodeRefClass 
 #'
 #' @family Lims Node
@@ -532,6 +555,10 @@ parse_node <- function(node, lims){
        Node$new(node, lims))
 
 }
+
+
+
+
 
 #' Instantiate a LimsRefClass object
 #'

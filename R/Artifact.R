@@ -53,8 +53,52 @@ ArtifactRefClass$methods(
    })
    
 
-#' Get a pretty string representing the location
+
+
+
+#' Get the name of the artifact container as uri or NodeRefClass
 #' 
+#' @family Artifact
+#' @form character either "uri" or "Node"
+#' @name ArtifactRefClass_get_container
+#' @return ContainerRefClass or uri (or NULL or "")
+NULL
+ArtifactRefClass$methods(
+   get_container = function(form = c("Node", "uri")[1]){
+      
+      if (.self$has_child("location")){
+      
+         x <- trimuri(XML::xmlAttrs(.self$node[['location']][['container']])[['uri']])
+         if (tolower(form[1]) == "node") x <- .self$lims$GET(x, asNode = TRUE)
+         
+      } else {
+      
+         x <- if(tolower(form[1])) == "uri") "" else NULL
+      }
+      
+      invisible(x)    
+   })
+
+
+#' Get the name of the well in the form A:1
+#' 
+#' @family Artifact
+#' @name ArtifactRefClass_get_wellname
+#' @return character (possibly "")
+NULL
+ArtifactRefClass$methods(
+   get_wellname = function(){
+      if (.self$has_child("location")) {
+         x <- XML::xmlValue(.self$node[['location']][['value']])
+      } else {
+         x <- ""
+      }
+      x
+   })
+
+#' Get a pretty string representing the location
+#'
+#' @family Artifact 
 #' @name ArtifactRefClass_location
 #' @return charcater of containerLimsid_location
 NULL
@@ -72,6 +116,7 @@ ArtifactRefClass$methods(
 
 #' Get the qc flag
 #' 
+#' @family Artifact
 #' @name ArtifactRefClass_qc_flag
 #' @return charcater of containerLimsid_location
 NULL
@@ -82,6 +127,7 @@ ArtifactRefClass$methods(
    
 #' Get the working flag
 #' 
+#' @family Artifact
 #' @name ArtifactRefClass_working_flag
 #' @return charcater of containerLimsid_location
 NULL
@@ -135,4 +181,31 @@ ArtifactRefClass$methods(
          x <- .self$lims$GET(thisuri, asNode = TRUE)
       }
       invisible(x)
-   })  
+   }) 
+   
+#### methods above
+#### functions below
+
+#' Create a artifacts details node assembled from one or more artifacts XML::xmlNode
+#' See \url{http://genologics.com/files/permanent/API/latest/data_art.html#element_details}
+#' 
+#' @export
+#' @param x one or more XML::xmlNode for artifacts or ArtifactRefClass objects
+#' @param a artifacts details XML:xmlNode node
+create_artifacts_details <- function(x){
+   
+   if (!is.list(x)) x <- list(x)
+   
+   if (inherits(x[[1]], "ArtifactsRefClass")){
+      x <- lapply(x, "[[", "node")      
+   }
+   
+   nm <- sapply(x, xmlName)
+   if (!all(tolower(nm) == "artifact")) stop("create_artifact_details: input nodes must be of type artifact")
+   
+   newXMLNode("details",
+      namespace = "art",
+      namespaceDefinitions = get_NSMAP()['art'],
+      .children = x)
+} # create_containers_details
+ 

@@ -119,3 +119,29 @@ SampleRefClass$methods(
       }
       invisible(x)
    })   
+
+
+########## methods above
+########## functions below
+
+#' Create a sample details node assembled from one or more sample XML::xmlNode
+#' See \url{http://genologics.com/files/permanent/API/latest/data_smp.html#element_details}
+#' 
+#' @export
+#' @param x one or more XML::xmlNode for sample or SampelRefClass objects
+#' @param a sample details XML:xmlNode node
+create_sample_details <- function(x){
+   
+   if (inherits(x, "SampleRefClass")){
+      x <- lapply(x, "[[", "node")      
+   }
+   nm <- sapply(x, xmlName)
+   if (!all(nm == "sample")) stop("create_sample_details: input nodes must be of type sample")
+   
+   newXMLNode("details",
+      namespace = "smp",
+      namespaceDefinitions = get_NSMAP()['smp'],
+      .children = x)
+   
+   
+}
