@@ -3,8 +3,8 @@
 ArtifactRefClass <- setRefClass("ArtifactRefClass",
    contains = "NodeRefClass",
       fields = list(
-      name = 'character',
-      type = 'character'),
+         name = 'character',
+         type = 'character'),
    methods = list(
       initialize = function(...){
          callSuper(...)
@@ -73,7 +73,7 @@ ArtifactRefClass$methods(
          
       } else {
       
-         x <- if(tolower(form[1])) == "uri") "" else NULL
+         x <- if(tolower(form[1]) == "uri") "" else NULL
       }
       
       invisible(x)    
@@ -196,16 +196,15 @@ create_artifacts_details <- function(x){
    
    if (!is.list(x)) x <- list(x)
    
-   if (inherits(x[[1]], "ArtifactsRefClass")){
+   if (inherits(x[[1]], "ArtifactRefClass")){
       x <- lapply(x, "[[", "node")      
    }
    
    nm <- sapply(x, xmlName)
    if (!all(tolower(nm) == "artifact")) stop("create_artifact_details: input nodes must be of type artifact")
-   
    newXMLNode("details",
       namespace = "art",
-      namespaceDefinitions = get_NSMAP()['art'],
+      namespaceDefinitions = get_NSMAP()[c('art', 'ri', 'udf', 'file', 'con')],
       .children = x)
 } # create_containers_details
  

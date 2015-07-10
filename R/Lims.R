@@ -219,7 +219,7 @@ LimsRefClass$methods(
 
 #' PUSH a file - not really a RESTfule action but a combination of steps
 #' 
-#' given and artifact node
+#' given an artifact node
 #' if the artifact has a file then 
 #'    DELETE the file resource
 #' create an unresolved file resource
@@ -254,7 +254,7 @@ LimsRefClass$methods(
       resolved_node <- .self$POST(unresolved_node)
       fileuri <- xmlValue(resolved_node[['content-location']])
       body <- httr::upload_file(filename[1])
-      resolved_node <- httr::POST(resolved_node, body = body)
+      resolved_node <- httr::POST(resolved_node, body = list(file=body))
       
       
    }) # PUSH
@@ -442,16 +442,103 @@ LimsRefClass$methods(
 #'
 #' @family Lims Node
 #' @name LimsRefClass_batchupdate
-#' @param x one of more NodeRefClass or subclass objects
+#' @param x a list of one or mode XML::xmlNode of NodeRefClass
 #' @param asNode logical, if TRUE return NodeRefClass objects otherwise XML::xmlNode
-#' @param ... further arguments for batch_update
+#' @param ... further arguments for httr::POST
+#' @return a list of NodeRefClass or NULL
 NULL
 
 LimsRefClass$methods(
-   batchupdate = function(x)
+   batchupdate = function(x, asNode = TRUE, ...){
+      if (!is.list(x)) x <- list(x)
+      if (inherits(x[[1]], "NodeRefClass") ) {
+         origx <- x  
+         x <- lapply(x, "[[", node)
+      }
+      ok <- sapply(x, is_xmlNode)
+      if (!all(ok)) 
+         stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
+      nm <- unique(sapply(x, xmlName))
+      if (length(nm) > 1) 
+         stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
+      if (!(nm %in% c("artifact", "sample", "container")))
+         stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
+      
+      detail <- switch(nm,
+         'artifact' = create_artifact_details(x),
+         'container' = create_container_details(x),
+         'sample' = create_sample_details(x),
+         NULL)
+      
+      if (is.null(detail)) stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
+      
+      URI <- .self$uri(paste0(nm, "s/batch/update"))
+      r <- httr::POST(URI, ..., body = xmlString(detail), 
+         add_headers(c("Content-Type"="application/xml")),
+         lims$auth, handle = lims$handle)
+      
+      x <- lims$check(r)
+      if (!is_exception(x)) {
+         rel <- paste0(nm, "s")
+         uri <- sapply(x['link'], function(x) xmlAttrs(x)[['uri']])
+         r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"), ...)
+         if (asNode) r <- lapply(r, parse_node, .self)
+      } else {
+         r <- NULL
+      }
+      
+      invisible(r)
    })
 
-
+#' Create one or more Nodes (samples, containers only)
+#'
+#' @family Lims Node
+#' @name LimsRefClass_batchcreate
+#' @param x a list of one or mode XML::xmlNode of NodeRefClass
+#' @param asNode logical, if TRUE return NodeRefClass objects otherwise XML::xmlNode
+#' @param ... further arguments for httr::POST
+#' @return a list of NodeRefClass or NULL
+NULL
+LimsRefClass$methods(
+   batchcreate = function(x, asNode = TRUE, ...){
+      if (!is.list(x)) x <- list(x)
+      if (inherits(x[[1]], "NodeRefClass") ) {
+         origx <- x  
+         x <- lapply(x, "[[", node)
+      }
+      ok <- sapply(x, is_xmlNode)
+      if (!all(ok)) 
+         stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
+      nm <- unique(sapply(x, xmlName))
+      if (length(nm) > 1) 
+         stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
+      if (!(nm %in% c("sample", "container")))
+         stop("LimsRefClass$batchupdate: only sample and container types have batch update")
+      
+      detail <- switch(nm,
+         'container' = create_container_details(x),
+         'sample' = create_sample_details(x),
+         NULL)
+      
+      if (is.null(detail)) stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
+      
+      URI <- .self$uri(paste0(nm, "s/batch/update"))
+      r <- httr::POST(URI, ..., body = xmlString(detail), 
+         add_headers(c("Content-Type"="application/xml")),
+         lims$auth, handle = lims$handle)
+      
+      x <- lims$check(r)
+      if (!is_exception(x)) {
+         rel <- paste0(nm, "s")
+         uri <- sapply(x['link'], function(x) xmlAttrs(x)[['uri']])
+         r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"), ...)
+         if (asNode) r <- lapply(r, parse_node, .self)
+      } else {
+         r <- NULL
+      }
+      
+      invisible(r)
+   })
 
 #### methods above
 #### functions below
@@ -552,6 +639,7 @@ parse_node <- function(node, lims){
        'sample' = Sample$new(node,lims),
        'input-output-map' = InputOutputMap$new(node, lims),
        'researcher' = Researcher$new(node, lims),
+       'file' = FileRefClass$new(node, lims),
        Node$new(node, lims))
 
 }

@@ -139,8 +139,9 @@ ContainerRefClass$methods(
 #' 
 #' @export
 #' @param x one or more XML::xmlNode for container or ContainerRefClass objects
+#' @param form character
 #' @param a containers details XML:xmlNode node
-create_containers_details <- function(x){
+create_containers_details <- function(x, form = c("retrieve", "update", "create") ){
    
    if (!is.list(x)) x <- list(x)
    
@@ -153,6 +154,6 @@ create_containers_details <- function(x){
    
    newXMLNode("details",
       namespace = "con",
-      namespaceDefinitions = get_NSMAP()['con'],
+      namespaceDefinitions = get_NSMAP()[c("ri",  "udf", "file", "art", "con")],
       .children = x)
 } # create_containers_details
