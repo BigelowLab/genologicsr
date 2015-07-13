@@ -53,6 +53,7 @@ S <- lims$get_samples(projectlimsid = "FER101")
 
 
 # File using Process above
+P <- lims$get_byLimsid('24-799', resource = "processes", asNode = TRUE)[[1]]
 iom <- P$get_artifacts("output")
 nm <- sapply(iom, "[[", "name")
 a <- iom[nm == "Log for the CSV"][[1]]

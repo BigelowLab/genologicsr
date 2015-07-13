@@ -8,6 +8,7 @@ LimsRefClass <- setRefClass('LimsRefClass',
       version = 'character',
       baseuri = 'character',
       auth = 'ANY',
+      fileauth = 'ANY',
       handle = 'ANY')
 )  
 
@@ -164,17 +165,25 @@ LimsRefClass$methods(
 #' POST a resource
 #'
 #' @family Lims
-#' @param x XML::xmlNode to POST
+#' @param x XML::xmlNode to or NodeRefClass POST
 #' @param ... further arguments for httr::POST
 #' @return XML::xmlNode
 NULL
 LimsRefClass$methods(
    POST = function(x, ...){
-      if (missing(x) || !is_xmlNode(x) || ! inherits(x,"NodeRefClass")) 
-         stop("LimsRefClass$POST x as NodeRefClass is required")
-      r <- httr::POST(x$uri, 
+      if (missing(x)) 
+         stop("LimsRefClass$POST x as XML::xmlNode or NodeRefClass is required")
+         
+      if (inherits(x, 'NodeRefClass')){
+         uri <- x$uri
+         body <- x$toString()
+      } else {
+         uri <- trimuri(xmlAttrs(x)[['uri']])
+         body <- XML::toString.XMLNode(x)
+      }
+      r <- httr::POST(uri, 
          ..., 
-         body = x$toString(), 
+         body = body, 
          httr::content_type_xml(),
          .self$auth,
          handle = .self$handle) 
@@ -219,44 +228,97 @@ LimsRefClass$methods(
 
 #' PUSH a file - not really a RESTfule action but a combination of steps
 #' 
-#' given an artifact node
+#' given an artifact node and a filename
 #' if the artifact has a file then 
 #'    DELETE the file resource
 #' create an unresolved file resource
-#' POST the unresolved file resource to get a resolved file resource
-#' Upload the file (scp)
-#' POST the resolved file resource again
+#' POST the unresolved file resource to 'glsstore' to get a resolved file resource
+#' Upload the file (scp, cp, or curl)
+#' POST the resolved file resource to 'files'
 #' return the resolved file resource
 #      
 #' @family Lims
 #' @param x XML::xmlNode of the artifact to attach to 
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
-#' @return XML::xmlNode
+#' @return XML::xmlNode or FileRefClass
 NULL
 LimsRefClass$methods(
-   PUSH = function(x, ..., filename = ""){
-      if (missing(x)) stop("LimsRefClass$PUSH node is required")
+   PUSH = function(x, ..., filename = "", 
+      use = c("scp", "cp", "curl")[3]){
+      
+      stopifnot(inherits(x, 'ArtifactRefClass'))
+      
       if (!file.exists(filename[1])) stop("LimsRefClass$PUSH file not found:", filename[1])
-      attached_to_uri <- trimuri(xmlAttrs(x)["uri"])
+      
+      attached_to_uri <- trimuri(x[["uri"]])
+      
       # if the artifact node has a file element
       # then we need to DELETE it
-      if (is.null(x[["file"]]) == FALSE) {
-         fileuri <- xmlAttrs(x[["file"]])["uri"]
-         ok <- .self$DELETE(fileuri)
+      if ( !is.null(x$node[["file"]]) ) {
+         fileuri <- xmlAttrs(x$node[["file"]])["uri"]
+         ok <- .self$DELETE(fileuri, ...)
          if (!ok) {
             e <- create_exception_node(message = "LimsRefClass$PUSH: Unable to delete existing file")
             return(e)
          }
       }
-      #' create an unresolved file resource
-      unresolved_node <- create_file_node(attach_to_uri, filename[1])
-      resolved_node <- .self$POST(unresolved_node)
-      fileuri <- xmlValue(resolved_node[['content-location']])
-      body <- httr::upload_file(filename[1])
-      resolved_node <- httr::POST(resolved_node, body = list(file=body))
+      # create an unresolved file resource
+      unresolved_node <- create_file_node(attached_to_uri, filename[1])
+      # POST it
+      uri <- .self$uri("glsstorage")
+      body <- xmlString(unresolved_node)
+      r<- httr::POST(uri,
+         body = body,
+         content_type_xml(),
+         .self$auth, 
+         handle = .self$handle)
+      r <- .self$check(r)  
+      
+      if (is_exception(r)){ return(r)}
+      resolved_node <- parse_node(r, .self)
       
       
+      # now we copy the file over...
+      use <- tolower(use[1])
+      if (use == "scp"){
+         # https://kb.iu.edu/d/agye
+         # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
+         dst <- resolved_node[['content-location']]
+         up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
+         puri <- httr::parse_url(resolved_node[['content_location']])
+         MKDIR <- paste('ssh',
+            paste0(up[1],'@',puri[['hostname']]), 
+            shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) ))
+            )
+         ok <- system(MKDIR)
+      } else if (use == "cp"){
+         # not implemented?
+      
+      } else if (use == "curl"){
+         cmd <- paste("curl -F", 
+            paste0("file=@", filename[1]),
+            "-u", .self$auth[['options']][['userpwd']],
+            resolved_node[['content_location']])
+         ok <- system(cmd)
+         if (ok != 0){
+            
+         } else {
+         
+         }   
+      }
+      
+      uri <- .self$uri("glsstorage")
+      body <- resolved_node$toString() 
+      r <- httr::POST(uri,
+         body = body,
+         httr::content_type_xml(),
+         .self$auth, 
+         handle = .self$handle)
+      r <- .self$check(r)  
+      
+      if (is_exception(r)){ return(r)}
+      parse_node(r, .self)
    }) # PUSH
 
 
@@ -540,8 +602,12 @@ LimsRefClass$methods(
       invisible(r)
    })
 
+
+
 #### methods above
 #### functions below
+
+
 
 #' Retrieve a batch resource
 #'
@@ -645,9 +711,6 @@ parse_node <- function(node, lims){
 }
 
 
-
-
-
 #' Instantiate a LimsRefClass object
 #'
 #' @export
@@ -669,6 +732,10 @@ Lims <- function(configfile){
       authenticate(get_config(x, "genologics", "USERNAME", default = ""),
                    get_config(x, "genologics", "PASSWORD", default = "") 
       ) )
+   X$field('fileauth',
+      authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
+                   get_config(x, "glsfilestore", "PASSWORD", default = "") 
+      ) )   
    X$field("handle", httr::handle(buri))
    if (!X$validate_session()) {
       warning("API session failed validation")

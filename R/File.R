@@ -17,7 +17,7 @@ FileRefClass <- setRefClass("FileRefClass",
             if ('content-location' %in% nm)
                .self$content_location <- xmlValue(.self$node[['content-location']]) 
             if ('original-location' %in% nm)
-               .self$original_location <- xmlValue(.self$node[['original-locationn']]) 
+               .self$original_location <- xmlValue(.self$node[['original-location']]) 
             if ('is-published' %in% nm)
                .self$is_published <- xmlValue(.self$node[['is-published']]) 
          }
@@ -37,6 +37,10 @@ FileRefClass$methods(
       cat(prefix, "  File is_published: ", .self$is_published, "\n", sep = "")
    })  
 
+
+
+
+   
 
 #' Create an unresolved file node
 #' 
