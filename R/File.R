@@ -33,6 +33,8 @@ FileRefClass <- setRefClass("FileRefClass",
       })
    )
 
+File <- getRefClass("FileRefClass")
+
 #' Show
 #' 
 #' @family Node File

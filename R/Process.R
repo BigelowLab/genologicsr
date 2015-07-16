@@ -8,6 +8,8 @@
 ProcessRefClass <- setRefClass("ProcessRefClass",
    contains = "NodeRefClass")
 
+Process <- getRefClass("ProcessRefClass")
+
 #' Show
 #' 
 #' @family Node Process
