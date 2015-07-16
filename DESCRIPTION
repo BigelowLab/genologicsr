@@ -1,4 +1,4 @@
-Package: genologicsR
+Package: genologicsr
 Title: A simplified interface between XML nodes and the Genologics RESTful API.
 Description: Provides a uniform interface for negotiating the Genologics API model after SciLifLabs Python interface https://github.com/SciLifeLab/genologics.
 Version: 0.1
