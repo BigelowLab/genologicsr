@@ -44,4 +44,11 @@ USERNAME=anotheruser
 PASSWORD=anotherpassword
 ```
 
+Then install into the system wide library with
+
+```
+library(devtools)
+with_lib(.Library, install_github("BigelowLab/genologicsr"))
+```
+
 
