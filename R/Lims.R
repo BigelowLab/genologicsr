@@ -742,11 +742,11 @@ Lims <- function(configfile){
    if (nchar(buri) == 0) stop("base uri not found in config file")
    X$field("baseuri", file.path(buri, "api", X$version))
    X$field('auth', 
-      authenticate(get_config(x, "genologics", "USERNAME", default = ""),
+      httr::authenticate(get_config(x, "genologics", "USERNAME", default = ""),
                    get_config(x, "genologics", "PASSWORD", default = "") 
       ) )
    X$field('fileauth',
-      authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
+      httr::authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
                    get_config(x, "glsfilestore", "PASSWORD", default = "") 
       ) )   
    X$field("handle", httr::handle(buri))

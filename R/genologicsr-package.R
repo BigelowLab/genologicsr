@@ -1,4 +1,4 @@
-#' genologicsr-package.R
+# genologicsr-package.R
 
 #' A simplified interface between XML nodes and the Genologics RESTful API.
 #'
