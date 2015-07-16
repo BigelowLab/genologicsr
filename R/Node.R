@@ -1,5 +1,14 @@
 # Node.R
 
+#' The root class that wraps XML::xmlNode
+#' 
+#' @family Node
+#' @field lims a LimsRefClass object (possibly NULL)
+#' @field uri character the uri of the node (possibly "")
+#' @field limsid character the limsid of the node (possibly "")
+#' @field ns character the XML::xmlNamespace object (possibly NULL)
+#' @field node XML::xmlNode external pointer to the representation (possibly NULL)
+#' @export
 NodeRefClass <- setRefClass("NodeRefClass",
    fields = list(
       lims = 'ANY', 

@@ -1,5 +1,13 @@
 #' File.R
 
+#' A File representation that subclasses from NodeRefClass
+#' 
+#' @family Node
+#' @field attached_to character, uri of Artifact attached to
+#' @field content_location character, location of file within filestore
+#' @field original_location character, the file path to original location of file
+#' @field is_published character, indicates if the file has been published
+#' @export
 FileRefClass <- setRefClass("FileRefClass",
    contains = "NodeRefClass",
    fields = list(

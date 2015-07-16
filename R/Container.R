@@ -1,5 +1,12 @@
 # Container.R
 
+#' A Container representation that subclasses from NodeRefClass
+#' 
+#' @family Node
+#' @field name character, name if any
+#' @field state charcater, the state of the container
+#' @field type character, type if any
+#' @export
 ContainerRefClass <- setRefClass("ContainerRefClass",
    contains = "NodeRefClass",
    fields = list(

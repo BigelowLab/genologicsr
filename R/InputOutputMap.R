@@ -1,3 +1,14 @@
+#' An Input-Output-Map representation that subclasses from NodeRefClass
+#' 
+#' @family Node
+#' @field input_uri character 
+#' @field input_limsid character 
+#' @field post_process_uri character 
+#' @field output_uri character 
+#' @field output_limsid character
+#' @field output_generation_type character 
+#' @field output_type character
+#' @export
 InputOutputMapRefClass <- setRefClass("InputOutputMapRefClass",
    contains = "NodeRefClass",
    

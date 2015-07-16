@@ -1,9 +1,11 @@
 # Process.R
 
+#' An Process representation that sublcasses from NodeRefClass
+#' 
+#' @family Node
+#' @export
 ProcessRefClass <- setRefClass("ProcessRefClass",
    contains = "NodeRefClass")
-
-Process <- getRefClass("ProcessRefClass")
 
 #' Show
 #' 

@@ -27,4 +27,21 @@ See the [wiki](https://github.com/BigelowLab/genologicsR/wiki) for details
 
 To Do
 
+##### The configuration file
+
+Create a file, `~/.clarityrc` with the contents below and edit appropriately for your platform.
+
+```
+# make a copy of this as ~/.genologcsrc
+# edit as needed [genologics] section is required anyhting else is optional
+[genologics]
+BASEURI=http://my-server.my.host.org:8080
+USERNAME=user
+PASSWORD=password
+VERSION=v2
+[glsfilestore]
+USERNAME=anotheruser
+PASSWORD=anotherpassword
+```
+
 

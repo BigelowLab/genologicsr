@@ -1,5 +1,14 @@
 # Sample.R
 
+#' A Sample representation that subclasses from NodeRefClass
+#' 
+#' @family Node
+#' @field name character, name if any
+#' @field type character, type if any
+#' @field date_received character, "YYYY-mm-dd"
+#' @field date_completed character, "YYYY-mm-dd"
+#' @field biosource character, ummmm...
+#' @export
 SampleRefClass <- setRefClass("SampleRefClass",
    contains = "NodeRefClass",
    fields = list(

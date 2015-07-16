@@ -1,8 +1,13 @@
    
 #' Reference class for Lims instance
-#' @name LimsRefClass
+#'
 #' @family Lims
-NULL
+#' @field version character Genologics LIMS version
+#' @field baseuri character the base uri
+#' @field auth httr::authenticate object for LIMS
+#' @field fileauth httr::authenticate object for filestore
+#' @field handle httr::handle object
+#' @export
 LimsRefClass <- setRefClass('LimsRefClass',
    fields = list(
       version = 'character',

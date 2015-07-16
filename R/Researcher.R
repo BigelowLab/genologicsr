@@ -1,5 +1,13 @@
 # Researcher.R
 
+#' An Researcher representation that sublcasses from NodeRefClass
+#' 
+#' @family Node
+#' @field character, username the user name
+#' @field character, name the user's full name in 'First Last' form
+#' @field email character, user's email
+#' @field initials character, user's initials
+#' @export
 ResearcherRefClass <- setRefClass("ResearcherRefClass",
    contains = "NodeRefClass",
       fields = list(

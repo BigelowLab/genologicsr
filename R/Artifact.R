@@ -1,5 +1,11 @@
 # Artifact.R
 
+#' An Artifact representation that sublcasses from NodeRefClass
+#' 
+#' @family Node
+#' @field name character, name if any
+#' @field type character, type if any
+#' @export
 ArtifactRefClass <- setRefClass("ArtifactRefClass",
    contains = "NodeRefClass",
       fields = list(
