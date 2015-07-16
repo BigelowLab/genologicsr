@@ -95,7 +95,7 @@ NodeRefClass$methods(
          stop("NodeRefClass$update input must be non-exception XML::xmlNode")
 
       .self$field('node', x)
-      .self$field('ns', xmlNamespace(.self$node))
+      .self$field('ns', XML::xmlNamespace(.self$node))
        
       atts <- xmlAttrs(.self$node)
       .self$field('uri', trimuri(atts[['uri']]))
@@ -150,7 +150,7 @@ NodeRefClass$methods(
          .self$update(r)
       } else {
          cat("NodeRefClass: PUT exception\n")
-         cat(xmlValue(r[['message']]), "\n")
+         cat(XML::xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
       ok
@@ -172,7 +172,7 @@ NodeRefClass$methods(
          .self$lims <- NULL
       } else {
          cat("NodeRefClass: DELETE exception\n")
-         cat(xmlValue(r[['message']]), "\n")
+         cat(XML::xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
       ok
@@ -195,7 +195,7 @@ NodeRefClass$methods(
       } else {
          cat("NodeRefClass: DELETE exception\n")
          cat("NodeRefClass: node not deleted because...\n")
-         cat(xmlValue(r[['message']]), "\n")
+         cat(XML::xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
       ok
@@ -241,7 +241,7 @@ NodeRefClass$methods(
          # x <- x %in% xmlChildren(.self$node)
          # so instead we loop through comparing xmlparent this this node
          ok <- sapply(x, function(x, p=NULL) {
-               identical(p,xmlParent(x))
+               identical(p, XML::xmlParent(x))
             }, p = .self$node)   
       }
       ok

@@ -34,7 +34,7 @@ ProcessRefClass$methods(
    date_run = function(as_POSIX = FALSE){
       dr <- .self$node[['date-run']]
       if (!is.null(dr)) {
-         x <- xmlValue(dr)
+         x <- XML::xmlValue(dr)
          if (as_POSIX) x <- as.POSIXct(x)
       } else {
          x <- ""
@@ -56,9 +56,9 @@ ProcessRefClass$methods(
          x <- ""
       } else {
          x <- switch(form,
-            'uri' = xmlAttrs(technode)[['uri']],
-            paste(xmlValue(technode[['first-name']]),
-               xmlValue(technode[['last-name']]) ) )
+            'uri' = XML::xmlAttrs(technode)[['uri']],
+            paste(XML::xmlValue(technode[['first-name']]),
+               XML::xmlValue(technode[['last-name']]) ) )
       }
       x
    }) #technician
@@ -75,8 +75,8 @@ ProcessRefClass$methods(
       typenode <- .self$node[['type']]
       if (!is.null(typenode)) {
          x <- switch(form,
-            'uri' = xmlAttrs(typenode)[['uri']],
-            xmlValue(typenode) )
+            'uri' = XML::xmlAttrs(typenode)[['uri']],
+            XML::xmlValue(typenode) )
       } else {
          x <- ""
       }
@@ -98,7 +98,7 @@ ProcessRefClass$methods(
             NULL)
          return(x)
       }
-      thisuri <- trimuri(xmlAttrs(.self$node[["parent-process"]])[['uri']])
+      thisuri <- trimuri(XML::xmlAttrs(.self$node[["parent-process"]])[['uri']])
       if (tolower(form == "uri")){
          x <- thisuri
       } else {
@@ -206,15 +206,15 @@ create_process_node <- function(type = "processTypeName",
       dateRun = format(Sys.Date(), "%Y-%m-%d"),
       instrument = NULL, ... ){
    
-   x <- newXMLNode("process",
-      newXMLNode("type", type),
-      newXMLNode("date-run", dateRun),
-      newXMLNode("technician", attrs = c(uri=technician)),
+   x <- XML::newXMLNode("process",
+      XML::newXMLNode("type", type),
+      XML::newXMLNode("date-run", dateRun),
+      XML::newXMLNode("technician", attrs = c(uri=technician)),
       ...,
       namespaceDefinitions = get_NSMAP()[c("udf", "prx", "inst")], 
       namespace = "prx") 
-   if (!is.null(instrument))  x <- addChildren(x,
-         kids = list(newXMLNode("instrument", 
+   if (!is.null(instrument))  x <- XML::addChildren(x,
+         kids = list(XML::newXMLNode("instrument", 
             attrs = list(uri=instrument))) )
    x
 }

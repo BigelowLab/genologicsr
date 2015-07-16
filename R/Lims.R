@@ -124,14 +124,14 @@ LimsRefClass$methods(
       
       x <- .self$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
-         uri <- xmlAttrs(x[['next-page']])[['uri']]
+         uri <- XML::xmlAttrs(x[['next-page']])[['uri']]
          doNext <- TRUE
          while(doNext){
             y <- .self$check(httr::GET(uri, .self$auth, handle = handle))
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
-            if (doNext) uri <- xmlAttrs(y[["next-page"]])[["uri"]]
+            if (doNext) uri <- XML::xmlAttrs(y[["next-page"]])[["uri"]]
          } # doNext while loop
          x <- removeChildren(x, kids = x["next-page"]) 
       }
@@ -158,7 +158,7 @@ LimsRefClass$methods(
          uri <- x$uri
          body <- x$toString()
       } else if (is_xmlNode(x)) {
-         uri <- trimuri(xmlAttrs(x)[['uri']])
+         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
          body <- XML::toString.XMLNode(x)
       } else {
          stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
@@ -190,7 +190,7 @@ LimsRefClass$methods(
          uri <- x$uri
          body <- x$toString()
       } else {
-         uri <- trimuri(xmlAttrs(x)[['uri']])
+         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
          body <- XML::toString.XMLNode(x)
       }
       r <- httr::POST(uri, 
@@ -220,7 +220,7 @@ LimsRefClass$methods(
          uri <- x$uri
          #body <- x$toString()
       } else if (is_xmlNode(x)) {
-         uri <- trimuri(xmlAttrs(x)[['uri']])
+         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
          #body <- XML::toString.XMLNode(x)
       } else {
          stop("LimsRefClass$DELETE: x must be xmlNode or NodeRefClass")
@@ -270,7 +270,7 @@ LimsRefClass$methods(
       # if the artifact node has a file element
       # then we need to DELETE it
       if ( !is.null(x$node[["file"]]) ) {
-         fileuri <- xmlAttrs(x$node[["file"]])["uri"]
+         fileuri <- XML::xmlAttrs(x$node[["file"]])["uri"]
          ok <- .self$DELETE(fileuri, ...)
          if (!ok) {
             e <- create_exception_node(message = "LimsRefClass$PUSH: Unable to delete existing file")
@@ -379,7 +379,7 @@ LimsRefClass$methods(
       x <- .self$GET(file.path(.self$baseuri, resource), query = query)
       # lapply(xmlChildren(x) function(x) Container$new(x, .self))
       if (!is_exception(x)){
-         uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
+         uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'containers')
          x <- lapply(x, function(x) Container$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
@@ -410,7 +410,7 @@ LimsRefClass$methods(
       query <- build_query(query)
       x <- .self$GET(.self$uri(resource), query = query)
       if (!is_exception(x)){
-         uri <- sapply(XML::xmlChildren(x), function(x) xmlAttrs(x)[['uri']])
+         uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'samples')
          x <- lapply(x, function(x) Sample$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
@@ -436,7 +436,7 @@ LimsRefClass$methods(
       RR <- lims$GET(.self$uri(resource), query = query)
       rr <- RR['researcher']
       if (length(rr) == 0) return(NULL)
-      uri <- sapply(rr, function(x) xmlAttrs(x)[['uri']])
+      uri <- sapply(rr, function(x) XML::xmlAttrs(x)[['uri']])
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
@@ -481,9 +481,9 @@ LimsRefClass$methods(
       if (!is.null(query)) query <- build_query(query)
    
       x <- lims$GET(.self$uri(resource), query = query)
-      if (length(xmlChildren(x))) return(NULL)
+      if (length(XML::xmlChildren(x))) return(NULL)
       
-      uri <- sapply(x, function(x) xmlAttrs(x)[['uri']])
+      uri <- sapply(x, function(x) XML::xmlAttrs(x)[['uri']])
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
@@ -533,7 +533,7 @@ LimsRefClass$methods(
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
          stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
-      nm <- unique(sapply(x, xmlName))
+      nm <- unique(sapply(x, XML::xmlName))
       if (length(nm) > 1) 
          stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
       if (!(nm %in% c("artifact", "sample", "container")))
@@ -555,7 +555,7 @@ LimsRefClass$methods(
       x <- lims$check(r)
       if (!is_exception(x)) {
          rel <- paste0(nm, "s")
-         uri <- sapply(x['link'], function(x) xmlAttrs(x)[['uri']])
+         uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
          r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"), ...)
          if (asNode) r <- lapply(r, parse_node, .self)
       } else {
@@ -584,7 +584,7 @@ LimsRefClass$methods(
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
          stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
-      nm <- unique(sapply(x, xmlName))
+      nm <- unique(sapply(x, XML::xmlName))
       if (length(nm) > 1) 
          stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
       if (!(nm %in% c("sample", "container")))
@@ -605,7 +605,7 @@ LimsRefClass$methods(
       x <- lims$check(r)
       if (!is_exception(x)) {
          rel <- paste0(nm, "s")
-         uri <- sapply(x['link'], function(x) xmlAttrs(x)[['uri']])
+         uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
          r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"), ...)
          if (asNode) r <- lapply(r, parse_node, .self)
       } else {
@@ -675,7 +675,7 @@ batch_retrieve <- function(uri, lims,
          'sample' = 'smp',
          'file' = 'file')
          
-      nmspc <- xmlNamespace(x)
+      nmspc <- XML::xmlNamespace(x)
       x <- x[singleName]
       # transfer the the xmlnamespace to each child node
       uristub = get_NSMAP()[[nm]]
@@ -710,7 +710,7 @@ parse_node <- function(node, lims){
    if (!is_xmlNode(node)) stop("assign_node: node must be XML::xmlNode")
    if (!inherits(lims, 'LimsRefClass')) stop("assign_node: lims must be LimsRefClass")
    
-   nm <- xmlName(node)[1]
+   nm <- XML::xmlName(node)[1]
    switch(nm,
        'artifact' = Artifact$new(node, lims),
        'process' = Process$new(node, lims),

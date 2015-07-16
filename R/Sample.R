@@ -79,7 +79,7 @@ NULL
 SampleRefClass$methods(
    get_biosource = function(){
       nd <- .self$node[['biosource']]
-      if (!is.null(nd)) xmlAttrs(nd)[['name']] else ""
+      if (!is.null(nd)) XML::xmlAttrs(nd)[['name']] else ""
    })
  
   
@@ -99,7 +99,7 @@ SampleRefClass$methods(
             x <- NULL
          }
       } else {
-         x <- xmlAttrs(.self$node[['artifact']])[['uri']]
+         x <- XML::xmlAttrs(.self$node[['artifact']])[['uri']]
          if (tolower(form) == "Node"){
             x <- .self$lims$GET(x, asNode = TRUE)
          }
@@ -123,7 +123,7 @@ SampleRefClass$methods(
             x <- NULL
          }
       } else {
-         x <- xmlAttrs(.self$node[['project']])[['uri']]
+         x <- XML::xmlAttrs(.self$node[['project']])[['uri']]
          if (tolower(form) == "Node"){
             x <- .self$lims$GET(x, asNode = TRUE)
          }
@@ -149,7 +149,7 @@ create_sample_details <- function(x){
    nm <- sapply(x, xmlName)
    if (!all(nm == "sample")) stop("create_sample_details: input nodes must be of type sample")
    
-   newXMLNode("details",
+   XML::newXMLNode("details",
       namespace = "smp",
       namespaceDefinitions = get_NSMAP()['smp'],
       .children = x)

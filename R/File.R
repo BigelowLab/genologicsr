@@ -22,13 +22,13 @@ FileRefClass <- setRefClass("FileRefClass",
          if (is_xmlNode(.self$node)){
             nm <- names(.self$node)
             if ('attached-to' %in% nm)
-               .self$attached_to <- xmlValue(.self$node[['attached-to']])
+               .self$attached_to <- XML::xmlValue(.self$node[['attached-to']])
             if ('content-location' %in% nm)
-               .self$content_location <- xmlValue(.self$node[['content-location']]) 
+               .self$content_location <- XML::xmlValue(.self$node[['content-location']]) 
             if ('original-location' %in% nm)
-               .self$original_location <- xmlValue(.self$node[['original-location']]) 
+               .self$original_location <- XML::xmlValue(.self$node[['original-location']]) 
             if ('is-published' %in% nm)
-               .self$is_published <- xmlValue(.self$node[['is-published']]) 
+               .self$is_published <- XML::xmlValue(.self$node[['is-published']]) 
          }
       })
    )
@@ -65,10 +65,10 @@ FileRefClass$methods(
 create_file_node <- function(attached_to = "", original_location = "",
    namespace = 'file', ...){
    nsr <- get_NSMAP()[namespace[1]]
-   newXMLNode(namespace[1],
+   XML::newXMLNode(namespace[1],
       namespace = namespace[1],
       namespaceDefinitions = nsr,,
       .children = list(
-         newXMLNode("attached-to", attached_to),
-         newXMLNode("original-location", original_location)) )
+         XML::newXMLNode("attached-to", attached_to),
+         XML::newXMLNode("original-location", original_location)) )
 }

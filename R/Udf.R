@@ -19,12 +19,12 @@ create_udf_node <- function(x, namespace = 'udf', parent = NULL, ...) {
    ns <- get_NSMAP()[[namespace[1]]]
    atts <- x[ names(x) %in% c("name", "type", "unit") ]
    
-   newNode <- newXMLNode("field", 
+   newNode <- XML::newXMLNode("field", 
       attrs = atts, 
       namespace = ns, 
       parent = parent, ...) 
    
-   if ("value" %in% names(x)) xmlValue(newNode) <- x[["value"]]
+   if ("value" %in% names(x)) XML::xmlValue(newNode) <- x[["value"]]
     
    return(newNode)        
 }
@@ -108,10 +108,10 @@ extract_udfs <- function(x){
       r <- list()
    } else {
       r <- lapply(ff, function(x){
-         att <- xmlAttrs(x)
+         att <- XML::xmlAttrs(x)
          nm <- att[['name']]
          typ <- att[['type']]
-         val <- as(xmlValue(x), udf_type2R(typ))
+         val <- as(XML::xmlValue(x), udf_type2R(typ))
          list(name = nm, type = typ, value = val )
          })  
       names(r) <- sapply(r, "[[", "name")  

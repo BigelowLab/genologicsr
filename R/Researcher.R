@@ -104,7 +104,7 @@ get_researchers <- function(lims, asNode = FALSE){
       stop("get_researchers: input must be LimsRefClass")
    
    RR <- lims$GET(lims$uri("researchers"))
-   uri <- sapply(RR, function(x) xmlAttrs(x)[['uri']])
+   uri <- sapply(RR, function(x) XML::xmlAttrs(x)[['uri']])
    x <- lapply(uri, function(x, lims = NULL) {
          lims$GET(x, asNode = TRUE)
       }, lims = lims)

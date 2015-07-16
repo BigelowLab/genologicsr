@@ -4,10 +4,8 @@
 \name{genologicsr}
 \alias{genologicsr}
 \alias{genologicsr-package}
-\title{genologicsr-package.R
-A simplified interface between XML nodes and the Genologics RESTful API.}
+\title{A simplified interface between XML nodes and the Genologics RESTful API.}
 \description{
-genologicsr-package.R
 A simplified interface between XML nodes and the Genologics RESTful API.
 }
 

@@ -17,9 +17,9 @@ ContainerRefClass <- setRefClass("ContainerRefClass",
    methods = list( 
       initialize = function(...){
          callSuper(...)
-         .self$name = xmlValue(.self$node[['name']]) 
-         .self$type = xmlAttrs(.self$node[['type']])[['name']]
-         .self$state = xmlValue(.self$node[['state']])    
+         .self$name = XML::xmlValue(.self$node[['name']]) 
+         .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
+         .self$state = XML::xmlValue(.self$node[['state']])    
       })
    )
    
@@ -158,7 +158,7 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
       x <- lapply(x, "[[", "node")      
    }
    
-   nm <- sapply(x, xmlName)
+   nm <- sapply(x, XML::xmlName)
    if (!all(tolower(nm) == "container")) stop("create_container_details: input nodes must be of type container")
    
    newXMLNode("details",

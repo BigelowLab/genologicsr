@@ -156,7 +156,7 @@ ArtifactRefClass$methods(
             NULL)
          return(x)
       }
-      thisuri <- trimuri(xmlAttrs(.self$node[["parent-process"]])[['uri']])
+      thisuri <- trimuri(XML::xmlAttrs(.self$node[["parent-process"]])[['uri']])
       if (tolower(form == "uri")){
          x <- thisuri
       } else {
@@ -179,7 +179,7 @@ ArtifactRefClass$methods(
             NULL)
          return(x)
       }
-      thisuri <- trimuri(xmlAttrs(.self$node[["sample"]])[['uri']])
+      thisuri <- trimuri(XML::xmlAttrs(.self$node[["sample"]])[['uri']])
       if (tolower(form == "uri")){
          x <- thisuri
       } else {
@@ -205,7 +205,7 @@ create_artifacts_details <- function(x){
       x <- lapply(x, "[[", "node")      
    }
    
-   nm <- sapply(x, xmlName)
+   nm <- sapply(x, XML::xmlName)
    if (!all(tolower(nm) == "artifact")) stop("create_artifact_details: input nodes must be of type artifact")
    newXMLNode("details",
       namespace = "art",

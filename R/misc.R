@@ -59,7 +59,7 @@ xmlString <- function(x){
 #' @param space the namespace to test
 #' @return logical
 is_exception <- function(x, space = 'exc'){
-   is_xmlNode(x) && ("exc" %in% names(xmlNamespace(x)) )
+   is_xmlNode(x) && ("exc" %in% names(XML::xmlNamespace(x)) )
 }
 
 
