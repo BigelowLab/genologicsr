@@ -19,6 +19,7 @@ LimsRefClass <- setRefClass('LimsRefClass',
 
 
 #' Print a pretty summary
+#' @name LimsRefClass_show Sample
 #' @param prefix character - perhaps number of spaces to prefix the output 
 NULL
 LimsRefClass$methods(
@@ -33,6 +34,7 @@ LimsRefClass$methods(
 #' Build a uri staring with the baseuri
 #'
 #' @family Lims
+#' @name LimsRefClass_uri
 #' @param ... one or more character segments to append to the base
 #' @param base character, the base uri, if NULL then use this object's baseuri property
 #' @return character uri
@@ -70,8 +72,9 @@ LimsRefClass$methods(
 
 #' Verify a response and return xmlNode, possible an exception node
 #' 
+#' @name LimsRefClass_check
 #' @param rsp httr::response object
-#' @msg if an exception is encountered, attach this message (unless NULL)
+#' @param msg if an exception is encountered, attach this message (unless NULL)
 #' @return XML::xmlNode
 LimsRefClass$methods(
    check = function(rsp, msg = NULL){
@@ -88,6 +91,8 @@ LimsRefClass$methods(
    }) # verify_response
     
 #' Create an exception node
+#'
+#' @name LimsRefClass_create_exception
 #' @param message chracter, some error message
 #' @return XML::xmlNode
 LimsRefClass$methods(
@@ -140,6 +145,7 @@ LimsRefClass$methods(
 #' PUT a resource
 #'
 #' @family Lims
+#' @name LimsRefClass_PUT
 #' @param x xmlNode to put
 #' @param ... further arguments for httr::PUT
 #' @return xmlNode
@@ -170,6 +176,7 @@ LimsRefClass$methods(
 #' POST a resource
 #'
 #' @family Lims
+#' @name LimsRefClass_POST
 #' @param x XML::xmlNode to or NodeRefClass POST
 #' @param ... further arguments for httr::POST
 #' @return XML::xmlNode
@@ -200,6 +207,7 @@ LimsRefClass$methods(
 #' Typically this is a file (resource = 'files')
 #' 
 #' @family Lims
+#' @name LimsRefClass_DELETE
 #' @param x XML::xmlNode to DELETE, generally a file node
 #' @param ... further arguments for httr::DELETE
 #' @return logical
@@ -243,6 +251,7 @@ LimsRefClass$methods(
 #' return the resolved file resource
 #      
 #' @family Lims
+#' @name LimsRefClass_PUSH
 #' @param x XML::xmlNode of the artifact to attach to 
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
@@ -514,7 +523,6 @@ LimsRefClass$methods(
 #' @param ... further arguments for httr::POST
 #' @return a list of NodeRefClass or NULL
 NULL
-
 LimsRefClass$methods(
    batchupdate = function(x, asNode = TRUE, ...){
       if (!is.list(x)) x <- list(x)

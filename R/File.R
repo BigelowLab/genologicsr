@@ -7,6 +7,7 @@
 #' @field content_location character, location of file within filestore
 #' @field original_location character, the file path to original location of file
 #' @field is_published character, indicates if the file has been published
+#' @include Node.R
 #' @export
 FileRefClass <- setRefClass("FileRefClass",
    contains = "NodeRefClass",
@@ -35,6 +36,7 @@ FileRefClass <- setRefClass("FileRefClass",
 #' Show
 #' 
 #' @family Node File
+#' @name FileRefClass_show
 NULL
 FileRefClass$methods(
    show = function(prefix = ""){

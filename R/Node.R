@@ -8,6 +8,7 @@
 #' @field limsid character the limsid of the node (possibly "")
 #' @field ns character the XML::xmlNamespace object (possibly NULL)
 #' @field node XML::xmlNode external pointer to the representation (possibly NULL)
+#' @include Lims.R
 #' @export
 NodeRefClass <- setRefClass("NodeRefClass",
    fields = list(
@@ -27,7 +28,7 @@ Node <- getRefClass("NodeRefClass")
 #' @name NodeRefClass_new
 #' @param node either XML::xmlNode or a uri that points to such
 #' @param lims LimsRefClass instance
-#' @returns an instance of NodeRefClass
+#' @return an instance of NodeRefClass
 NULL
 NodeRefClass$methods(
    initialize = function(node = NULL, lims = NULL, ...){
@@ -249,6 +250,7 @@ NodeRefClass$methods(
 #' Get the contents of a UDF field
 #' 
 #' @family Node
+#' @name NodeRefClass_get_field
 #' @param name character one or more names 
 #' @param as_type character, the data type to return: default, numeric, character, etc.
 #' @return list of field values, assigned NA when the field is missing
@@ -273,7 +275,7 @@ NodeRefClass$methods(
 #' Get the value of the name field or ""
 #' 
 #' @family Node
-#' @param NodeRefClass_get_type
+#' @name NodeRefClass_get_type
 #' @return named character vector of the name or "" if none
 NULL
 NodeRefClass$methods(

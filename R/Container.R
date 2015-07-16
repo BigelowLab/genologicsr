@@ -6,6 +6,7 @@
 #' @field name character, name if any
 #' @field state charcater, the state of the container
 #' @field type character, type if any
+#' @include Node.R
 #' @export
 ContainerRefClass <- setRefClass("ContainerRefClass",
    contains = "NodeRefClass",
@@ -27,6 +28,7 @@ Container <- getRefClass("ContainerRefClass")
 #' Show
 #' 
 #' @family Node Process
+#' @name ContainerRefClass_show
 NULL
 ContainerRefClass$methods(
    show = function(prefix = ""){

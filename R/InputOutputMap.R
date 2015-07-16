@@ -8,6 +8,7 @@
 #' @field output_limsid character
 #' @field output_generation_type character 
 #' @field output_type character
+#' @include Node.R
 #' @export
 InputOutputMapRefClass <- setRefClass("InputOutputMapRefClass",
    contains = "NodeRefClass",
@@ -45,6 +46,7 @@ InputOutputMap <- getRefClass("InputOutputMapRefClass")
 #' Show
 #' 
 #' @family Node InputOutputMap
+#' @name InputOutputMapRefClass_show 
 NULL
 InputOutputMapRefClass$methods(
    show = function(prefix = ""){

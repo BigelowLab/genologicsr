@@ -3,6 +3,7 @@
 #' An Process representation that sublcasses from NodeRefClass
 #' 
 #' @family Node
+#' @include Node.R
 #' @export
 ProcessRefClass <- setRefClass("ProcessRefClass",
    contains = "NodeRefClass")
@@ -10,6 +11,7 @@ ProcessRefClass <- setRefClass("ProcessRefClass",
 #' Show
 #' 
 #' @family Node Process
+#' @name ProcessRefClass_show
 NULL
 ProcessRefClass$methods(
    show = function(prefix = ""){
@@ -21,6 +23,8 @@ ProcessRefClass$methods(
    
 #' Retrieve the date run as string or POSIXct
 #'
+#' @family Process
+#' @name ProcessRefClass_date_run
 #' @param as_POSIX logical, by default return a string
 #' @return character, POSIXct or "" if not available
 NULL
@@ -39,6 +43,7 @@ ProcessRefClass$methods(
 #' Retrieve the technican "First Last" name
 #' 
 #' @family Process
+#' @name ProcessRefClass_technician
 #' @param form 'First Last', or 'uri'
 #' @return character or "" if not available
 NULL
@@ -58,6 +63,8 @@ ProcessRefClass$methods(
    
 #' Retrieve the process type, overrides NodeRefClass_get_type
 #'
+#' @family Process
+#' @name ProcessRefClass_get_type
 #' @param form 'name', or 'uri'
 #' @return character or "" if not available
 NULL

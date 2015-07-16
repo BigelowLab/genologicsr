@@ -8,6 +8,7 @@
 #' @field date_received character, "YYYY-mm-dd"
 #' @field date_completed character, "YYYY-mm-dd"
 #' @field biosource character, ummmm...
+#' @include Node.R
 #' @export
 SampleRefClass <- setRefClass("SampleRefClass",
    contains = "NodeRefClass",
@@ -35,6 +36,7 @@ Sample <- getRefClass("SampleRefClass")
 #' Show
 #' 
 #' @family Node Sample
+#' @name SampleRefNode_show
 NULL
 SampleRefClass$methods(
    show = function(prefix = ""){

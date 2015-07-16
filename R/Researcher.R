@@ -7,6 +7,7 @@
 #' @field character, name the user's full name in 'First Last' form
 #' @field email character, user's email
 #' @field initials character, user's initials
+#' @include Node.R
 #' @export
 ResearcherRefClass <- setRefClass("ResearcherRefClass",
    contains = "NodeRefClass",
@@ -30,6 +31,7 @@ Researcher <- getRefClass("ResearcherRefClass")
 #' Show
 #' 
 #' @family Node Researcher
+#' @name ResearcherRefClass_show
 NULL
 ResearcherRefClass$methods(
    show = function(prefix = ""){

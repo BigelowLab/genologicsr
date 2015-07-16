@@ -5,6 +5,7 @@
 #' @family Node
 #' @field name character, name if any
 #' @field type character, type if any
+#' @include Node.R
 #' @export
 ArtifactRefClass <- setRefClass("ArtifactRefClass",
    contains = "NodeRefClass",
@@ -26,6 +27,7 @@ Artifact <- getRefClass("ArtifactRefClass")
 #' Show
 #' 
 #' @family Node Artifact
+#' @name ArtifactRefNode_show
 NULL
 ArtifactRefClass$methods(
    show = function(prefix = ""){
@@ -59,14 +61,11 @@ ArtifactRefClass$methods(
    })
    
 
-
-
-
 #' Get the name of the artifact container as uri or NodeRefClass
 #' 
 #' @family Artifact
-#' @form character either "uri" or "Node"
 #' @name ArtifactRefClass_get_container
+#' @param form character either "uri" or "Node"
 #' @return ContainerRefClass or uri (or NULL or "")
 NULL
 ArtifactRefClass$methods(
