@@ -24,4 +24,5 @@ Collate:
     'Researcher.R'
     'Sample.R'
     'Udf.R'
+    'genologicsr-package.R'
     'misc.R'
