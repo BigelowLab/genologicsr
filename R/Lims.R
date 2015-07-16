@@ -81,9 +81,9 @@ LimsRefClass$methods(
       w <- httr::warn_for_status(rsp)
       if (!is.logical(w)) {
          print(rsp)
-         print(content(rsp))
+         print(httr::content(rsp))
       }
-      x <- try(XML::xmlRoot(content(rsp, type = "text/xml")))
+      x <- try(XML::xmlRoot(httr::content(rsp, type = "text/xml")))
       if (inherits(x, "try-error")){
          x <- .self$create_exception(message = "error parsing response content with xmlRoot")
       }
@@ -129,11 +129,11 @@ LimsRefClass$methods(
          while(doNext){
             y <- .self$check(httr::GET(uri, .self$auth, handle = handle))
             children <- !(names(y) %in% c("previous-page", "next-page"))
-            if (any(children)) x <- addChildren(x, kids = y[children])
+            if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
             if (doNext) uri <- XML::xmlAttrs(y[["next-page"]])[["uri"]]
          } # doNext while loop
-         x <- removeChildren(x, kids = x["next-page"]) 
+         x <- XML::removeChildren(x, kids = x["next-page"]) 
       }
       
       if (asNode) x <- parse_node(x, .self)
@@ -218,25 +218,21 @@ LimsRefClass$methods(
       
       if (inherits(x, "NodeRefClass")){
          uri <- x$uri
-         #body <- x$toString()
       } else if (is_xmlNode(x)) {
          uri <- trimuri(XML::xmlAttrs(x)[['uri']])
-         #body <- XML::toString.XMLNode(x)
       } else {
          stop("LimsRefClass$DELETE: x must be xmlNode or NodeRefClass")
       }
       r <- httr::DELETE(uri, 
          ...,  
-         #body = body,
-         #httr::content_type_xml(),
          .self$auth,
          handle = .self$handle)
       if (status_code(r) != 204){
          warn("LimsRefClass$DELETE unknown issue")
          print(r)
-         print(content(r))
+         print(httr::content(r))
       }
-      invisible(status_code(r) == 204)
+      invisible(httr::status_code(r) == 204)
    }) # POST
 
 #' PUSH a file - not really a RESTfule action but a combination of steps
@@ -284,7 +280,7 @@ LimsRefClass$methods(
       body <- xmlString(unresolved_node)
       r<- httr::POST(uri,
          body = body,
-         content_type_xml(),
+         httr::content_type_xml(),
          .self$auth, 
          handle = .self$handle)
       r <- .self$check(r)  
@@ -549,7 +545,7 @@ LimsRefClass$methods(
       
       URI <- .self$uri(paste0(nm, "s/batch/update"))
       r <- httr::POST(URI, ..., body = xmlString(detail), 
-         add_headers(c("Content-Type"="application/xml")),
+         httr::add_headers(c("Content-Type"="application/xml")),
          lims$auth, handle = lims$handle)
       
       x <- lims$check(r)
@@ -599,7 +595,7 @@ LimsRefClass$methods(
       
       URI <- .self$uri(paste0(nm, "s/batch/update"))
       r <- httr::POST(URI, ..., body = xmlString(detail), 
-         add_headers(c("Content-Type"="application/xml")),
+         httr::add_headers(c("Content-Type"="application/xml")),
          lims$auth, handle = lims$handle)
       
       x <- lims$check(r)
@@ -659,7 +655,7 @@ batch_retrieve <- function(uri, lims,
    
    URI <- file.path(lims$baseuri, resource)
    r <- httr::POST(URI, ..., body = xmlString(batchNode), 
-      add_headers(c("Content-Type"="application/xml")),
+      httr::add_headers(c("Content-Type"="application/xml")),
       lims$auth, handle = lims$handle)
    x <- lims$check(r)
    if (!is_exception(x) && asList){
@@ -703,6 +699,7 @@ batch_retrieve <- function(uri, lims,
 #' Convert a node to an object inheriting from NodeRefClass 
 #'
 #' @family Lims Node
+#' @export
 #' @param node XML::xmlNode
 #' @param lims LimsRefClass object
 parse_node <- function(node, lims){

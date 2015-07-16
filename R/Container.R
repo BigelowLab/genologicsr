@@ -161,7 +161,7 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
    nm <- sapply(x, XML::xmlName)
    if (!all(tolower(nm) == "container")) stop("create_container_details: input nodes must be of type container")
    
-   newXMLNode("details",
+   XML::newXMLNode("details",
       namespace = "con",
       namespaceDefinitions = get_NSMAP()[c("ri",  "udf", "file", "art", "con")],
       .children = x)

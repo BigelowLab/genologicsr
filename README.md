@@ -25,11 +25,9 @@ See the [wiki](https://github.com/BigelowLab/genologicsR/wiki) for details
 
 #### Installation
 
-To Do
+The configuration file can be saved in a user's home directory by any name, choosing a hidden file in the home directory makes a lot of sense.
 
-##### The configuration file
-
-Create a file, `~/.clarityrc` with the contents below and edit appropriately for your platform.
+Create a file, such as `~/.clarityrc` with the contents below and edit appropriately for your platform.
 
 ```
 # make a copy of this as ~/.genologcsrc
@@ -50,5 +48,3 @@ Then install into the system wide library with
 library(devtools)
 with_lib(.Library, install_github("BigelowLab/genologicsr"))
 ```
-
-

@@ -207,7 +207,7 @@ create_artifacts_details <- function(x){
    
    nm <- sapply(x, XML::xmlName)
    if (!all(tolower(nm) == "artifact")) stop("create_artifact_details: input nodes must be of type artifact")
-   newXMLNode("details",
+   XML::newXMLNode("details",
       namespace = "art",
       namespaceDefinitions = get_NSMAP()[c('art', 'ri', 'udf', 'file', 'con')],
       .children = x)

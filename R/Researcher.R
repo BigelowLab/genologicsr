@@ -97,24 +97,3 @@ ResearcherRefClass$methods(
    
 ##### Methods above
 ##### Functions below
-
-
-get_researchers <- function(lims, asNode = FALSE){
-   if (missing(lims) || !inherits(lims, "LimsRefClass")) 
-      stop("get_researchers: input must be LimsRefClass")
-   
-   RR <- lims$GET(lims$uri("researchers"))
-   uri <- sapply(RR, function(x) XML::xmlAttrs(x)[['uri']])
-   x <- lapply(uri, function(x, lims = NULL) {
-         lims$GET(x, asNode = TRUE)
-      }, lims = lims)
-   if (!asNode){
-      x <- data.frame (name = sapply(x, function(x) x$name),
-         username = sapply(x, function(x) x$username),
-         initials = sapply(x, function(x) x$initials),
-         email = sapply(x, function(x) x$initials),
-         stringsAsFactors = FALSE, 
-         row.names = sapply(x, function(x) x$username))
-   }
-   invisible(x)
-}
