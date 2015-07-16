@@ -372,12 +372,12 @@ LimsRefClass$methods(
       if(length(query) == 0) 
          stop("LimsRefClass$get_containers please specify at leatst one or more of name, type, state or last_modified")
       query <- build_query(query)
-      x <- .self$GET(file.path(.self$baseuri, resource), query = query)
+      x <- .self$GET(file.path(.self$baseuri, resource), query = query, asNode = FALSE)
       # lapply(xmlChildren(x) function(x) Container$new(x, .self))
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'containers')
-         x <- lapply(x, function(x) Container$new(x, .self))
+         x <- lapply(x, function(x) ContainerRefClass$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
       }
       invisible(x)
@@ -408,7 +408,7 @@ LimsRefClass$methods(
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'samples')
-         x <- lapply(x, function(x) Sample$new(x, .self))
+         x <- lapply(x, function(x) SampleRefClass$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
       }
       invisible(x)
@@ -502,7 +502,7 @@ LimsRefClass$methods(
    batchretrieve = function(uri, rel = c("artifacts", "samples", "containers", "files")[1], 
       rm_dups = TRUE, asNode = TRUE, ...){
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
-         stop("LimsRefClass$batchrretrieve rel must be one of artifacts, files, samples or containers")
+         stop("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers")
       x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
       if (asNode) x <- lapply(x, parse_node, .self)
       invisible(x)
@@ -709,14 +709,14 @@ parse_node <- function(node, lims){
    
    nm <- XML::xmlName(node)[1]
    switch(nm,
-       'artifact' = Artifact$new(node, lims),
-       'process' = Process$new(node, lims),
-       'container' = Container$new(node, lims),
-       'sample' = Sample$new(node,lims),
-       'input-output-map' = InputOutputMap$new(node, lims),
-       'researcher' = Researcher$new(node, lims),
-       'file' = File$new(node, lims),
-       Node$new(node, lims))
+       'artifact' = ArtifactRefClass$new(node, lims),
+       'process' = ProcessRefClass$new(node, lims),
+       'container' = ContaineRefClassr$new(node, lims),
+       'sample' = SampleRefClass$new(node,lims),
+       'input-output-map' = InputOutputMapRefClass$new(node, lims),
+       'researcher' = ResearcherRefClass$new(node, lims),
+       'file' = FileRefClass$new(node, lims),
+       NodeRefClass$new(node, lims))
 
 }
 

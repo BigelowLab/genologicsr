@@ -206,7 +206,7 @@ NodeRefClass$methods(
 #' Retrieve a vector of unique child names
 #'
 #' @family Node
-#' @name NodeRefClass_unames get the unique child names
+#' @name NodeRefClass_unames
 #' @return a vector of unique children names
 NULL
 NodeRefClass$methods( 
