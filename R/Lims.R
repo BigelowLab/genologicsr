@@ -716,6 +716,7 @@ parse_node <- function(node, lims){
        'input-output-map' = InputOutputMapRefClass$new(node, lims),
        'researcher' = ResearcherRefClass$new(node, lims),
        'file' = FileRefClass$new(node, lims),
+       'field' = FieldRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

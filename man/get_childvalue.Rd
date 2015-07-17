@@ -7,7 +7,7 @@
 get_childvalue(x, name)
 }
 \arguments{
-\item{x}{XML::xmlNode}
+\item{x}{XML::xmlNode or NodeRefClass}
 
 \item{name}{the name of the child(ren)}
 }

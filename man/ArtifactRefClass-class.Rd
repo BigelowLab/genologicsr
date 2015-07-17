@@ -18,6 +18,9 @@ An Artifact representation that sublcasses from NodeRefClass
 \seealso{
 Other Node: \code{\link{ContainerRefClass}},
   \code{\link{ContainerRefClass-class}};
+  \code{\link{FieldRefClass_show}};
+  \code{\link{FieldRefClass}},
+  \code{\link{FieldRefClass-class}};
   \code{\link{FileRefClass}},
   \code{\link{FileRefClass-class}};
   \code{\link{InputOutputMapRefClass}},
@@ -26,6 +29,7 @@ Other Node: \code{\link{ContainerRefClass}},
   \code{\link{NodeRefClass_GET}};
   \code{\link{NodeRefClass_POST}};
   \code{\link{NodeRefClass_PUT}};
+  \code{\link{NodeRefClass_get_childv}};
   \code{\link{NodeRefClass_get_field}};
   \code{\link{NodeRefClass_get_type}},
   \code{\link{NodeRefClass_get_type}};

@@ -18,6 +18,7 @@ Collate:
     'Node.R'
     'Artifact.R'
     'Container.R'
+    'Field.R'
     'File.R'
     'InputOutputMap.R'
     'Process.R'

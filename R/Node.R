@@ -283,17 +283,30 @@ NodeRefClass$methods(
       get_childvalue(.self$node, "name")
    })
    
+#' Get the value of the value of a child or ""
+#' 
+#' @family Node
+#' @name NodeRefClass_get_childv
+#' @param names one or more child names
+#' @return named character vector of the name or "" if none
+NULL
+NodeRefClass$methods(
+   get_childv = function(names){
+      get_childvalue(.self$node, names)
+   })
 ############## methods above
 ############## functions below
 
 #' Retrieve the value of a child node(s)
 #'
 #' @export
-#' @param x XML::xmlNode 
+#' @param x XML::xmlNode or NodeRefClass
 #' @param name the name of the child(ren)
 #' @return named character vector of child values, possibly ""
 get_childvalue <- function(x, name){
+
    sapply(name, function(nm,x=NULL){
          if (nm %in% names(x)) XML::xmlValue(x[[name]]) else ""
-      }, x = x)
+      }, x = if (inherits(x, 'NodeRefClass')) x$node else x )
+
 }

@@ -42,7 +42,7 @@ ContainerRefClass$methods(
 
 #' POST is disallowed for containers
 #' @family Container
-#' @name ContainerRefNode_POST
+#' @name ContainerRefClass_POST
 NULL
 ContainerRefClass$methods(
    POST = function(){
@@ -52,7 +52,7 @@ ContainerRefClass$methods(
 #' Retrieve the occupied well count
 #'
 #' @family Container
-#' @name ContainerRefNode_n_occupied
+#' @name ContainerRefClass_n_occupied
 #' @return numeric
 NULL
 ContainerRefClass$methods(
@@ -69,7 +69,7 @@ ContainerRefClass$methods(
 #' Retrieve the empty well count
 #'
 #' @family Container
-#' @name ContainerRefNode_n_empty
+#' @name ContainerRefClass_n_empty
 #' @return numeric
 NULL
 ContainerRefClass$methods(
@@ -80,7 +80,7 @@ ContainerRefClass$methods(
 #' Retrieve the well count (occupied + empty)
 #'
 #' @family Container
-#' @name ContainerRefNode_n_wells
+#' @name ContainerRefClass_n_wells
 #' @return numeric
 NULL
 ContainerRefClass$methods(
@@ -96,7 +96,7 @@ ContainerRefClass$methods(
 #' Retrieve a named vector of placements uri
 #' 
 #' @family Container
-#' @name ContainerRefNode_get_placements
+#' @name ContainerRefClass_get_placements
 #' @return a named vector of placements, possibly an empty charcater vector
 NULL
 ContainerRefClass$methods(
@@ -110,7 +110,7 @@ ContainerRefClass$methods(
 #' Retrieve a named list of artifact XML:xmlNode or ArtifactRefClass objects
 #' 
 #' @family Container
-#' @name ContainerRefNode_get_artifacts
+#' @name ContainerRefClass_get_artifacts
 #' @param asNode logical if TURE cast the result to ArtifactRefClass
 #' @return a named vector of artifact XML:xmlNode or ArtifactRefClass objects
 NULL
@@ -126,7 +126,7 @@ ContainerRefClass$methods(
 #' Retrieve a named list of artifact XML:xmlNode or SampleRefClass
 #' 
 #' @family Container
-#' @name ContainerRefNode_get_samples
+#' @name ContainerRefClass_get_samples
 #' @param asNode logical if TURE cast the result to SampleRefClass
 #' @return a named vector of sample XML:xmlNode or SampleRefClass objects
 NULL
