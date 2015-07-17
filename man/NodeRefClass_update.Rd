@@ -30,8 +30,8 @@ Other Node: \code{\link{ArtifactRefClass}},
   \code{\link{NodeRefClass_new}};
   \code{\link{NodeRefClass_show}};
   \code{\link{NodeRefClass_toString}};
-  \code{\link{NodeRefClass_unames get the unique child
-  names}}; \code{\link{NodeRefClass}},
+  \code{\link{NodeRefClass_unames}};
+  \code{\link{NodeRefClass}},
   \code{\link{NodeRefClass-class}};
   \code{\link{ProcessRefClass}},
   \code{\link{ProcessRefClass-class}};

@@ -29,8 +29,8 @@ Other Node: \code{\link{ArtifactRefClass}},
   \code{\link{NodeRefClass_has_lims}};
   \code{\link{NodeRefClass_new}};
   \code{\link{NodeRefClass_show}};
-  \code{\link{NodeRefClass_unames get the unique child
-  names}}; \code{\link{NodeRefClass_update}};
+  \code{\link{NodeRefClass_unames}};
+  \code{\link{NodeRefClass_update}};
   \code{\link{NodeRefClass}},
   \code{\link{NodeRefClass-class}};
   \code{\link{ProcessRefClass}},
