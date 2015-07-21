@@ -18,4 +18,7 @@ a named list of container XML::xmlNode
 Get one or more samples using queries on name, projectlimsid, projectname
 It is possible to also filter the query on UDF values but it may be easier to
 }
+\seealso{
+Other Lims Sample: \code{\link{create_sample_node}}
+}
 

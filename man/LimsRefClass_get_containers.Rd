@@ -18,4 +18,7 @@ a named list of container XML::xmlNode
 \description{
 Get one or more containers by name, state, etc
 }
+\seealso{
+Other Lims Container: \code{\link{create_container_node}}
+}
 

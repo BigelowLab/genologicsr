@@ -5,7 +5,7 @@
 \title{Create an unresolved file node}
 \usage{
 create_file_node(attached_to = "", original_location = "",
-  namespace = "file", ...)
+  namespace = "file")
 }
 \arguments{
 \item{attached_to}{character uri of the artifact to attach the file to}

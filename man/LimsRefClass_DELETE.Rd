@@ -15,7 +15,8 @@ logical
 Typically this is a file (resource = 'files')
 }
 \seealso{
-Other Lims: \code{\link{LimsRefClass_POST}};
+Other Lims: \code{\link{LimsRefClass_BROWSE}};
+  \code{\link{LimsRefClass_POST}};
   \code{\link{LimsRefClass_PUSH}};
   \code{\link{LimsRefClass_PUT}};
   \code{\link{LimsRefClass_get_byLimsid}};

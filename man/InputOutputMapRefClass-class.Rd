@@ -26,7 +26,9 @@ An Input-Output-Map representation that subclasses from NodeRefClass
 \item{\code{output_type}}{character}
 }}
 \seealso{
-Other Node: \code{\link{ArtifactRefClass}},
+Other Node: \code{\link{ArtifactGroupRefClass}},
+  \code{\link{ArtifactGroupRefClass-class}};
+  \code{\link{ArtifactRefClass}},
   \code{\link{ArtifactRefClass-class}};
   \code{\link{ContainerRefClass}},
   \code{\link{ContainerRefClass-class}};
@@ -35,6 +37,7 @@ Other Node: \code{\link{ArtifactRefClass}},
   \code{\link{FieldRefClass-class}};
   \code{\link{FileRefClass}},
   \code{\link{FileRefClass-class}};
+  \code{\link{NodeRefClass_BROWSE}};
   \code{\link{NodeRefClass_DELETE}};
   \code{\link{NodeRefClass_GET}};
   \code{\link{NodeRefClass_POST}};
@@ -54,6 +57,8 @@ Other Node: \code{\link{ArtifactRefClass}},
   \code{\link{NodeRefClass-class}};
   \code{\link{ProcessRefClass}},
   \code{\link{ProcessRefClass-class}};
+  \code{\link{ProjectRefClass}},
+  \code{\link{ProjectRefClass-class}};
   \code{\link{ResearcherRefClass}},
   \code{\link{ResearcherRefClass-class}};
   \code{\link{SampleRefClass}},

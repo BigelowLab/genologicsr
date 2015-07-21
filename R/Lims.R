@@ -7,6 +7,7 @@
 #' @field auth httr::authenticate object for LIMS
 #' @field fileauth httr::authenticate object for filestore
 #' @field handle httr::handle object
+#' @include Node.R
 #' @export
 LimsRefClass <- setRefClass('LimsRefClass',
    fields = list(
@@ -89,7 +90,33 @@ LimsRefClass$methods(
       }
       invisible(x)
    }) # verify_response
-    
+  
+#' BROWSE a URI in a browser if in interactive session
+#'
+#' @family Lims
+#' @name LimsRefClass_BROWSE
+#' @param x XML::xmlNode or NodeRefClass
+#' @param ... further arguments for httr::BROWSE
+NULL
+LimsRefClass$methods(
+   BROWSE = function(x, ...){
+   
+      stopifnot(is.interactive())
+      
+      if (is_xmlNode(x)){
+         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+      } else if (inherits(x, 'character')) {
+         uri <- x[1]
+      } else if (inherits(x, 'NodeRefClass')){
+         uri <- x$uri
+      }
+      
+      httr::BROWSE(uri, 
+         ..., 
+         .self$auth, 
+         handle = .self$handle)
+   })
+     
 #' Create an exception node
 #'
 #' @name LimsRefClass_create_exception
@@ -120,7 +147,7 @@ LimsRefClass$methods(
       x <- httr::GET(uri, 
          ..., 
          .self$auth,
-         handle = handle)
+         handle = .self$handle)
       
       x <- .self$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){

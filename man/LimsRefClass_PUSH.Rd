@@ -24,7 +24,8 @@ POST the resolved file resource to 'files'
 return the resolved file resource
 }
 \seealso{
-Other Lims: \code{\link{LimsRefClass_DELETE}};
+Other Lims: \code{\link{LimsRefClass_BROWSE}};
+  \code{\link{LimsRefClass_DELETE}};
   \code{\link{LimsRefClass_POST}};
   \code{\link{LimsRefClass_PUT}};
   \code{\link{LimsRefClass_get_byLimsid}};

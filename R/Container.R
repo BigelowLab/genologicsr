@@ -20,7 +20,13 @@ ContainerRefClass <- setRefClass("ContainerRefClass",
          .self$name = XML::xmlValue(.self$node[['name']]) 
          .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
          .self$state = XML::xmlValue(.self$node[['state']])    
-      })
+      },
+   update = function(){
+      callSuper(.self$node)
+      .self$name = XML::xmlValue(.self$node[['name']]) 
+      .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
+      .self$state = XML::xmlValue(.self$node[['state']])    
+   })
    )
    
 Container <- getRefClass("ContainerRefClass")
@@ -107,12 +113,11 @@ ContainerRefClass$methods(
       invisible(puri)
    })
 
-#' Retrieve a named list of artifact XML:xmlNode or ArtifactRefClass objects
+#' Retrieve a named list ArtifactRefClass objects
 #' 
 #' @family Container
 #' @name ContainerRefClass_get_artifacts
-#' @param asNode logical if TURE cast the result to ArtifactRefClass
-#' @return a named vector of artifact XML:xmlNode or ArtifactRefClass objects
+#' @return a named list of ArtifactRefClass objects
 NULL
 ContainerRefClass$methods(
    get_artifacts = function(){
@@ -166,3 +171,27 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
       namespaceDefinitions = get_NSMAP()[c("ri",  "udf", "file", "art", "con")],
       .children = x)
 } # create_containers_details
+
+
+#' Create a container XML::xmlNode suitable for POSTing 
+#' 
+#' @export
+#' @family Lims Container
+#' @param name character container name (optional)
+#' @param type_uri character uri of container type (required)
+#' @return XML::xmlNode
+create_container_node <- function(type_uri, name = NULL){
+   
+      if (missing(type_uri)) stop("create_project_node type uri is required")
+      
+      nmsp <- 'con'
+            
+      kids <- list(XML::newXMLNode("type", type_uri[1]))
+      if (!is.null(name)) kids <- append(kids, XML::newXMLNode("name", name[1]))
+      
+      XML::newXMLNode('container',
+         namespace = nmsp,
+         namespaceDefinitions = get_NSMAP()[nmsp],
+         .children = kids)
+      
+} # create_container_node

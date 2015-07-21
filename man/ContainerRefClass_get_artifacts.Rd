@@ -2,15 +2,12 @@
 % Please edit documentation in R/Container.R
 \name{ContainerRefClass_get_artifacts}
 \alias{ContainerRefClass_get_artifacts}
-\title{Retrieve a named list of artifact XML:xmlNode or ArtifactRefClass objects}
-\arguments{
-\item{asNode}{logical if TURE cast the result to ArtifactRefClass}
-}
+\title{Retrieve a named list ArtifactRefClass objects}
 \value{
-a named vector of artifact XML:xmlNode or ArtifactRefClass objects
+a named list of ArtifactRefClass objects
 }
 \description{
-Retrieve a named list of artifact XML:xmlNode or ArtifactRefClass objects
+Retrieve a named list ArtifactRefClass objects
 }
 \seealso{
 Other Container: \code{\link{ContainerRefClass_POST}};

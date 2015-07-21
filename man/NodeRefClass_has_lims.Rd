@@ -12,7 +12,9 @@ Determine if http transactions (GET, PATCH, POST, HEAD, PUT, and DELETE)
 are possible for this Node
 }
 \seealso{
-Other Node: \code{\link{ArtifactRefClass}},
+Other Node: \code{\link{ArtifactGroupRefClass}},
+  \code{\link{ArtifactGroupRefClass-class}};
+  \code{\link{ArtifactRefClass}},
   \code{\link{ArtifactRefClass-class}};
   \code{\link{ContainerRefClass}},
   \code{\link{ContainerRefClass-class}};
@@ -23,6 +25,7 @@ Other Node: \code{\link{ArtifactRefClass}},
   \code{\link{FileRefClass-class}};
   \code{\link{InputOutputMapRefClass}},
   \code{\link{InputOutputMapRefClass-class}};
+  \code{\link{NodeRefClass_BROWSE}};
   \code{\link{NodeRefClass_DELETE}};
   \code{\link{NodeRefClass_GET}};
   \code{\link{NodeRefClass_POST}};
@@ -41,6 +44,8 @@ Other Node: \code{\link{ArtifactRefClass}},
   \code{\link{NodeRefClass-class}};
   \code{\link{ProcessRefClass}},
   \code{\link{ProcessRefClass-class}};
+  \code{\link{ProjectRefClass}},
+  \code{\link{ProjectRefClass-class}};
   \code{\link{ResearcherRefClass}},
   \code{\link{ResearcherRefClass-class}};
   \code{\link{SampleRefClass}},

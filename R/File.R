@@ -63,11 +63,11 @@ FileRefClass$methods(
 #' @param namespace character the namespace for the resource
 #' @return XML::xmlNode
 create_file_node <- function(attached_to = "", original_location = "",
-   namespace = 'file', ...){
+   namespace = 'file'){
    nsr <- get_NSMAP()[namespace[1]]
    XML::newXMLNode(namespace[1],
       namespace = namespace[1],
-      namespaceDefinitions = nsr,,
+      namespaceDefinitions = nsr,
       .children = list(
          XML::newXMLNode("attached-to", attached_to),
          XML::newXMLNode("original-location", original_location)) )

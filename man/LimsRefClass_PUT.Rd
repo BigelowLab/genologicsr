@@ -15,7 +15,8 @@ xmlNode
 PUT a resource
 }
 \seealso{
-Other Lims: \code{\link{LimsRefClass_DELETE}};
+Other Lims: \code{\link{LimsRefClass_BROWSE}};
+  \code{\link{LimsRefClass_DELETE}};
   \code{\link{LimsRefClass_POST}};
   \code{\link{LimsRefClass_PUSH}};
   \code{\link{LimsRefClass_get_byLimsid}};

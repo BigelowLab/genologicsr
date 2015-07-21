@@ -35,6 +35,8 @@ NodeRefClass$methods(
       if ( missing(node) || missing(lims) ) {
          return(callSuper(...))
       }
+         
+      callSuper(...)
       
       if (!inherits(lims, "LimsRefClass") && !is.null(lims) ) 
          stop("NodeRefClass$initialize lims is must be of class LimsRefClass or NULL")
@@ -58,13 +60,8 @@ NodeRefClass$methods(
          stop("NodeRefClass$new: x must be either xmlNode or character uri")
       }
       
-      .self$field('ns', XML::xmlNamespace(.self$node))
+      .self$update()
       
-      atts <- XML::xmlAttrs(.self$node)
-      if ('uri' %in% names(atts)) .self$field('uri', trimuri(atts[['uri']]))
-      if ('limsid' %in% names(atts)) .self$field('limsid', atts[['limsid']])
-   
-      callSuper(...)
    }) # new
 
 
@@ -91,14 +88,16 @@ NULL
 NodeRefClass$methods(
    update = function(x){
    
+      if (missing(x)) x <- .self$node
+      
       if (!is_xmlNode(x) || is_exception(x)) 
          stop("NodeRefClass$update input must be non-exception XML::xmlNode")
 
       .self$field('node', x)
       .self$field('ns', XML::xmlNamespace(.self$node))
        
-      atts <- xmlAttrs(.self$node)
-      .self$field('uri', trimuri(atts[['uri']]))
+      atts <- XML::xmlAttrs(.self$node)
+      if('uri' %in% names(atts)) .self$field('uri', trimuri(atts[['uri']]))
       if ('limsid' %in% names(atts)) .self$field('limsid', atts[['limsid']])
    }) # update
 
@@ -193,8 +192,8 @@ NodeRefClass$methods(
       if (!is_exception(r)) {
          .self$update(r)
       } else {
-         cat("NodeRefClass: DELETE exception\n")
-         cat("NodeRefClass: node not deleted because...\n")
+         cat("NodeRefClass: POST exception\n")
+         cat("NodeRefClass: node not POSTed because...\n")
          cat(XML::xmlValue(r[['message']]), "\n")
          ok <- FALSE
       }
@@ -202,6 +201,16 @@ NodeRefClass$methods(
  
    }) #POST
 
+#' BROWSE this node in a browser if in interactive session
+#'
+#' @family Node
+#' @name NodeRefClass_BROWSE
+#' @param ... furtehr arguments for httr::BROWSE
+NULL
+NodeRefClass$methods(
+   BROWSE = function(...){
+      .self$lims$BROWSE(.self)
+   })
 
 #' Retrieve a vector of unique child names
 #'

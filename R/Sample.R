@@ -153,6 +153,42 @@ create_sample_details <- function(x){
       namespace = "smp",
       namespaceDefinitions = get_NSMAP()['smp'],
       .children = x)
+} # create_sample_details
+
+#' Create a sample XML::xmlNode suitable for POSTing 
+#' 
+#' @export
+#' @family Lims Sample
+#' @param name character container name (required)
+#' @param project_uri character uri of project (required)
+#' @param container_uri character uri of the container
+#' @param well character location on the well such as 'A:1' (required)
+#' @return XML::xmlNode
+create_sample_node <- function(name = NULL, 
+   project_uri = NULL, container_uri = NULL, well = NULL){
    
-   
-}
+      if (is.null(name)) stop("create_sample_node name is required")
+      if (is.null(project_uri)) stop("create_sample_node project_uri is required")
+      if (is.null(container_uri)) stop("create_sample_node container_uri is required")
+      if (is.null(well)) stop("create_sample_node well is required")
+      
+      nmsp <- 'smp'
+            
+      kids <- list(
+         XML::newXMLNode("name", name[1]),
+         XML::newXMLNode("project_uri", project_uri[1]),
+         XML::newXMLNode("location",
+            .children = list(
+               XML::newXMLNode("container", container_uri[1]),
+               XML::newXMLNode("value", well[1])
+               )
+            )
+         )
+      
+      XML::newXMLNode('samplecreation',
+         namespace = nmsp,
+         namespaceDefinitions = get_NSMAP()[nmsp],
+         .children = kids)
+      
+} # create_container_node
+
