@@ -1,6 +1,6 @@
 # ArtifactGroup.R
 
-#' An ArtifactGroup (aka Project) representation that subclasses from NodeRefClass
+#' An ArtifactGroup representation that subclasses from NodeRefClass
 #' 
 #' @family Node
 #' @field name character, name if any
@@ -34,3 +34,32 @@ ArtifactGroupRefClass$methods(
       AA <- .self$lims$batchretrieve(uris,rel = 'artifacts', asNode = TRUE)
       invisible(AA)
    })
+
+
+#' PUT is disallowed for artifact groups
+#' @family ArtifactGroup
+#' @name ArtifactGroupRefNode_PUT
+NULL
+ArtifactGroupRefClass$methods(
+   PUT = function(){
+      cat("ArtifactGroupRefClass_PUT in not a permitted transaction\n")
+   })
+   
+#' POST is disallowed for artifact groups
+#' @family ArtifactGroup
+#' @name ArtifactGroupRefNode_POST
+NULL
+ArtifactGroupRefClass$methods(
+   POST = function(){
+      cat("ArtifactGroupRefClass_POST in not a permitted transaction\n")
+   })
+
+#' DELETE is disallowed for ArtifactGroup
+#' @family ArtifactGroup
+#' @name ArtifactGrouptRefNode_DELETE
+NULL
+ArtifactGroupRefClass$methods(
+   DELETE = function(){
+      cat("ArtifactGrouptRefClass_DELETE in not a permitted transaction\n")
+   })
+   

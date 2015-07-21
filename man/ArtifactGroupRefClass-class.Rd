@@ -4,9 +4,9 @@
 \name{ArtifactGroupRefClass-class}
 \alias{ArtifactGroupRefClass}
 \alias{ArtifactGroupRefClass-class}
-\title{An ArtifactGroup (aka Project) representation that subclasses from NodeRefClass}
+\title{An ArtifactGroup representation that subclasses from NodeRefClass}
 \description{
-An ArtifactGroup (aka Project) representation that subclasses from NodeRefClass
+An ArtifactGroup representation that subclasses from NodeRefClass
 }
 \section{Fields}{
 
