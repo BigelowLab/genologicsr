@@ -43,11 +43,10 @@ SampleRefClass$methods(
       callSuper(prefix = prefix)
       cat(prefix, "  Sample name: ", .self$name, "\n", sep = "")
       cat(prefix, "  Sample type: ", .self$type, "\n", sep = "")
-      cat(prefix, "  Sample project: ", .self$project, "\n", sep = "")
       cat(prefix, "  Sample date_received: ", .self$date_received, "\n", sep = "")
       cat(prefix, "  Sample date_completed: ", .self$date_completed, "\n", sep = "")
       cat(prefix, "  Sample biosource: ", .self$get_biosource(), "\n", sep = "")
-      cat(prefix, "  Sample artifact: ", .sefl$get_artifact(form = "uri"), "\n", sep = "")
+      cat(prefix, "  Sample artifact: ", .self$get_artifact(form = "uri"), "\n", sep = "")
    })  
 
 
@@ -78,8 +77,14 @@ SampleRefClass$methods(
 NULL
 SampleRefClass$methods(
    get_biosource = function(){
+      # biosource element may be empty
+      x <- ""
       nd <- .self$node[['biosource']]
-      if (!is.null(nd)) XML::xmlAttrs(nd)[['name']] else ""
+      if (!is.null(nd)) {
+         atts <- XML::xmlAttrs(nd)
+         if ( !is.null(atts) && ("name" %in% names(atts) )) x <- atts[['name']] 
+      }
+      return(x)
    })
  
   
@@ -115,7 +120,7 @@ SampleRefClass$methods(
 #' @return character of NodeRefClass, possibly "" or NULL
 NULL
 SampleRefClass$methods(
-   get_project = function(form = c("Node", "uri")[2]){
+   get_project = function(form = c("Node", "uri")[1]){
       if (!.self$has_child("project")){
          if(form == "uri") {
             x <- ""
@@ -124,7 +129,7 @@ SampleRefClass$methods(
          }
       } else {
          x <- XML::xmlAttrs(.self$node[['project']])[['uri']]
-         if (tolower(form) == "Node"){
+         if (tolower(form) == "node"){
             x <- .self$lims$GET(x, asNode = TRUE)
          }
       }

@@ -19,7 +19,8 @@ Reference class for Lims instance
 
 \item{\code{fileauth}}{httr::authenticate object for filestore}
 
-\item{\code{handle}}{httr::handle object}
+\item{\code{handle}}{httr::handle object - accessor function provides a fresh handle
+for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/64194_2282137119ca48e1893054091456fe43.html#on-re-using-handles}}
 }}
 \seealso{
 Other Lims: \code{\link{LimsRefClass_BROWSE}};

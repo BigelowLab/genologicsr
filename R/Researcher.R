@@ -97,3 +97,68 @@ ResearcherRefClass$methods(
    
 ##### Methods above
 ##### Functions below
+
+
+#' Create a researcher XML::xmlNode suitable for POSTing 
+#' 
+#' @export
+#' @family Lims Researcher
+#' @param firstname character researcher first name (required)
+#' @param lastname character researcher last name (required)
+#' @param email character researcher email (required)
+#' @param username character if credentailed the required
+#' @param password character if credentailed then required
+#' @param initials exactly 3 alphanumeric characters, if credentialed then required
+#' @param role character vector of one or more roles
+#' @param account_locked logical
+#' @param lab character URI of the lab
+#' @return XML::xmlNode
+create_researcher_node <- function(firstname = NULL, lastname = NULL,
+   email = NULL, username = NULL, password = NULL, initials = NULL,
+   role = NULL, account_locked = NULL, lab = NULL){
+
+      if (is.null(firstname)) stop("create_researcher_node firstname is required")
+      if (is.null(lastname)) stop("create_researcher_node lastname is required")
+      if (is.null(email)) stop("create_researcher_node email is required")
+
+      nmsp <- c('udf','ri','res')
+            
+      kids <- list(
+         XML::newXMLNode("firstname", firstname[1]),
+         XML::newXMLNode("lastname", lastname[1]),
+         XML::newXMLNode("email", email[1]))
+      
+      if (!is.null(initials)) kids <- base::append(kids, XML::newXMLNode("initials", initials[1]))
+      if (!is.null(lab)) {
+         labnode <- XML::newXMLNode("initials")
+         XML::xmlAttrs(labnode) <- c("uri" = lab[1])
+         kids <- base::append(kids, labnode)
+      }
+      
+      creds <- XML::newXMLNode("credentials")
+      if (!is.null(role)){
+         allowed <- c("systemadministrator","administrator","labtech", "webclient")
+         if (!all(role %in% allowed)){
+           stop(paste("Allowed rolls are only:", paste(allowed, collapse = " ")))
+         }
+         creds <- XML::newXMLNode("credentials")
+         k <- list()
+         for (r in role) k <- append(k, XML::newXMLNode("role", name = r))
+         if (!is.null(username)) k <- base::append(k, XML::newXMLNode("username", username[1]))
+         if (!is.null(password)) k <- base::append(k, XML::newXMLNode("password", password[1]))
+         if (!is.null(account_locked)) k <- base::append(k, 
+            XML::newXMLNode("account-locked", tolower(as.character(account_locked[1]))))
+            
+         creds <- XML::addChildren(creds, kids = k)
+         kids <- base::append(kids, creds)
+      }
+      
+      
+      XML::newXMLNode('researcher',
+         namespace = nmsp,
+         namespaceDefinitions = get_NSMAP()[nmsp],
+         .children = kids)
+      
+} # create_container_node
+
+

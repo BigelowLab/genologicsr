@@ -47,6 +47,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass-class}};
   \code{\link{ProcessRefClass}},
   \code{\link{ProcessRefClass-class}};
+  \code{\link{ProjectsRefClass}},
+  \code{\link{ProjectsRefClass-class}};
   \code{\link{ResearcherRefClass}},
   \code{\link{ResearcherRefClass-class}};
   \code{\link{SampleRefClass}},

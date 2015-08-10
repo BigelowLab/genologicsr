@@ -9,6 +9,8 @@
 \item{...}{further arguments for httr::GET/DELETE/POST}
 
 \item{filename}{character, the fully qualified name of the file we are pushing}
+
+\item{use}{character the type of file transfer to use: duck, scp, cp or curl}
 }
 \value{
 XML::xmlNode or FileRefClass

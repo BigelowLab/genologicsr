@@ -4,6 +4,8 @@
 \alias{ContainerRefClass_get_samples}
 \title{Retrieve a named list of artifact XML:xmlNode or SampleRefClass}
 \arguments{
+\item{NAME}{well name such as 'A:1' or NULL to retrieve all}
+
 \item{asNode}{logical if TURE cast the result to SampleRefClass}
 }
 \value{

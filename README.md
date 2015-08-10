@@ -42,9 +42,19 @@ USERNAME=anotheruser
 PASSWORD=anotherpassword
 ```
 
-Then install into the system wide library with
+Then install ...
 
 ```
 library(devtools)
+install_github("BigelowLab/genologicsr")
+
+# or into the the system-wide library
 with_lib(.Library, install_github("BigelowLab/genologicsr"))
 ```
+
+#### Working with versions
+
+Even though much of API v2 interoperates with API v1 there are some significant resources missing in v1 that are present in v2.  Some capabilities in `geneologicsr` adapt to the different versions including...
+
++ `LimsRefClass$get_samples()`  
++ `ContainerRefClass$get_samples()`

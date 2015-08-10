@@ -4,7 +4,7 @@
 \alias{NodeRefClass_BROWSE}
 \title{BROWSE this node in a browser if in interactive session}
 \arguments{
-\item{...}{furtehr arguments for httr::BROWSE}
+\item{...}{further arguments for httr::BROWSE}
 }
 \description{
 BROWSE this node in a browser if in interactive session
@@ -44,6 +44,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{ProcessRefClass-class}};
   \code{\link{ProjectRefClass}},
   \code{\link{ProjectRefClass-class}};
+  \code{\link{ProjectsRefClass}},
+  \code{\link{ProjectsRefClass-class}};
   \code{\link{ResearcherRefClass}},
   \code{\link{ResearcherRefClass-class}};
   \code{\link{SampleRefClass}},

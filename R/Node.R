@@ -77,7 +77,7 @@ NodeRefClass$methods(
       cat(prefix, "  Node children: ", paste(.self$unames(), collapse = " "), "\n", sep = "")
    }) #show
 
-   
+ 
 
 #' Update the node information
 #' 
@@ -205,11 +205,11 @@ NodeRefClass$methods(
 #'
 #' @family Node
 #' @name NodeRefClass_BROWSE
-#' @param ... furtehr arguments for httr::BROWSE
+#' @param ... further arguments for httr::BROWSE
 NULL
 NodeRefClass$methods(
    BROWSE = function(...){
-      .self$lims$BROWSE(.self)
+      if (httr::url_ok(.self$uri)) httr::BROWSE(.self$uri,...)
    })
 
 #' Retrieve a vector of unique child names

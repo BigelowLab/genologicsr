@@ -12,4 +12,7 @@ a list of  ResearcherRefClass, a data frame or NULL
 \description{
 Retrieve a list of ResearcherRefNodes or a data.frame of the good stuff
 }
+\seealso{
+Other Lims Researcher: \code{\link{create_researcher_node}}
+}
 

@@ -3,8 +3,11 @@
 \name{ContainerRefClass_get_artifacts}
 \alias{ContainerRefClass_get_artifacts}
 \title{Retrieve a named list ArtifactRefClass objects}
+\arguments{
+\item{NAME}{well name such as 'A:1' or NULL to retrieve all}
+}
 \value{
-a named list of ArtifactRefClass objects
+a named list of ArtifactRefClass objects or NULL
 }
 \description{
 Retrieve a named list ArtifactRefClass objects

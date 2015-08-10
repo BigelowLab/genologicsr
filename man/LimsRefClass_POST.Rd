@@ -6,6 +6,8 @@
 \arguments{
 \item{x}{XML::xmlNode to or NodeRefClass POST}
 
+\item{uri}{character if NULL taken from \code{x}}
+
 \item{...}{further arguments for httr::POST}
 }
 \value{

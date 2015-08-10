@@ -190,3 +190,38 @@ get_NSMAP <- function(){
     ver='http://genologics.com/ri/version',
     wkfcnf='http://genologics.com/ri/workflowconfiguration')
 }   # get_NSMAP
+
+
+
+#' Check one or more a well names to make sure they follow the A01 or A:1 format
+#' @export 
+#' @param well character vector of well names such as A:1 or A01
+#' @param form character, the desired output format either "A:1" or "A01"
+#' @return a character vector of well names formatted as specified
+A01 <- function(well, form = c("A:1", "A01")[1]){
+   
+   # A:1 to A01
+   ac1_to_a01 <- function(x){
+      a <- substring(x,1,1)
+      n <- as.numeric(substring(x, 3, nchar(x)))
+      sprintf("%s%2.2i", a,n)
+   }
+   
+   # A01 to A:1
+   a01_to_ac1 <- function(x){
+      a <- substring(x,1,1)
+      n <- as.numeric(substring(x, 2, nchar(x)))
+      sprintf("%s:%s",a,n)
+   }
+   
+   ix <- grepl(":", well, fixed = TRUE)
+   if (tolower(form[1])=="a:1") {
+      # "A:1"
+      if (any(!ix)) well[!ix] <- a01_to_ac1(well[!ix])
+   } else {  
+      # "A01"
+      if (any(ix)) well[ix] <- ac1_to_a01(well[ix])
+   }
+   return(well)
+}
+

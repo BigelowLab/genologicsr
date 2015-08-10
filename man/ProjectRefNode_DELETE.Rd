@@ -7,6 +7,7 @@
 DELETE is disallowed for Project
 }
 \seealso{
-Other Project: \code{\link{ProjectRefNode_POST}}
+Other Project: \code{\link{ProjectRefClass_get_researcher}};
+  \code{\link{ProjectRefNode_POST}}
 }
 

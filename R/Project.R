@@ -13,11 +13,19 @@ ProjectRefClass <- setRefClass("ProjectRefClass",
    methods = list( 
       initialize = function(...){
          callSuper(...)
-         .self$update()   
+         .self$update()  
       },
    update = function(){
          callSuper(.self$node)
-         .self$name = XML::xmlValue(.self$node[['name']])  
+         if ("name" %in% names(XML::xmlChildren(.self$node))) {
+            .self$name = XML::xmlValue(.self$node[['name']])
+         } else {
+            .self$name <- ""
+         }
+      },
+   show = function(prefix = ""){
+      callSuper(prefix = prefix)
+      cat(prefix, "  Project name:", .self$name, "\n", sep = "")
       })
    )
 
@@ -41,6 +49,25 @@ ProjectRefClass$methods(
       cat("ProjectRefClass_DELETE in not a permitted transaction\n")
    })
    
+
+
+#' Retrieve the Researcher assigned to the project
+#' @family Project
+#' @name ProjectRefClass_get_researcher
+#' @return ResearcherRefClass node or NULL
+NULL
+ProjectRefClass$methods(
+   get_researcher = function(){
+      x <- NULL
+      if ("researcher" %in% names(XML::xmlChildren(.self$node))){
+         URI <- XML::xmlAttrs(.self$node[['researcher']])
+         x <- .self$lims$GET(URI)
+      }
+      invisible(x)
+   })
+
+###### Methods above
+###### Functions below
 
 #' Create a project XML::xmlNode suitable for POSTing 
 #' 

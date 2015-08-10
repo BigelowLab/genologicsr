@@ -3,8 +3,11 @@
 \name{ContainerRefClass_get_placements}
 \alias{ContainerRefClass_get_placements}
 \title{Retrieve a named vector of placements uri}
+\arguments{
+\item{NAME}{character vector of well names (A:1 etc.) or NULL to get all}
+}
 \value{
-a named vector of placements, possibly an empty charcater vector
+a named vector of placements, possibly an empty character vector
 }
 \description{
 Retrieve a named vector of placements uri

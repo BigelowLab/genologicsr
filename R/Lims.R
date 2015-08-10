@@ -6,7 +6,8 @@
 #' @field baseuri character the base uri
 #' @field auth httr::authenticate object for LIMS
 #' @field fileauth httr::authenticate object for filestore
-#' @field handle httr::handle object
+#' @field handle httr::handle object - accessor function provides a fresh handle
+#'   for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/64194_2282137119ca48e1893054091456fe43.html#on-re-using-handles}
 #' @include Node.R
 #' @export
 LimsRefClass <- setRefClass('LimsRefClass',
@@ -15,7 +16,8 @@ LimsRefClass <- setRefClass('LimsRefClass',
       baseuri = 'character',
       auth = 'ANY',
       fileauth = 'ANY',
-      handle = 'ANY')
+      handle = function() httr::handle(.self$baseuri),
+      timeout = 'integer')
 )  
 
 
@@ -60,8 +62,7 @@ LimsRefClass$methods(
    validate_session = function(){
       ok <- TRUE
       x <- httr::GET(.self$baseuri, 
-         .self$auth, 
-         handle = .self$handle)
+         .self$auth)
       if (httr::status_code(x) != 200) {
          warning("response has non-200 status code")
          print(x)
@@ -113,8 +114,7 @@ LimsRefClass$methods(
       
       httr::BROWSE(uri, 
          ..., 
-         .self$auth, 
-         handle = .self$handle)
+         .self$auth)
    })
      
 #' Create an exception node
@@ -146,15 +146,14 @@ LimsRefClass$methods(
    GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = TRUE){
       x <- httr::GET(uri, 
          ..., 
-         .self$auth,
-         handle = .self$handle)
+         .self$auth)
       
       x <- .self$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
          uri <- XML::xmlAttrs(x[['next-page']])[['uri']]
          doNext <- TRUE
          while(doNext){
-            y <- .self$check(httr::GET(uri, .self$auth, handle = handle))
+            y <- .self$check(httr::GET(uri, .self$auth))
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
@@ -194,8 +193,7 @@ LimsRefClass$methods(
          ..., 
          body = body, 
          httr::content_type_xml(), 
-         .self$auth,
-         handle = .self$handle) 
+         .self$auth) 
       .self$check(r)
    }) # PUT
 
@@ -205,27 +203,28 @@ LimsRefClass$methods(
 #' @family Lims
 #' @name LimsRefClass_POST
 #' @param x XML::xmlNode to or NodeRefClass POST
+#' @param uri character if NULL taken from \code{x}
 #' @param ... further arguments for httr::POST
 #' @return XML::xmlNode
 NULL
 LimsRefClass$methods(
-   POST = function(x, ...){
+   POST = function(x, uri = NULL, ...){
       if (missing(x)) 
          stop("LimsRefClass$POST x as XML::xmlNode or NodeRefClass is required")
          
+         
       if (inherits(x, 'NodeRefClass')){
-         uri <- x$uri
+         if (is.null(uri)) uri <- x$uri
          body <- x$toString()
       } else {
-         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+         if (is.null(uri)) uri <- trimuri(XML::xmlAttrs(x)[['uri']])
          body <- XML::toString.XMLNode(x)
       }
       r <- httr::POST(uri, 
          ..., 
          body = body, 
          httr::content_type_xml(),
-         .self$auth,
-         handle = .self$handle) 
+         .self$auth) 
       .self$check(r)
    }) # POST
    
@@ -252,8 +251,7 @@ LimsRefClass$methods(
       }
       r <- httr::DELETE(uri, 
          ...,  
-         .self$auth,
-         handle = .self$handle)
+         .self$auth)
       if (status_code(r) != 204){
          warn("LimsRefClass$DELETE unknown issue")
          print(r)
@@ -278,11 +276,12 @@ LimsRefClass$methods(
 #' @param x XML::xmlNode of the artifact to attach to 
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
+#' @param use character the type of file transfer to use: duck, scp, cp or curl
 #' @return XML::xmlNode or FileRefClass
 NULL
 LimsRefClass$methods(
    PUSH = function(x, ..., filename = "", 
-      use = c("scp", "cp", "curl")[3]){
+      use = c("duck", "scp", "cp", "curl")[3]){
       
       stopifnot(inherits(x, 'ArtifactRefClass'))
       
@@ -308,8 +307,7 @@ LimsRefClass$methods(
       r<- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
-         .self$auth, 
-         handle = .self$handle)
+         .self$auth)
       r <- .self$check(r)  
       
       if (is_exception(r)){ return(r)}
@@ -337,12 +335,14 @@ LimsRefClass$methods(
             paste0("file=@", filename[1]),
             "-u", .self$auth[['options']][['userpwd']],
             resolved_node[['content_location']])
-         ok <- system(cmd)
-         if (ok != 0){
-            
-         } else {
-         
-         }   
+         ok <- system(cmd)   
+      } else if (use == 'duck'){
+         up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
+         ok <- duck_upload(filename[1], resolved_node[['content_location']],
+            username = up[[1]], password = up[[2]])
+      }
+      if (!ok) {
+         # now what?
       }
       
       uri <- .self$uri("glsstorage")
@@ -350,8 +350,7 @@ LimsRefClass$methods(
       r <- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
-         .self$auth, 
-         handle = .self$handle)
+         .self$auth)
       r <- .self$check(r)  
       
       if (is_exception(r)){ return(r)}
@@ -434,8 +433,12 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query)
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
-         x <- batch_retrieve(uri, .self, rel = 'samples')
-         x <- lapply(x, function(x) SampleRefClass$new(x, .self))
+         if (.self$version == "v1"){
+            x <- lapply(uri, function(x, lims=NULL) {lims$GET(x)}, lims = .self)
+         } else {
+            x <- batch_retrieve(uri, .self, rel = 'samples')
+            x <- lapply(x, function(x) SampleRefClass$new(x, .self))
+         }
          names(x) <- sapply(x, '[[', 'name')
       }
       invisible(x)
@@ -454,22 +457,22 @@ LimsRefClass$methods(
    
       resource <- 'researchers'
       
-      query = if(is.null(username)) NULL else build_query(list(username=username))
+      query <- if(is.null(username)) NULL else build_query(list(username=username))
       
-      RR <- lims$GET(.self$uri(resource), query = query)
-      rr <- RR['researcher']
+      RR <- .self$GET(.self$uri(resource), query = query)
+      rr <- RR$node['researcher']
       if (length(rr) == 0) return(NULL)
       uri <- sapply(rr, function(x) XML::xmlAttrs(x)[['uri']])
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
       if (asDataFrame){
-         x <- data.frame (name = sapply(x, function(x) x$name),
+         x <- data.frame (limsid = basename(uri),
+            name = sapply(x, function(x) x$name),
             username = sapply(x, function(x) x$username),
             initials = sapply(x, function(x) x$initials),
             email = sapply(x, function(x) x$email),
-            stringsAsFactors = FALSE, 
-            row.names = sapply(x, function(x) x$username))
+            stringsAsFactors = FALSE)
       }
       invisible(x)
    })
@@ -492,7 +495,7 @@ LimsRefClass$methods(
       inputartifactlimsid = NULL, technamefirst = NULL, technamelast = NULL,
       projectname = NULL){
       
-      resources <- 'processes'
+      resource <- 'processes'
       
       query <- list()
       if (!is.null(last_modified)) query[["last-modified"]] <- last_modified
@@ -501,18 +504,95 @@ LimsRefClass$methods(
       if (!is.null(technamefirst)) query[["technamefirst"]] <- technamefirst
       if (!is.null(technamelast)) query[["technamelast"]] <- technamelast
       if (!is.null(projectname)) query[["projectname"]] <- projectname
-      if (!is.null(query)) query <- build_query(query)
+      if (length(query)>0) {
+         query <- build_query(query)
+      } else {
+         query <- NULL
+      }
    
-      x <- lims$GET(.self$uri(resource), query = query)
-      if (length(XML::xmlChildren(x))) return(NULL)
+      x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
+      if (length(XML::xmlChildren(x)) == 0) return(NULL)
       
-      uri <- sapply(x, function(x) XML::xmlAttrs(x)[['uri']])
-      x <- lapply(uri, function(x, lims = NULL) {
+      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      x <- lapply(uri, 
+         function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
-         }, lims = .self)
+         }, 
+         lims = .self)
       
       invisible(x)
    }) # get_processes
+
+
+#' Get one or more Labs - does not leverage /batch/retrieve resources
+#' but provides similar behavior.
+#'
+#' @family Lims Labs
+#' @name LimsRefClass_get_labs
+#' @param name optional lab name
+#' @param last_modified optional character vector in YYYY-MM-DDThh:mm:ssTZD format
+#' @return a list of NodeRefClass or NULL
+LimsRefClass$methods(
+   get_labs = function(name = NULL, last_modified = NULL){
+      
+      resource <- 'labs'
+      
+      query <- list()
+      if (!is.null(last_modified)) query[["last-modified"]] <- last_modified
+      if (!is.null(name)) query[["name"]] <- name
+      if (length(query)>0) query <- build_query(query)
+      if (length(query) == 0) query <- NULL
+      
+      x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
+      if (length(XML::xmlChildren(x)) == 0) return(NULL)
+      
+      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      x <- lapply(uri, 
+         function(x, lims = NULL) {
+            lims$GET(x, asNode = TRUE)
+         }, 
+         lims = .self)
+      names(x) <- sapply(x, function(x) XML::xmlValue(x$node[['name']]) )
+      invisible(x)
+   }) # get_labs
+
+
+#' Get one or more Projects - does not leverage /batch/retrieve resources
+#' but provides similar behavior.
+#'
+#' @family Lims Projects
+#' @name LimsRefClass_get_projects
+#' @param name optional project name
+#' @param last_modified optional character vector in YYYY-MM-DDThh:mm:ssTZD format
+#' @return a list of ProjectRefClass or NULL
+LimsRefClass$methods(
+   get_projects = function(name = NULL, last_modified = NULL){
+      
+      resource <- 'projects'
+      
+      query <- list()
+      if (!is.null(last_modified)) query[["last-modified"]] <- last_modified
+      if (!is.null(name)) query[["name"]] <- name
+      if (length(query)>0) {
+         query <- build_query(query)
+      } else {
+         query <- NULL
+      }
+   
+      x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
+      if (length(XML::xmlChildren(x)) == 0) return(NULL)
+      
+      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      x <- lapply(uri, 
+         function(x, lims = NULL) {
+            lims$GET(x, asNode = TRUE)
+         }, 
+         lims = .self)
+      
+      invisible(x)
+   }) # get_processes
+
+
 
 #' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
 #'
@@ -573,9 +653,9 @@ LimsRefClass$methods(
       URI <- .self$uri(paste0(nm, "s/batch/update"))
       r <- httr::POST(URI, ..., body = xmlString(detail), 
          httr::add_headers(c("Content-Type"="application/xml")),
-         lims$auth, handle = lims$handle)
+         .self$auth)
       
-      x <- lims$check(r)
+      x <- .self$check(r)
       if (!is_exception(x)) {
          rel <- paste0(nm, "s")
          uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
@@ -623,9 +703,9 @@ LimsRefClass$methods(
       URI <- .self$uri(paste0(nm, "s/batch/update"))
       r <- httr::POST(URI, ..., body = xmlString(detail), 
          httr::add_headers(c("Content-Type"="application/xml")),
-         lims$auth, handle = lims$handle)
+         .self$auth)
       
-      x <- lims$check(r)
+      x <- .self$check(r)
       if (!is_exception(x)) {
          rel <- paste0(nm, "s")
          uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
@@ -683,7 +763,7 @@ batch_retrieve <- function(uri, lims,
    URI <- file.path(lims$baseuri, resource)
    r <- httr::POST(URI, ..., body = xmlString(batchNode), 
       httr::add_headers(c("Content-Type"="application/xml")),
-      lims$auth, handle = lims$handle)
+      lims$auth)
    x <- lims$check(r)
    if (!is_exception(x) && asList){
       singleName <- switch(rel,
@@ -737,6 +817,7 @@ parse_node <- function(node, lims){
    nm <- XML::xmlName(node)[1]
    switch(nm,
        'artifact' = ArtifactRefClass$new(node, lims),
+       'processes' = ProcessRefClass$new(node, lims),
        'process' = ProcessRefClass$new(node, lims),
        'container' = ContaineRefClassr$new(node, lims),
        'sample' = SampleRefClass$new(node,lims),
@@ -744,6 +825,8 @@ parse_node <- function(node, lims){
        'researcher' = ResearcherRefClass$new(node, lims),
        'file' = FileRefClass$new(node, lims),
        'field' = FieldRefClass$new(node, lims),
+       'project' = ProjectRefClass$new(node, lims),
+       'projects' = ProjectsRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }
@@ -761,7 +844,6 @@ Lims <- function(configfile){
    if (inherits(x, "try-error")) stop("Error reading config file")
    
    X <- LimsRefClass$new()
-   X$handle <- NULL
    X$field("version", get_config(x, "genologics", "VERSION", default = ""))
    buri <- get_config(x, "genologics", "BASEURI", default = "")
    if (nchar(buri) == 0) stop("base uri not found in config file")
@@ -774,7 +856,6 @@ Lims <- function(configfile){
       httr::authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
                    get_config(x, "glsfilestore", "PASSWORD", default = "") 
       ) )   
-   X$field("handle", httr::handle(buri))
    if (!X$validate_session()) {
       warning("API session failed validation")
       #return(NULL)

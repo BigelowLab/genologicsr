@@ -13,7 +13,7 @@ A Container representation that subclasses from NodeRefClass
 \describe{
 \item{\code{name}}{character, name if any}
 
-\item{\code{state}}{charcater, the state of the container}
+\item{\code{state}}{character, the state of the container}
 
 \item{\code{type}}{character, type if any}
 }}
@@ -51,6 +51,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{ProcessRefClass-class}};
   \code{\link{ProjectRefClass}},
   \code{\link{ProjectRefClass-class}};
+  \code{\link{ProjectsRefClass}},
+  \code{\link{ProjectsRefClass-class}};
   \code{\link{ResearcherRefClass}},
   \code{\link{ResearcherRefClass-class}};
   \code{\link{SampleRefClass}},
