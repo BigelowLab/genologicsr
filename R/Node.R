@@ -90,8 +90,11 @@ NodeRefClass$methods(
    
       if (missing(x)) x <- .self$node
       
-      if (!is_xmlNode(x) || is_exception(x)) 
-         stop("NodeRefClass$update input must be non-exception XML::xmlNode")
+      if (!is_xmlNode(x) || is_exception(x)) {
+         cat("NodeRefClass$update input must be non-exception XML::xmlNode\n")
+         print(str(x))
+         return(invisible(NULL))
+      }
 
       .self$field('node', x)
       .self$field('ns', XML::xmlNamespace(.self$node))

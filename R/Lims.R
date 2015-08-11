@@ -14,9 +14,10 @@ LimsRefClass <- setRefClass('LimsRefClass',
    fields = list(
       version = 'character',
       baseuri = 'character',
+      encoding = 'character',
       auth = 'ANY',
       fileauth = 'ANY',
-      handle = function() httr::handle(.self$baseuri),
+      handle = 'ANY',
       timeout = 'integer')
 )  
 
@@ -62,6 +63,8 @@ LimsRefClass$methods(
    validate_session = function(){
       ok <- TRUE
       x <- httr::GET(.self$baseuri, 
+         encoding = .self$encoding, 
+         handle = .self$handle,
          .self$auth)
       if (httr::status_code(x) != 200) {
          warning("response has non-200 status code")
@@ -85,10 +88,23 @@ LimsRefClass$methods(
          print(rsp)
          print(httr::content(rsp))
       }
-      x <- try(XML::xmlRoot(httr::content(rsp, type = "text/xml")))
+      
+      x <- try(httr::content(rsp, as = "text")) #, type = "text/xml"))
+      if (inherits(x, 'try-error')){
+         x <- .self$create_exception(message = "error extracting response content")
+         return(invisible(x))
+      }
+      x <- try(XML::xmlTreeParse(x, asText = TRUE, encoding = .self$encoding, useInternalNodes = TRUE))
+      if (inherits(x, "try-error")){
+         x <- .self$create_exception(message = "error with xmlTreeParse")
+         return(invisible(x))
+      }
+      
+      x <- try(XML::xmlRoot(x))
       if (inherits(x, "try-error")){
          x <- .self$create_exception(message = "error parsing response content with xmlRoot")
       }
+      
       invisible(x)
    }) # verify_response
   
@@ -146,6 +162,8 @@ LimsRefClass$methods(
    GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = TRUE){
       x <- httr::GET(uri, 
          ..., 
+         encoding = .self$encoding,
+         handle = .self$handle,
          .self$auth)
       
       x <- .self$check(x) 
@@ -153,7 +171,8 @@ LimsRefClass$methods(
          uri <- XML::xmlAttrs(x[['next-page']])[['uri']]
          doNext <- TRUE
          while(doNext){
-            y <- .self$check(httr::GET(uri, .self$auth))
+            y <- .self$check(httr::GET(uri,encoding = .self$encoding,
+               handle = .self$handle, .self$auth))
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
@@ -193,6 +212,7 @@ LimsRefClass$methods(
          ..., 
          body = body, 
          httr::content_type_xml(), 
+         handle = .self$handle,
          .self$auth) 
       .self$check(r)
    }) # PUT
@@ -224,6 +244,7 @@ LimsRefClass$methods(
          ..., 
          body = body, 
          httr::content_type_xml(),
+         handle = .self$handle,
          .self$auth) 
       .self$check(r)
    }) # POST
@@ -250,7 +271,8 @@ LimsRefClass$methods(
          stop("LimsRefClass$DELETE: x must be xmlNode or NodeRefClass")
       }
       r <- httr::DELETE(uri, 
-         ...,  
+         ...,
+         handle = .self$handle,
          .self$auth)
       if (status_code(r) != 204){
          warn("LimsRefClass$DELETE unknown issue")
@@ -307,6 +329,7 @@ LimsRefClass$methods(
       r<- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
+         handle = .self$handle,
          .self$auth)
       r <- .self$check(r)  
       
@@ -350,6 +373,7 @@ LimsRefClass$methods(
       r <- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
+         handle = .self$handle,
          .self$auth)
       r <- .self$check(r)  
       
@@ -653,6 +677,7 @@ LimsRefClass$methods(
       URI <- .self$uri(paste0(nm, "s/batch/update"))
       r <- httr::POST(URI, ..., body = xmlString(detail), 
          httr::add_headers(c("Content-Type"="application/xml")),
+         handle = .self$handle,
          .self$auth)
       
       x <- .self$check(r)
@@ -703,6 +728,7 @@ LimsRefClass$methods(
       URI <- .self$uri(paste0(nm, "s/batch/update"))
       r <- httr::POST(URI, ..., body = xmlString(detail), 
          httr::add_headers(c("Content-Type"="application/xml")),
+         handle = .self$handle,
          .self$auth)
       
       x <- .self$check(r)
@@ -763,6 +789,7 @@ batch_retrieve <- function(uri, lims,
    URI <- file.path(lims$baseuri, resource)
    r <- httr::POST(URI, ..., body = xmlString(batchNode), 
       httr::add_headers(c("Content-Type"="application/xml")),
+      handle = lims$handle,
       lims$auth)
    x <- lims$check(r)
    if (!is_exception(x) && asList){
@@ -778,13 +805,13 @@ batch_retrieve <- function(uri, lims,
          'sample' = 'smp',
          'file' = 'file')
          
-      nmspc <- XML::xmlNamespace(x)
+      nmspc <- unclass(XML::xmlNamespace(x))
       x <- x[singleName]
       # transfer the the xmlnamespace to each child node
       uristub = get_NSMAP()[[nm]]
-      x <- lapply(x, function(x, 
-            nm=structure(uristub, .Names = nm, class = "XMLNamespace")) {
-                  XML::xmlNamespace(x) <- nm; 
+      x <- lapply(x, 
+         function(x, nm=NULL) {
+                  XML::xmlNamespace(x) <- nm
                   x}, 
             nm = nmspc)
       if (rm_dups == FALSE) {
@@ -811,7 +838,7 @@ batch_retrieve <- function(uri, lims,
 #' @param lims LimsRefClass object
 parse_node <- function(node, lims){
 
-   if (!is_xmlNode(node)) stop("assign_node: node must be XML::xmlNode")
+   if (!is_xmlNode(node)) stop("parse_node: node must be XML::xmlNode")
    if (!inherits(lims, 'LimsRefClass')) stop("assign_node: lims must be LimsRefClass")
    
    nm <- XML::xmlName(node)[1]
@@ -844,10 +871,12 @@ Lims <- function(configfile){
    if (inherits(x, "try-error")) stop("Error reading config file")
    
    X <- LimsRefClass$new()
+   X$field("encoding", "UTF-8")
    X$field("version", get_config(x, "genologics", "VERSION", default = ""))
    buri <- get_config(x, "genologics", "BASEURI", default = "")
    if (nchar(buri) == 0) stop("base uri not found in config file")
    X$field("baseuri", file.path(buri, "api", X$version))
+   X$field("handle", httr::handle(buri))
    X$field('auth', 
       httr::authenticate(get_config(x, "genologics", "USERNAME", default = ""),
                    get_config(x, "genologics", "PASSWORD", default = "") 
@@ -858,7 +887,6 @@ Lims <- function(configfile){
       ) )   
    if (!X$validate_session()) {
       warning("API session failed validation")
-      #return(NULL)
    } 
    X
 }
