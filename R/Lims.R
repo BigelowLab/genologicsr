@@ -614,9 +614,39 @@ LimsRefClass$methods(
          lims = .self)
       
       invisible(x)
-   }) # get_processes
+   }) # get_projects
 
-
+#' Get one or more process-types as Nodes
+#'
+#' @family Lims Process
+#' @name LimsRefClass_get_processtypes
+#' @param displayname optional project name
+#' @return a list of NodeRefClass or NULL
+LimsRefClass$methods(
+   get_processtypes = function(displayname = NULL){
+      
+      resource <- 'processtypes'
+      
+      query <- list()
+      if (!is.null(displayname)) query[["displayname"]] <- displayname
+      if (length(query)>0) {
+         query <- build_query(query)
+      } else {
+         query <- NULL
+      }
+   
+      x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
+      if (length(XML::xmlChildren(x)) == 0) return(NULL)
+      
+      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      x <- lapply(uri, 
+         function(x, lims = NULL) {
+            lims$GET(x, asNode = TRUE)
+         }, 
+         lims = .self)
+      names(x) <- sapply(x, function(x) XML::xmlAttrs(x$node)[['name']] )
+      invisible(x)
+   }) # get_processtypes
 
 #' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
 #'

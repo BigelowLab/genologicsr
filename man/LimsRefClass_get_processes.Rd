@@ -24,4 +24,7 @@ a list of ProcessRefClass or NULL
 Get one or more Processes - does not leverage /batch/retrieve resources
 but provides similar behavior.
 }
+\seealso{
+Other Lims Process: \code{\link{LimsRefClass_get_processtypes}}
+}
 
