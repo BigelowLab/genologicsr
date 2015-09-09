@@ -85,7 +85,7 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    userpwd = function(what = c("lims", "file")){
-   Auth <- switch(tolower(auth[1]),
+   Auth <- switch(tolower(what[1]),
       'file' = .self$fileauth,
       .self$auth)
       
