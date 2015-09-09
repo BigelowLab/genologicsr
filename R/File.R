@@ -50,7 +50,31 @@ FileRefClass$methods(
    })  
 
 
-
+#' Download the file identified in 'content-location'
+#' 
+#' Download tools include 
+#' \itemize{
+#'    \item{duck}{From Cyberduck \url{https://duck.sh/}}
+#'    \item{scp}{not implemented yet}
+#' }
+#' @family File
+#' @name FileRefClass_download
+#' @param dest filename for destination, by default the basename of the 'content_location'
+#' @param use character indicating download tool to use.  Currently just 'duck'
+#' @param ... further arguments for the download tool
+#' @return numeric code where 0 means success
+NULL
+FileRefClass$methods(
+   download = function(dest = NULL, use = c("duck", "scp")[1], ...){
+      
+      if (nchar(.self$content_location)) stop("FileRefClass$download: Node is not populated")
+      if (nchar(dest[1]) == 0) dest <- basename(.self$content_location)
+      up <- .self$lims$userpwd()
+      switch(tolower(use[1]),
+         'duck' = duck_download(.self$content_location[1], dest[1],
+            username = up[1], password = up[2]),
+         function(){ "Download tool not known" ; return(1) })
+   })
 
    
 

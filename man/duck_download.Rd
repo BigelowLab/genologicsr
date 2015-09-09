@@ -4,10 +4,12 @@
 \alias{duck_download}
 \title{Download a file using duck}
 \usage{
-duck_download(url, username = "foo", password = "bar")
+duck_download(url, dest, username = "foo", password = "bar")
 }
 \arguments{
 \item{url}{}
+
+\item{dest}{character destination filename, by default the basename of the URL}
 
 \item{username}{the username (required)}
 

@@ -75,12 +75,31 @@ LimsRefClass$methods(
    })
 
 
+#' Retrieve the user and password
+#'
+#' @family Lims
+#' @name LimsRefClass_userpwd
+#' @return character vector of [username, password] or NULL
+NULL
+LimsRefClass$methods(
+   userpwd = function(){
+   if (!is.null(.self$auth)){
+      up <- NULL
+   } else {
+      up <- strsplit(.self$auth[['options']][['userpwd']],":", fixed = TRUE)[[1]]
+   }
+   invisible(up)
+   })
+   
+   
 #' Verify a response and return xmlNode, possible an exception node
 #' 
 #' @name LimsRefClass_check
+#' @family Lims
 #' @param rsp httr::response object
 #' @param msg if an exception is encountered, attach this message (unless NULL)
 #' @return XML::xmlNode
+NULL
 LimsRefClass$methods(
    check = function(rsp, msg = NULL){
       w <- httr::warn_for_status(rsp)

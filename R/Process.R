@@ -135,7 +135,7 @@ ProcessRefClass$methods(
                output_generation_type = sapply(x, "[[", "output_generation_type"),
                output_type = sapply(x, "[[", "output_type"),
                stringsAsFactors = FALSE, 
-               rownames = inputlimsid)
+               row.names = inputlimsid)
       }
       invisible(x)
    })

@@ -40,20 +40,22 @@ duck_upload <- function(filename, url, username = "foo", password = "bar"){
 #' @family file_transfer
 #' @export
 #' @param url
+#' @param dest character destination filename, by default the basename of the URL
 #' @param username the username (required)
 #' @param password the password (required)
 #' @return integer with 0 for success
-duck_download <- function(url, username = "foo", password = "bar"){
+duck_download <- function(url, dest, username = "foo", password = "bar"){
    
    stopifnot(has_duck())
    stopifnot(!missing(url))
+   if (missing(dest)) dest <- basename(url[1])
    stopifnot(username != 'foo')
    stopifnot(password != 'bar')
 
    CMD <- paste("duck",
       "--username", username[1],
       "--password", password[1],
-      "--download", url[1])
-
+      "--download", url[1], dest[1])
+      
    system(CMD)
 }
