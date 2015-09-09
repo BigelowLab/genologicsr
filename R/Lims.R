@@ -86,7 +86,15 @@ LimsRefClass$methods(
    if (is.null(.self$auth)){
       up <- NULL
    } else {
-      up <- strsplit(.self$auth[['options']][['userpwd']],":", fixed = TRUE)[[1]]
+      # we can't depend upon httr providing the same format of attributes
+      if ("userpwd" %in% names(.self$auth)){
+         up <- strsplit(.self$auth[['userpwd']],":", fixed = TRUE)[[1]]
+      } else if ("options" %in% names(.self$auth)) {
+         up <- strsplit(.self$auth[['options']][['userpwd']],":", fixed = TRUE)[[1]]
+      } else{
+         cat("LimsRefClass$userpwd: unable to retrieve credentials\n")
+         up <- NULL
+      }
    }
    invisible(up)
    })
