@@ -3,6 +3,10 @@
 \name{LimsRefClass_userpwd}
 \alias{LimsRefClass_userpwd}
 \title{Retrieve the user and password}
+\arguments{
+\item{what}{character to specify which authorization ('lims' or 'file')
+by default lims is returned}
+}
 \value{
 character vector of [username, password] or NULL
 }

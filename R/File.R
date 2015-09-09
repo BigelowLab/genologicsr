@@ -72,7 +72,7 @@ FileRefClass$methods(
       
       if (nchar(.self$content_location) == 0) stop("FileRefClass$download: Node is not populated")
       if (is.null(dest)) dest <- basename(.self$content_location)
-      if (is.null(up)) up <- .self$lims$userpwd()
+      if (is.null(up)) up <- .self$lims$userpwd(what = 'file')
       switch(tolower(use[1]),
          'duck' = duck_download(.self$content_location[1], dest[1],
             username = up[1], password = up[2],...),
