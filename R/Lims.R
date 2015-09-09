@@ -82,15 +82,19 @@ LimsRefClass$methods(
 #' @return character vector of [username, password] or NULL
 NULL
 LimsRefClass$methods(
-   userpwd = function(){
-   if (is.null(.self$auth)){
+   userpwd = function(what = c("basic", "file")){
+   auth <- switch(tolower(auth[1]),
+      'file' = .self$fileauth,
+      .sefl$auth)
+      
+   if (is.null(auth)){
       up <- NULL
    } else {
       # we can't depend upon httr providing the same format of attributes
-      if ("userpwd" %in% names(.self$auth)){
-         up <- strsplit(.self$auth[['userpwd']],":", fixed = TRUE)[[1]]
-      } else if ("options" %in% names(.self$auth)) {
-         up <- strsplit(.self$auth[['options']][['userpwd']],":", fixed = TRUE)[[1]]
+      if ("userpwd" %in% names(auth)){
+         up <- strsplit(auth[['userpwd']],":", fixed = TRUE)[[1]]
+      } else if ("options" %in% names(auth)) {
+         up <- strsplit(auth[['options']][['userpwd']],":", fixed = TRUE)[[1]]
       } else{
          cat("LimsRefClass$userpwd: unable to retrieve credentials\n")
          up <- NULL
