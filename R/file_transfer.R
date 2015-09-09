@@ -50,7 +50,7 @@ duck_download <- function(url, dest, username = "foo", password = "bar",
    
    stopifnot(has_duck())
    stopifnot(!missing(url))
-   if (missing(dest)) dest <- basename(url[1])
+   if (missing(dest)) dest <- file.path(getwd(),basename(url[1]))
    stopifnot(username != 'foo')
    stopifnot(password != 'bar')
 
