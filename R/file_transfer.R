@@ -43,8 +43,10 @@ duck_upload <- function(filename, url, username = "foo", password = "bar"){
 #' @param dest character destination filename, by default the basename of the URL
 #' @param username the username (required)
 #' @param password the password (required)
+#' @param verbose logical, if TRUE then echo the command string
 #' @return integer with 0 for success
-duck_download <- function(url, dest, username = "foo", password = "bar"){
+duck_download <- function(url, dest, username = "foo", password = "bar",
+   verbose = FALSE){
    
    stopifnot(has_duck())
    stopifnot(!missing(url))

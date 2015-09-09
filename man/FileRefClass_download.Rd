@@ -8,6 +8,9 @@
 
 \item{use}{character indicating download tool to use.  Currently just 'duck'}
 
+\item{up}{character vector of two elements [username, password].  If not
+provided the then the credentials are derived from the File nodes' Lims.}
+
 \item{...}{further arguments for the download tool}
 }
 \value{

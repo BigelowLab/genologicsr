@@ -61,19 +61,22 @@ FileRefClass$methods(
 #' @name FileRefClass_download
 #' @param dest filename for destination, by default the basename of the 'content_location'
 #' @param use character indicating download tool to use.  Currently just 'duck'
+#' @param up character vector of two elements [username, password].  If not 
+#'    provided the then the credentials are derived from the File nodes' Lims.
 #' @param ... further arguments for the download tool
 #' @return numeric code where 0 means success
 NULL
 FileRefClass$methods(
-   download = function(dest = NULL, use = c("duck", "scp")[1], ...){
+   download = function(dest = NULL, use = c("duck", "scp")[1], 
+      up = NULL, ...){
       
-      if (nchar(.self$content_location)) stop("FileRefClass$download: Node is not populated")
-      if (nchar(dest[1]) == 0) dest <- basename(.self$content_location)
-      up <- .self$lims$userpwd()
+      if (nchar(.self$content_location) == 0) stop("FileRefClass$download: Node is not populated")
+      if (is.null(dest)) dest <- basename(.self$content_location)
+      if (is.null(up)) up <- .self$lims$userpwd()
       switch(tolower(use[1]),
          'duck' = duck_download(.self$content_location[1], dest[1],
-            username = up[1], password = up[2]),
-         function(){ "Download tool not known" ; return(1) })
+            username = up[1], password = up[2],...),
+         function(){ cat("Download tool not known", use[1], "\n") ; return(1) })
    })
 
    

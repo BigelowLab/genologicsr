@@ -4,7 +4,8 @@
 \alias{duck_download}
 \title{Download a file using duck}
 \usage{
-duck_download(url, dest, username = "foo", password = "bar")
+duck_download(url, dest, username = "foo", password = "bar",
+  verbose = FALSE)
 }
 \arguments{
 \item{url}{}
@@ -14,6 +15,8 @@ duck_download(url, dest, username = "foo", password = "bar")
 \item{username}{the username (required)}
 
 \item{password}{the password (required)}
+
+\item{verbose}{logical, if TRUE then echo the command string}
 }
 \value{
 integer with 0 for success

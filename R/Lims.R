@@ -83,7 +83,7 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    userpwd = function(){
-   if (!is.null(.self$auth)){
+   if (is.null(.self$auth)){
       up <- NULL
    } else {
       up <- strsplit(.self$auth[['options']][['userpwd']],":", fixed = TRUE)[[1]]
