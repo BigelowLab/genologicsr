@@ -47,7 +47,7 @@ duck_upload <- function(filename, url, username = "foo", password = "bar"){
 #' @param extra character extra params for duck, currently "--existing overwrite"
 #' @return integer with 0 for success
 duck_download <- function(url, dest, username = "foo", password = "bar",
-   verbose = FALSE, extra = '--exisiting overwrite'){
+   verbose = FALSE, extra = '--existing overwrite'){
    
    stopifnot(has_duck())
    stopifnot(!missing(url))
