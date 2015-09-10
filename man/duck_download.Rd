@@ -5,7 +5,7 @@
 \title{Download a file using duck}
 \usage{
 duck_download(url, dest, username = "foo", password = "bar",
-  verbose = FALSE, extra = "--existing overwrite")
+  verbose = FALSE, extra = "--quiet --existing overwrite")
 }
 \arguments{
 \item{url}{}
