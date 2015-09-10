@@ -56,6 +56,7 @@ FileRefClass$methods(
 #' \itemize{
 #'    \item{duck}{From Cyberduck \url{https://duck.sh/}}
 #'    \item{scp}{not implemented yet}
+#'    \item{curl}{not implemented yet}
 #' }
 #' @family File
 #' @name FileRefClass_download

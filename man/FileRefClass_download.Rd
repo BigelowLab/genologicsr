@@ -21,6 +21,7 @@ Download tools include
 \itemize{
    \item{duck}{From Cyberduck \url{https://duck.sh/}}
    \item{scp}{not implemented yet}
+   \item{curl}{not implemented yet}
 }
 }
 

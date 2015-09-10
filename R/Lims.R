@@ -307,8 +307,8 @@ LimsRefClass$methods(
          ...,
          handle = .self$handle,
          .self$auth)
-      if (status_code(r) != 204){
-         warn("LimsRefClass$DELETE unknown issue")
+      if (httr::status_code(r) != 204){
+         warning("LimsRefClass$DELETE unknown issue")
          print(r)
          print(httr::content(r))
       }

@@ -5,7 +5,7 @@
 \title{Download a file using duck}
 \usage{
 duck_download(url, dest, username = "foo", password = "bar",
-  verbose = FALSE)
+  verbose = FALSE, extra = "--exisiting overwrite")
 }
 \arguments{
 \item{url}{}
@@ -17,6 +17,8 @@ duck_download(url, dest, username = "foo", password = "bar",
 \item{password}{the password (required)}
 
 \item{verbose}{logical, if TRUE then echo the command string}
+
+\item{extra}{character extra params for duck, currently "--existing overwrite"}
 }
 \value{
 integer with 0 for success
