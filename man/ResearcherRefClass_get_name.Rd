@@ -12,6 +12,7 @@ Get the user's First Last name (overrides NodeRefClass_get_name)
 \seealso{
 Other Researcher: \code{\link{ResearcherRefClass_DELETE}};
   \code{\link{ResearcherRefClass_POST}};
+  \code{\link{ResearcherRefClass_get_credentials}};
   \code{\link{ResearcherRefClass_get_username}}
 }
 

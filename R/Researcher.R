@@ -40,6 +40,7 @@ ResearcherRefClass$methods(
       cat(prefix, "  Researcher username: ", .self$username, "\n", sep = "")
       cat(prefix, "  Researcher email: ", .self$email, "\n", sep = "")
       cat(prefix, "  Researcher initials: ", .self$initials, "\n", sep = "")
+      cat(prefix, "  Researcher credentials: ", .self$get_credentials(), "\n", sep = "")
    })  
 
 
@@ -54,6 +55,28 @@ ResearcherRefClass$methods(
       paste(get_childvalue(.self$node, "first-name"),
          get_childvalue(.self$node, "last-name") )
    }) #get_name
+
+
+#' Get the credentials as a string.  If the researcher
+#' is uncredentialed then 'none' is returned.
+#'
+#' @family Researcher
+#' @name ResearcherRefClass_get_credentials
+#' @name sep character, the separator to use when pasting
+#' @return character vector
+NULL
+ResearcherRefClass$methods(
+   get_credentials = function(sep = ' '){
+      
+      nd <- .self$node[['credentials']]
+      if (is_xmlNode(nd)){
+         role <- sapply(nd['role'], function(x) XML::xmlAttrs(x)[['roleName']])
+         x <- paste(unname(role), collapse = sep)
+      } else {
+         x <- 'none'
+      }
+      return(x)
+   }) # get_credentials
 
 #' Get the user's username
 #' 

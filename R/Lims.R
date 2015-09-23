@@ -507,6 +507,7 @@ LimsRefClass$methods(
 #' @family Lims Researcher
 #' @name LimsRefClass_get_researchers
 #' @param optional username character a vector of one or more user names like 'btupper' etc.
+#' @param asDataFrame logical, return a data.frame or list of Nodes
 #' @return a list of  ResearcherRefClass, a data frame or NULL
 NULL
 LimsRefClass$methods(
@@ -529,6 +530,7 @@ LimsRefClass$methods(
             username = sapply(x, function(x) x$username),
             initials = sapply(x, function(x) x$initials),
             email = sapply(x, function(x) x$email),
+            credentials = sapply(x, function(x) x$get_credentials()),
             stringsAsFactors = FALSE)
       }
       invisible(x)

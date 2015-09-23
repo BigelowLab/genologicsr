@@ -12,6 +12,7 @@ Get the user's username
 \seealso{
 Other Researcher: \code{\link{ResearcherRefClass_DELETE}};
   \code{\link{ResearcherRefClass_POST}};
+  \code{\link{ResearcherRefClass_get_credentials}};
   \code{\link{ResearcherRefClass_get_name}}
 }
 

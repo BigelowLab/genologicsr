@@ -11,6 +11,7 @@ Override the DELETE method to push user to use the GUI
 }
 \seealso{
 Other Researcher: \code{\link{ResearcherRefClass_POST}};
+  \code{\link{ResearcherRefClass_get_credentials}};
   \code{\link{ResearcherRefClass_get_name}};
   \code{\link{ResearcherRefClass_get_username}}
 }
