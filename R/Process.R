@@ -126,16 +126,16 @@ ProcessRefClass$methods(
          
       if (asDataFrame == TRUE){
          inputlimsid <- sapply(x, "[[", "input_limsid")
+         output_limsid = sapply(x, "[[", "output_limsid")
          x <- data.frame(
                input_limsid = inputlimsid,
                input_uri = sapply(x, "[[", "input_uri"),
                post_process_uri = sapply(x, "[[", "post_process_uri"),
-               output_limsid = sapply(x, "[[", "output_limsid"),
+               output_limsid = output_limsid,
                output_uri = sapply(x, "[[", "output_uri"),
                output_generation_type = sapply(x, "[[", "output_generation_type"),
                output_type = sapply(x, "[[", "output_type"),
-               stringsAsFactors = FALSE, 
-               row.names = inputlimsid)
+               stringsAsFactors = FALSE)
       }
       invisible(x)
    })
