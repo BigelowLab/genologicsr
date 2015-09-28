@@ -103,21 +103,21 @@ ContainerRefClass$methods(
 #' 
 #' @family Container
 #' @name ContainerRefClass_get_placements
-#' @param NAME character vector of well names (A:1 etc.) or NULL to get all
+#' @param placement character vector of well names (A:1 etc.) or NULL to get all
 #' @return a named vector of placements, possibly an empty character vector
 NULL
 ContainerRefClass$methods(
-   get_placements = function(NAME = NULL){
+   get_placements = function(placement = NULL){
       if ( !.self$has_child("placement") ) return(character())
       puri <- sapply(.self$node['placement'], function(x) XML::xmlAttrs(x)[['uri']])
       names(puri) <- sapply(.self$node['placement'], XML::xmlValue)
-      if (!is.null(NAME)) {
-         NAME <- A01(NAME, form = "A:1")
-         if (!(NAME %in% names(puri))){
-            cat("ContainerRefClass$get_placements name(s) not found:", paste(NAME, collapse = " "), "\n")
+      if (!is.null(placement)) {
+         placement <- A01(placement, form = "A:1")
+         if (!(placement %in% names(puri))){
+            cat("ContainerRefClass$get_placements name(s) not found:", paste(placement, collapse = " "), "\n")
             return(character())
          }
-         puri <- puri[NAME]
+         puri <- puri[placement]
       }
       invisible(puri)
    })
@@ -126,12 +126,12 @@ ContainerRefClass$methods(
 #' 
 #' @family Container
 #' @name ContainerRefClass_get_artifacts
-#' @param NAME well name such as 'A:1' or NULL to retrieve all
+#' @param placement well name such as 'A:1' or NULL to retrieve all
 #' @return a named list of ArtifactRefClass objects or NULL
 NULL
 ContainerRefClass$methods(
-   get_artifacts = function(NAME = NULL){
-      puri <- .self$get_placements(NAME = NAME) 
+   get_artifacts = function(placement = NULL){
+      puri <- .self$get_placements(placement = placement) 
       if (length(puri) == 0) return(NULL)
       AA <- .self$lims$batchretrieve(puri,rel = 'artifacts', asNode = TRUE)
       # we could copy names over from puri, but it might be better to dig them out
@@ -144,13 +144,13 @@ ContainerRefClass$methods(
 #' 
 #' @family Container
 #' @name ContainerRefClass_get_samples
-#' @param NAME well name such as 'A:1' or NULL to retrieve all
+#' @param placement well name such as 'A:1' or NULL to retrieve all
 #' @param asNode logical if TURE cast the result to SampleRefClass
 #' @return a named vector of sample XML:xmlNode or SampleRefClass objects
 NULL
 ContainerRefClass$methods(
-   get_samples = function(NAME = NULL, asNode = TRUE){
-      puri <- .self$get_placements(NAME = NAME)
+   get_samples = function(placement = NULL, asNode = TRUE){
+      puri <- .self$get_placements(placement = placement)
       if (length(puri) == 0) return(NULL)
       AA <- .self$lims$batchretrieve(puri, rel = 'artifacts', asNode = asNode)
       suri <- sapply(AA, function(x) x$get_sample(form = "uri"))

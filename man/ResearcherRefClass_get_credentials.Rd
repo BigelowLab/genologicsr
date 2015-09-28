@@ -15,6 +15,7 @@ is uncredentialed then 'none' is returned.
 Other Researcher: \code{\link{ResearcherRefClass_DELETE}};
   \code{\link{ResearcherRefClass_POST}};
   \code{\link{ResearcherRefClass_get_name}};
-  \code{\link{ResearcherRefClass_get_username}}
+  \code{\link{ResearcherRefClass_get_username}};
+  \code{\link{ResearcherRefClass_update}}
 }
 

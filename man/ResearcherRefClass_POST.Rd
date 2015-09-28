@@ -13,6 +13,7 @@ Override the POST method to push user to use the GUI
 Other Researcher: \code{\link{ResearcherRefClass_DELETE}};
   \code{\link{ResearcherRefClass_get_credentials}};
   \code{\link{ResearcherRefClass_get_name}};
-  \code{\link{ResearcherRefClass_get_username}}
+  \code{\link{ResearcherRefClass_get_username}};
+  \code{\link{ResearcherRefClass_update}}
 }
 

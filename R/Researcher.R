@@ -28,6 +28,22 @@ ResearcherRefClass <- setRefClass("ResearcherRefClass",
       
 Researcher <- getRefClass("ResearcherRefClass")
 
+
+#' Update the object fields
+#' 
+#' @name ResearcherRefClass_update
+#' @family Researcher
+#' @param ... further arguments for \code{NodeRefClass$update()}
+NULL
+ResearcherRefClass$methods(
+   update = function(...){
+      callSuper(...)
+      .self$username = .self$get_username()
+      .self$name = .self$get_name()
+      .self$email = get_childvalue(.self$node, 'email')
+      .self$initials = get_childvalue(.self$node, 'initials')
+   })
+
 #' Show
 #' 
 #' @family Node Researcher
