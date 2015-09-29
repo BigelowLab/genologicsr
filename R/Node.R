@@ -306,6 +306,23 @@ NodeRefClass$methods(
    get_childv = function(names){
       get_childvalue(.self$node, names)
    })
+   
+   
+#' Set the value of the value of  one or more UDF children.  If the
+#' field does not exist it is created and added, otherwise it is updated.
+#' 
+#' @family Node
+#' @name NodeRefClass_set_udfs
+#' @param v a list of one or more udf vectors
+#'    each udf vector must have \code{name}, \code{type} and \code{value}
+#' @return a reference to this (updated) NodeRefClass object
+NULL
+NodeRefClass$methods(
+   set_udfs = function(v){
+      .self$node <- set_udfs(.self$node, v)
+      return(.self)
+   })   
+
 ############## methods above
 ############## functions below
 

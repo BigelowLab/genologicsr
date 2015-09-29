@@ -37,6 +37,7 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass_get_type}};
   \code{\link{NodeRefClass_has_lims}};
   \code{\link{NodeRefClass_new}};
+  \code{\link{NodeRefClass_set_udfs}};
   \code{\link{NodeRefClass_show}};
   \code{\link{NodeRefClass_toString}};
   \code{\link{NodeRefClass_unames}};
