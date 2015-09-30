@@ -319,7 +319,7 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    set_udfs = function(v){
-      .self$node <- set_udfs(.self$node, v)
+      .self$node <- genologicsr::set_udfs(.self$node, v)
       return(.self)
    })   
 
