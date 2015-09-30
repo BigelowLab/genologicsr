@@ -79,7 +79,7 @@ set_udfs <- function(x, v){
             name <- unname(v[[i]][["name"]])
             value <- checkType(typ, v[[i]][["value"]])
             cC <- x['field'][[ix[1]]]
-            xmlValue(cC) <- value
+            XML::xmlValue(cC) <- value
          } else{
             # or create a new one
             newNode <- udf.create(v[[i]], parent = x)
