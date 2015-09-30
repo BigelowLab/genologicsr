@@ -364,7 +364,6 @@ LimsRefClass$methods(
       r<- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
-         handle = .self$handle,
          .self$auth)
       r <- .self$check(r)  
       
@@ -377,17 +376,22 @@ LimsRefClass$methods(
       if (use == "scp"){
          # https://kb.iu.edu/d/agye
          # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
-         dst <- resolved_node[['content-location']]
+         dst <- resolved_node[['content_location']]
          up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
          puri <- httr::parse_url(resolved_node[['content_location']])
+         # first make the directory if it doesn't already exist
          MKDIR <- paste('ssh',
             paste0(up[1],'@',puri[['hostname']]), 
             shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) ))
             )
          ok <- system(MKDIR)
+         # now copy the file over
+         CP <- paste('scp', filename[1], 
+            paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
+         ok <- system(CP)
       } else if (use == "cp"){
          # not implemented?
-      
+         stop("cp not implemented")
       } else if (use == "curl"){
          cmd <- paste("curl -F", 
             paste0("file=@", filename[1]),
