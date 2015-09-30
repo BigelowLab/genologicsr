@@ -4,7 +4,7 @@
 \alias{LimsRefClass_DELETE}
 \title{DELETE a resource}
 \arguments{
-\item{x}{XML::xmlNode to DELETE, generally a file node}
+\item{x}{NodeRefClass, XML::xmlNode or character uri to DELETE, generally a file node}
 
 \item{...}{further arguments for httr::DELETE}
 }

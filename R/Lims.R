@@ -288,7 +288,7 @@ LimsRefClass$methods(
 #' 
 #' @family Lims
 #' @name LimsRefClass_DELETE
-#' @param x XML::xmlNode to DELETE, generally a file node
+#' @param x NodeRefClass, XML::xmlNode or character uri to DELETE, generally a file node
 #' @param ... further arguments for httr::DELETE
 #' @return logical
 NULL
@@ -300,8 +300,10 @@ LimsRefClass$methods(
          uri <- x$uri
       } else if (is_xmlNode(x)) {
          uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+      } else if (inherits(x, 'character')) {
+         uri <- trimuri(x)
       } else {
-         stop("LimsRefClass$DELETE: x must be xmlNode or NodeRefClass")
+         stop("LimsRefClass$DELETE: x must be xmlNode, character, or NodeRefClass")
       }
       r <- httr::DELETE(uri, 
          ...,
