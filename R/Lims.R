@@ -376,12 +376,14 @@ LimsRefClass$methods(
       dst <- resolved_node[['content_location']]
       up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
       puri <- httr::parse_url(resolved_node[['content_location']])
-      # first make the directory if it doesn't already exist
-      MKDIR <- paste('ssh',
-          paste0(up[1],'@',puri[['hostname']]), 
-          shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
-      ok <- system(MKDIR)
+
       if (use == "scp"){
+          # first make the directory if it doesn't already exist
+         MKDIR <- paste('ssh',
+            paste0(up[1],'@',puri[['hostname']]), 
+            shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
+         ok <- system(MKDIR)
+
          # https://kb.iu.edu/d/agye
          # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
          cmd <- paste('scp', filename[1], 
