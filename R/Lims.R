@@ -377,6 +377,7 @@ LimsRefClass$methods(
       up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
       puri <- httr::parse_url(resolved_node[['content_location']])
 
+      ok <- 1
       if (use == "scp"){
           # first make the directory if it doesn't already exist
          MKDIR <- paste('ssh',
@@ -407,7 +408,7 @@ LimsRefClass$methods(
          ok <- duck_upload(filename[1], resolved_node[['content_location']],
             username = up[[1]], password = up[[2]])
       }
-      if (!ok) {
+      if (ok != 0) {
          # now what?
       }
       
