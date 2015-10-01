@@ -408,7 +408,7 @@ LimsRefClass$methods(
          # now what?
       }
       
-      uri <- .self$uri("glsstorage")
+      uri <- .self$uri("files")
       body <- resolved_node$toString() 
       rafter <- httr::POST(uri,
          body = body,
