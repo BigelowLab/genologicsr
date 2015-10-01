@@ -361,14 +361,14 @@ LimsRefClass$methods(
       # POST it
       uri <- .self$uri("glsstorage")
       body <- xmlString(unresolved_node)
-      r<- httr::POST(uri,
+      rbefore<- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
          .self$auth)
-      r <- .self$check(r)  
+      rbefore <- .self$check(rbefore)  
       
-      if (is_exception(r)){ return(r)}
-      resolved_node <- parse_node(r, .self)
+      if (is_exception(rbefore)){ return(rbeforer)}
+      resolved_node <- parse_node(rbefore, .self)
       
       
       # now we copy the file over...
@@ -394,10 +394,6 @@ LimsRefClass$methods(
          # not implemented?
          stop("cp not implemented")
       } else if (use == "curl"){
-         # cmd <- paste("curl --ftp-create-dirs", 
-         #    paste0("file=@", filename[1]),
-         #       "-u", .self$auth[['options']][['userpwd']],
-         #       resolved_node[['content_location']])
          cmd <- paste("curl --ftp-create-dirs",
             "-u", .self$fileauth[['options']][['userpwd']],
             "-T", filename[1],
@@ -414,15 +410,14 @@ LimsRefClass$methods(
       
       uri <- .self$uri("glsstorage")
       body <- resolved_node$toString() 
-      r <- httr::POST(uri,
+      rafter <- httr::POST(uri,
          body = body,
          httr::content_type_xml(),
-         handle = .self$handle,
          .self$auth)
-      r <- .self$check(r)  
+      rafter <- .self$check(rafter)  
       
-      if (is_exception(r)){ return(r)}
-      parse_node(r, .self)
+      if (is_exception(rafter)){ return(rafter)}
+      parse_node(rafter, .self)
    }) # PUSH
 
 
