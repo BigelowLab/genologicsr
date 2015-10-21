@@ -493,7 +493,7 @@ LimsRefClass$methods(
       if(length(query) == 0) 
          stop("LimsRefClass$get_samples please specify at least one or more of name, projectlimsid or projectname")
       query <- build_query(query)
-      x <- .self$GET(.self$uri(resource), query = query)
+      x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
          if (.self$version == "v1"){
