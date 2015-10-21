@@ -18,7 +18,7 @@
 #' @return udf XML::xmlNode                           
 create_udf_node <- function(x, namespace = 'udf', parent = NULL, ...) {
    
-   ns <- genologicsr::get_NSMAP()[[namespace[1]]]
+   ns <- genologicsr::get_NSMAP()[namespace[1]]
    atts <- x[ names(x) %in% c("name", "type", "unit") ]
    
    newNode <- XML::newXMLNode("field", 
