@@ -145,7 +145,7 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    PUT = function(...){
-      if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for PUT")
+      if (!.self$has_lims()) stop("NodeRefClass$PUT lims not available for PUT")
       r <- .self$lims$PUT(.self, ...)
       ok <- TRUE
       if (!is_exception(r)) {
