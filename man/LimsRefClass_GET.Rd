@@ -2,7 +2,7 @@
 % Please edit documentation in R/Lims.R
 \name{LimsRefClass_GET}
 \alias{LimsRefClass_GET}
-\title{GET a resource}
+\title{GET a resource, a wrapper around get_uri}
 \arguments{
 \item{uri}{character the uri to get}
 
@@ -16,6 +16,6 @@
 XML::xmlNode - possibly an error node
 }
 \description{
-GET a resource
+GET a resource, a wrapper around get_uri
 }
 

@@ -19,6 +19,7 @@ Collate:
     'Artifact.R'
     'ArtifactGroup.R'
     'Container.R'
+    'Containertype.R'
     'Field.R'
     'File.R'
     'InputOutputMap.R'

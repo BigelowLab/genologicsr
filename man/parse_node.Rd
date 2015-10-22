@@ -2,8 +2,7 @@
 % Please edit documentation in R/Lims.R
 \name{parse_node}
 \alias{parse_node}
-\title{Update a batch of XML::xmlNodes
-Convert a node to an object inheriting from NodeRefClass}
+\title{Convert a node to an object inheriting from NodeRefClass}
 \usage{
 parse_node(node, lims)
 }
@@ -13,7 +12,6 @@ parse_node(node, lims)
 \item{lims}{LimsRefClass object}
 }
 \description{
-Update a batch of XML::xmlNodes
 Convert a node to an object inheriting from NodeRefClass
 }
 \seealso{

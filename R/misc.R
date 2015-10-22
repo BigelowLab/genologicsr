@@ -4,10 +4,12 @@
 #' Prepares a contribution to a query list - see \code{modify_url}
 #'
 #' @export
-#' @param x a named list like \code{list(name=c("boo", "foo"), type = "shoe")}
-#' @return character like "name=boo&name=foo$type=shoe"
+#' @param x a named list like \code{list(name=c("boo", "foo"), type = "shoe")}.
+#'  NULL is returned if the input is an empty list
+#' @return character like "name=boo&name=foo$type=shoe" or NULL
 build_query <- function(x){
    if (!is.list(x)) stop("build_query: x must be a list")
+   if (length(x) == 0) return(NULL)
    nm <- names(x)
    if (length(nm) == 0) stop("build_query: x must be a named list")
    # create a character vector, iterate along the input transforming each element

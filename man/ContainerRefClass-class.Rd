@@ -22,6 +22,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{ArtifactGroupRefClass-class}};
   \code{\link{ArtifactRefClass}},
   \code{\link{ArtifactRefClass-class}};
+  \code{\link{ContainerTypeRefClass}},
+  \code{\link{ContainerTypeRefClass-class}};
   \code{\link{FieldRefClass_show}};
   \code{\link{FieldRefClass}},
   \code{\link{FieldRefClass-class}};

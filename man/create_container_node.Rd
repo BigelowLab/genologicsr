@@ -18,6 +18,7 @@ XML::xmlNode
 Create a container XML::xmlNode suitable for POSTing
 }
 \seealso{
-Other Lims Container: \code{\link{LimsRefClass_get_containers}}
+Other Lims Container: \code{\link{LimsRefClass_get_containers}};
+  \code{\link{LimsRefClass_get_containertypes}}
 }
 

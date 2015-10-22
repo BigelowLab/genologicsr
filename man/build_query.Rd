@@ -7,10 +7,11 @@
 build_query(x)
 }
 \arguments{
-\item{x}{a named list like \code{list(name=c("boo", "foo"), type = "shoe")}}
+\item{x}{a named list like \code{list(name=c("boo", "foo"), type = "shoe")}.
+NULL is returned if the input is an empty list}
 }
 \value{
-character like "name=boo&name=foo$type=shoe"
+character like "name=boo&name=foo$type=shoe" or NULL
 }
 \description{
 Prepares a contribution to a query list - see \code{modify_url}

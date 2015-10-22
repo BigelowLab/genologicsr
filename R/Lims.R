@@ -182,7 +182,7 @@ LimsRefClass$methods(
 
 
 
-#' GET a resource
+#' GET a resource, a wrapper around get_uri
 #'
 #' @name LimsRefClass_GET
 #' @param uri character the uri to get
@@ -193,29 +193,8 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = TRUE){
-      x <- httr::GET(uri, 
-         ..., 
-         encoding = .self$encoding,
-         handle = .self$handle,
-         .self$auth)
-      
-      x <- .self$check(x) 
-      if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
-         uri <- XML::xmlAttrs(x[['next-page']])[['uri']]
-         doNext <- TRUE
-         while(doNext){
-            y <- .self$check(httr::GET(uri,encoding = .self$encoding,
-               handle = .self$handle, .self$auth))
-            children <- !(names(y) %in% c("previous-page", "next-page"))
-            if (any(children)) x <- XML::addChildren(x, kids = y[children])
-            doNext <- "next-page" %in% names(y)
-            if (doNext) uri <- XML::xmlAttrs(y[["next-page"]])[["uri"]]
-         } # doNext while loop
-         x <- XML::removeChildren(x, kids = x["next-page"]) 
-      }
-      
-      if (asNode) x <- parse_node(x, .self)
-      
+      x <- get_uri(uri, .self, ..., depaginate = depaginate)
+      if (asNode) x <- parse_node(x, .self) 
       invisible(x)
    }) #GET
 
@@ -447,23 +426,23 @@ LimsRefClass$methods(
 #' @param optional type character of one or more container types ("384 well plate", etc)
 #' @param optional state character of one or more contain states ("Discarded", "Populated",...)
 #' @param optional last_modified a character vector of last modification date in YYYY-MM-DDThh:mm:ssTZD format
-#' @return a named list of container XML::xmlNode
+#' @return a named list of container XML::xmlNode or NULL
 NULL
 LimsRefClass$methods(
    get_containers = function(name = NULL, type = NULL, state = NULL,
    last_modified = NULL){
       resource <- 'containers'
-      query = list()
-      if (!is.null(name)) query[['name']] <- name
-      if (!is.null(type)) query[['type']] <- type
-      if (!is.null(state)) query[['state']] <- state
-      if (!is.null(last_modified)) query[['last-modified']] <- last_modified
-      if(length(query) == 0) 
+      queryl = list()
+      if (!is.null(name)) queryl[['name']] <- name
+      if (!is.null(type)) queryl[['type']] <- type
+      if (!is.null(state)) queryl[['state']] <- state
+      if (!is.null(last_modified)) queryl[['last-modified']] <- last_modified
+      if(length(queryl) == 0) 
          stop("LimsRefClass$get_containers please specify at leatst one or more of name, type, state or last_modified")
-      query <- build_query(query)
+      query <- build_query(queryl)
       x <- .self$GET(file.path(.self$baseuri, resource), query = query, asNode = FALSE)
-      # lapply(xmlChildren(x) function(x) Container$new(x, .self))
       if (!is_exception(x)){
+         if (length(XML::xmlChildren(x))==0) return(NULL)
          uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'containers')
          x <- lapply(x, function(x) ContainerRefClass$new(x, .self))
@@ -471,6 +450,34 @@ LimsRefClass$methods(
       }
       invisible(x)
    })
+
+
+#' Get the container type(s) in the system
+#' 
+#' 
+#' @family Lims Container
+#' @name LimsRefClass_get_containertypes
+#' @param optional name a character vector of one or more container type names
+#' @return a named list of container type NodeRefClass objects or NULL
+NULL
+LimsRefClass$methods(
+   get_containertypes = function(name = NULL){
+      queryl = list()
+      if (!is.null(name)) queryl[['name']] <- name
+      query <- build_query(queryl)
+      x <- .self$GET(.self$uri("containertypes"), query = query, 
+         depaginate = TRUE, asNode = FALSE)
+      if (!is_exception(x) && length(x['container-type']) > 0){
+         uris <- sapply(x['container-type'], function(x) XML::xmlAttrs(x)[['uri']])
+         names(uris) <- sapply(x['container-type'], function(x) XML::xmlAttrs(x)[['name']])
+         x <- lapply(uris, function(x) .self$GET(x))
+      } else {
+         x <- NULL
+      }
+      
+      invisible(x)
+   })
+
 
 #' Get one or more samples using queries on name, projectlimsid, projectname
 #' It is possible to also filter the query on UDF values but it may be easier to
@@ -481,7 +488,7 @@ LimsRefClass$methods(
 #' @param optional name a character vector of one or more names
 #' @param optional projectlimsid character of one or more projectlimsid values
 #' @param optional projectname character of one or more projectname values
-#' @return a named list of container XML::xmlNode
+#' @return a named list of container XML::xmlNode or NULL
 NULL
 LimsRefClass$methods(
    get_samples = function(name = NULL, projectlimsid = NULL, projectname = NULL){
@@ -496,6 +503,8 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
          uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+         len <- sapply(uri, length)
+         if (all(len == 0)) return(NULL)
          if (.self$version == "v1"){
             x <- lapply(uri, function(x, lims=NULL) {lims$GET(x)}, lims = .self)
          } else {
@@ -896,7 +905,46 @@ batch_retrieve <- function(uri, lims,
 } # batch_retrieve
 
 
-#' Update a batch of XML::xmlNodes
+#' Get a uri with option to depaginate
+#'
+#' @export
+#' @param uri character, the uri to retrieve
+#' @param lims a LimsRefClass node
+#' @param ... further arguments for httr::GET()
+#' @param depaginate logical, if TRUE (the default) then depaginate the results
+#' @return XML::xmlNode
+get_uri <- function(uri, lims, ..., depaginate = TRUE){
+
+      # first pass
+      x <- httr::GET(uri,  
+         ...,
+         encoding = lims$encoding,
+         handle = lims$handle,
+         lims$auth)
+
+      # since when has LIMS substituted "+" for spaces ("%20")?
+      # @param uri
+      # @return updated param
+      no_plus_uri <- function(x){
+         file.path(dirname(x), gsub("+", "%20", basename(x), fixed = TRUE))
+      }
+      
+      x <- lims$check(x) 
+      if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
+         yuri <- no_plus_uri(XML::xmlAttrs(x[['next-page']])[['uri']])
+         doNext <- TRUE
+         while(doNext){
+            y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
+               handle = .self$handle, .self$auth))
+            children <- !(names(y) %in% c("previous-page", "next-page"))
+            if (any(children)) x <- XML::addChildren(x, kids = y[children])
+            doNext <- "next-page" %in% names(y)
+            if (doNext) yuri <- no_plus_uri(XML::xmlAttrs(y[["next-page"]])[["uri"]])
+         } # doNext while loop
+         x <- XML::removeChildren(x, kids = x["next-page"])
+      }
+   invisible(x)
+}
 
 
 
@@ -917,7 +965,7 @@ parse_node <- function(node, lims){
        'artifact' = ArtifactRefClass$new(node, lims),
        'processes' = ProcessRefClass$new(node, lims),
        'process' = ProcessRefClass$new(node, lims),
-       'container' = ContaineRefClassr$new(node, lims),
+       'container' = ContainerRefClass$new(node, lims),
        'sample' = SampleRefClass$new(node,lims),
        'input-output-map' = InputOutputMapRefClass$new(node, lims),
        'researcher' = ResearcherRefClass$new(node, lims),
@@ -925,6 +973,7 @@ parse_node <- function(node, lims){
        'field' = FieldRefClass$new(node, lims),
        'project' = ProjectRefClass$new(node, lims),
        'projects' = ProjectsRefClass$new(node, lims),
+       'container-type' = ContainerTypeRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

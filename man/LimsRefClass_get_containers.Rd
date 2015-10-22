@@ -13,12 +13,13 @@
 \item{optional}{last_modified a character vector of last modification date in YYYY-MM-DDThh:mm:ssTZD format}
 }
 \value{
-a named list of container XML::xmlNode
+a named list of container XML::xmlNode or NULL
 }
 \description{
 Get one or more containers by name, state, etc
 }
 \seealso{
-Other Lims Container: \code{\link{create_container_node}}
+Other Lims Container: \code{\link{LimsRefClass_get_containertypes}};
+  \code{\link{create_container_node}}
 }
 

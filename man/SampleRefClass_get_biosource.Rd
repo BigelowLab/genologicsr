@@ -11,6 +11,7 @@ Get Biosource description
 }
 \seealso{
 Other Sample: \code{\link{SampleRefClass_get_artifact}};
+  \code{\link{SampleRefClass_get_container}};
   \code{\link{SampleRefClass_get_project}};
   \code{\link{SampleRefNode_DELETE}};
   \code{\link{SampleRefNode_POST}}

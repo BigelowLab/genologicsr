@@ -14,6 +14,7 @@ Get artifact as uri or Node
 }
 \seealso{
 Other Sample: \code{\link{SampleRefClass_get_biosource}};
+  \code{\link{SampleRefClass_get_container}};
   \code{\link{SampleRefClass_get_project}};
   \code{\link{SampleRefNode_DELETE}};
   \code{\link{SampleRefNode_POST}}

@@ -61,7 +61,7 @@ ArtifactRefClass$methods(
    })
    
 
-#' Get the name of the artifact container as uri or NodeRefClass
+#' Get the artifact container as uri or NodeRefClass
 #' 
 #' @family Artifact
 #' @name ArtifactRefClass_get_container

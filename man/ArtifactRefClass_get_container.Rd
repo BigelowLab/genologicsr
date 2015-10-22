@@ -2,7 +2,7 @@
 % Please edit documentation in R/Artifact.R
 \name{ArtifactRefClass_get_container}
 \alias{ArtifactRefClass_get_container}
-\title{Get the name of the artifact container as uri or NodeRefClass}
+\title{Get the artifact container as uri or NodeRefClass}
 \arguments{
 \item{form}{character either "uri" or "Node"}
 }
@@ -10,7 +10,7 @@
 ContainerRefClass or uri (or NULL or "")
 }
 \description{
-Get the name of the artifact container as uri or NodeRefClass
+Get the artifact container as uri or NodeRefClass
 }
 \seealso{
 Other Artifact: \code{\link{ArtifactRefClass_get_parent_process}};

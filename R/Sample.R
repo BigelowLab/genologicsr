@@ -98,19 +98,38 @@ NULL
 SampleRefClass$methods(
    get_artifact = function(form = c("Node", "uri")[2]){
       if (!.self$has_child("artifact")){
-         if(form == "uri") {
+         if(tolower(form) == "uri") {
             x <- ""
          } else {
             x <- NULL
          }
       } else {
          x <- XML::xmlAttrs(.self$node[['artifact']])[['uri']]
-         if (tolower(form) == "Node"){
-            x <- .self$lims$GET(x, asNode = TRUE)
+         if (tolower(form) == "node"){
+            x <- .self$lims$GET(trimuri(x), asNode = TRUE)
          }
       }
       invisible(x)
    })  
+
+
+#' Get the sample container as uri or NodeRefClass
+#' 
+#' @family Sample
+#' @name SampleRefClass_get_container
+#' @param form character either "uri" or "Node"
+#' @return ContainerRefClass or uri (or NULL or "")
+NULL
+SampleRefClass$methods(
+   get_container = function(form = c("Node", "uri")[1]){
+      
+      A <- .self$get_artifact(form = 'Node')
+      if (is.null(A)) return(NULL)
+      C <- A$get_container(form = form)
+      invisible(C)    
+   })
+
+
    
 #' Get project as uri or Node
 #' 
