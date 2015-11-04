@@ -104,10 +104,9 @@ SampleRefClass$methods(
             x <- NULL
          }
       } else {
-         x <- XML::xmlAttrs(.self$node[['artifact']])[['uri']]
-         if (tolower(form) == "node"){
-            x <- .self$lims$GET(trimuri(x), asNode = TRUE)
-         }
+         x <- trimuri(XML::xmlAttrs(.self$node[['artifact']])[['uri']])
+         if (tolower(form) == "node") x <- .self$lims$GET(x, asNode = TRUE)
+         
       }
       invisible(x)
    })  
@@ -165,13 +164,13 @@ SampleRefClass$methods(
 #' @export
 #' @param x one or more XML::xmlNode for sample or SampelRefClass objects
 #' @param a sample details XML:xmlNode node
-create_sample_details <- function(x){
+create_samples_details <- function(x){
    
    if (inherits(x, "SampleRefClass")){
       x <- lapply(x, "[[", "node")      
    }
    nm <- sapply(x, xmlName)
-   if (!all(nm == "sample")) stop("create_sample_details: input nodes must be of type sample")
+   if (!all(nm %in% c("sample", "samplecreation") )) stop("create_samples_details: input nodes must be of type sample")
    
    XML::newXMLNode("details",
       namespace = "smp",
@@ -200,10 +199,10 @@ create_sample_node <- function(name = NULL,
             
       kids <- list(
          XML::newXMLNode("name", name[1]),
-         XML::newXMLNode("project_uri", project_uri[1]),
+         XML::newXMLNode("project", attrs = list(uri = project_uri[1])),
          XML::newXMLNode("location",
             .children = list(
-               XML::newXMLNode("container", container_uri[1]),
+               XML::newXMLNode("container", attrs = list( "uri" = container_uri[1])),
                XML::newXMLNode("value", well[1])
                )
             )

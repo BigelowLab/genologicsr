@@ -6,7 +6,7 @@
 \arguments{
 \item{placement}{well name such as 'A:1' or NULL to retrieve all}
 
-\item{asNode}{logical if TURE cast the result to SampleRefClass}
+\item{asNode}{logical if TRUE cast the result to SampleRefClass}
 }
 \value{
 a named vector of sample XML:xmlNode or SampleRefClass objects

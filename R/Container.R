@@ -145,7 +145,7 @@ ContainerRefClass$methods(
 #' @family Container
 #' @name ContainerRefClass_get_samples
 #' @param placement well name such as 'A:1' or NULL to retrieve all
-#' @param asNode logical if TURE cast the result to SampleRefClass
+#' @param asNode logical if TRUE cast the result to SampleRefClass
 #' @return a named vector of sample XML:xmlNode or SampleRefClass objects
 NULL
 ContainerRefClass$methods(
@@ -198,13 +198,13 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
 #' @param name character container name (optional)
 #' @param type_uri character uri of container type (required)
 #' @return XML::xmlNode
-create_container_node <- function(type_uri, name = NULL){
+create_container_node <- function(type_uri, name = NULL, type = NULL){
    
       if (missing(type_uri)) stop("create_project_node type uri is required")
       
       nmsp <- 'con'
-            
-      kids <- list(XML::newXMLNode("type", type_uri[1]))
+      
+      kids <- list(XML::newXMLNode("type", attrs = list('uri' = type_uri[1])))
       if (!is.null(name)) kids <- append(kids, XML::newXMLNode("name", name[1]))
       
       XML::newXMLNode('container',

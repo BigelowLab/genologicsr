@@ -164,7 +164,33 @@ ArtifactRefClass$methods(
       }
       invisible(x)
    })  
-     
+  
+  
+#' Get the artifact group assocated with this artifact
+#'
+#' @family Artifact ArtifactGroup
+#' @name ArtifactRefClass_get_artifact_group
+#' @param form character flag of type to return "Node" or "uri" or "name"
+#' @return XML::xmlNode (or NULL) or the uri (or "")
+ArtifactRefClass$methods(
+   get_artifact_group = function(form = c("Node", "uri", "name")[2]){
+      if (!.self$has_child("artifact-group")){
+         x <- switch(tolower(form),
+            "uri" = "",
+            "name" = "",
+            NULL)
+         return(x)
+      }
+      atts <- XML::xmlAttrs(.self$node[["artifact-group"]])
+      thisuri <- trimuri(atts[['uri']])
+      thisname <- atts[['name']]
+      x <- switch(tolower(form),
+         "uri" = thisuri,
+         "node" = self$lims$GET(thisuri, asNode = TRUE),
+         "name" = thisname)
+      invisible(x)
+   })
+      
 #' Get the sample  associated with this artifact
 #'
 #' @family Artifact
@@ -190,6 +216,24 @@ ArtifactRefClass$methods(
    
 #### methods above
 #### functions below
+
+
+#' Create an artifacts links node from uris suitable for batch operations
+#' See \url{http://genologics.com/files/permanent/API/latest/rest.version.artifacts.batch.retrieve.html}
+#' 
+#' @export
+#' @param x one or more URI
+#' @return a links node
+create_artifacts_links <- function(x){
+   
+   kids <- lapply(x, function(x) {
+      XML::newXMLNode("link", attrs = list(uri = x, rel = 'artifacts'))
+   }
+   
+   XML::newXMLNode("links", namespace = "ri",
+      namespaceDefinitions = get_NSMAP()['ri'],
+      .children = x)
+}
 
 #' Create a artifacts details node assembled from one or more artifacts XML::xmlNode
 #' See \url{http://genologics.com/files/permanent/API/latest/data_art.html#element_details}

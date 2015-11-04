@@ -63,7 +63,7 @@ set_udfs <- function(x, v){
    
    if (length(curUdfVals) == 0){              # 1 - all are new udfs to the node
       
-      for (i in seq_along(v)) udf_create_node(v[[i]], parent = x)
+      for (i in seq_along(v)) create_udf_node(v[[i]], parent = x)
       
    } else {                          # 2 - some or none are new udfs to the node
       

@@ -517,6 +517,36 @@ LimsRefClass$methods(
    })
 
 
+#' Retrieve a list of InstrumentRefClass or data.frame of the good stuff
+#' @family Lims Instrument
+#' @name LimsRefClass_get_instruments
+#' @param optional name character a vector of one or more names
+#' @param asDataFrame logical, return a data.frame or list of Nodes
+#' @return a list of  InstrumentRefClass, a data frame or NULL
+NULL
+LimsRefClass$methods(
+   get_instruments = function(name = NULL, asDataFrame = TRUE){
+   
+      resource <- 'instruments'
+      
+      query <- if(is.null(name)) NULL else build_query(list(username=username))
+      
+      RR <- .self$GET(.self$uri(resource), query = query)
+      rr <- RR$node['instrument']
+      if (length(rr) == 0) return(NULL)
+      uri <- sapply(rr, function(x) XML::xmlAttrs(x)[['uri']])
+      x <- lapply(uri, function(x, lims = NULL) {
+            lims$GET(x, asNode = TRUE)
+         }, lims = .self)
+      if (asDataFrame){
+         x <- data.frame (limsid = basename(uri),
+            name = sapply(x, function(x) x$name),
+            type = sapply(x, function(x) x$type),
+            stringsAsFactors = FALSE)
+      }
+      invisible(x)
+   })
+
 #' Retrieve a list of ResearcherRefNodes or a data.frame of the good stuff
 #' 
 #' @family Lims Researcher
@@ -715,7 +745,12 @@ LimsRefClass$methods(
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
          stop("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers")
       x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
-      if (asNode) x <- lapply(x, parse_node, .self)
+      if (asNode) {
+         x <- lapply(x, parse_node, .self)
+         names(x) <- switch(rel[1],
+            'files' = names(x),
+            sapply(x, function(x) XML::xmlValue(x$node[['name']]))  )
+      }
       invisible(x)
    })
 
@@ -735,7 +770,7 @@ LimsRefClass$methods(
       if (!is.list(x)) x <- list(x)
       if (inherits(x[[1]], "NodeRefClass") ) {
          origx <- x  
-         x <- lapply(x, "[[", node)
+         x <- lapply(x, function(x) x$node)
       }
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
@@ -747,9 +782,9 @@ LimsRefClass$methods(
          stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
       
       detail <- switch(nm,
-         'artifact' = create_artifact_details(x),
-         'container' = create_container_details(x),
-         'sample' = create_sample_details(x),
+         'artifact' = create_artifacts_details(x),
+         'container' = create_containers_details(x),
+         'sample' = create_samples_details(x),
          NULL)
       
       if (is.null(detail)) stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
@@ -791,31 +826,37 @@ LimsRefClass$methods(
       }
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
-         stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
+         stop("LimsRefClass$batchcreate: inputs must inherit xmlNode or NodeRefClass")
       nm <- unique(sapply(x, XML::xmlName))
       if (length(nm) > 1) 
-         stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
-      if (!(nm %in% c("sample", "container")))
-         stop("LimsRefClass$batchupdate: only sample and container types have batch update")
+         stop("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
+      if (!(nm %in% c("samplecreation", "container")))
+         stop("LimsRefClass$batchcreate: only samplecreation and container types have batch create")
       
       detail <- switch(nm,
-         'container' = create_container_details(x),
-         'sample' = create_sample_details(x),
+         'container' = create_containers_details(x),
+         'samplecreation' = create_samples_details(x),
          NULL)
+         
+      # the name of the nodes may be different than the resource namespace
+      resource <- switch(nm,
+         'samplecreation' = 'sample',
+         nm)
+         
+      if (is.null(detail)) stop("LimsRefClass$batchcreate: only samplecreation and container types have batch create")
       
-      if (is.null(detail)) stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
-      
-      URI <- .self$uri(paste0(nm, "s/batch/update"))
-      r <- httr::POST(URI, ..., body = xmlString(detail), 
-         httr::add_headers(c("Content-Type"="application/xml")),
-         handle = .self$handle,
+      URI <- .self$uri(paste0(resource, "s/batch/create"))
+      r <- httr::POST(url=URI, body = xmlString(detail), 
+         #httr::add_headers(c("Content-Type"="application/xml")),
+         content_type_xml(),
+         #handle = .self$handle,
          .self$auth)
       
       x <- .self$check(r)
       if (!is_exception(x)) {
-         rel <- paste0(nm, "s")
+         rel <- paste0(resource, "s")
          uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
-         r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"), ...)
+         r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"))
          if (asNode) r <- lapply(r, parse_node, .self)
       } else {
          r <- NULL
@@ -935,7 +976,7 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE){
          doNext <- TRUE
          while(doNext){
             y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
-               handle = .self$handle, .self$auth))
+               handle = lims$handle, lims$auth))
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
@@ -945,8 +986,6 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE){
       }
    invisible(x)
 }
-
-
 
 
 #' Convert a node to an object inheriting from NodeRefClass 
@@ -974,6 +1013,7 @@ parse_node <- function(node, lims){
        'project' = ProjectRefClass$new(node, lims),
        'projects' = ProjectsRefClass$new(node, lims),
        'container-type' = ContainerTypeRefClass$new(node, lims),
+       'instrument' = InstrumentRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

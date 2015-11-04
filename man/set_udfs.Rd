@@ -19,7 +19,7 @@ the updated xmlNode
 Set one or more UDF fields in an xmlNode
 }
 \seealso{
-Other Node Udf: \code{\link{extract_udfs}};
-  \code{\link{get_udfs}}
+Other Node Udf: \code{\link{NodeRefClass_get_udfs}};
+  \code{\link{extract_udfs}}; \code{\link{get_udfs}}
 }
 

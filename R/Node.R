@@ -323,6 +323,25 @@ NodeRefClass$methods(
       return(.self)
    })   
 
+
+#' Extract the UDFs into a list of udf vectors each with 'name', 'type' and 'value' elements
+#'
+#' @family Node Udf
+#' @name NodeRefClass_get_udfs
+#' @return a named list of lists where each sublist is comprised of 
+#'    \itemize{
+#'       \item name character
+#'       \item type character
+#'       \item value data type varies
+#'    }
+#'  Or empty list if the xmlNode has no fields
+NULL
+NodeRefClass$methods(
+   get_udfs = function(){
+      genologicsr::extract_udfs(.self$node)
+   })
+
+
 ############## methods above
 ############## functions below
 

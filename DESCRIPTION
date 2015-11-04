@@ -23,6 +23,7 @@ Collate:
     'Field.R'
     'File.R'
     'InputOutputMap.R'
+    'Instrument.R'
     'Process.R'
     'Project.R'
     'Projects.R'
