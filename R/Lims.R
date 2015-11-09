@@ -799,8 +799,13 @@ LimsRefClass$methods(
       if (!is_exception(x)) {
          rel <- paste0(nm, "s")
          uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
-         r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"), ...)
-         if (asNode) r <- lapply(r, parse_node, .self)
+         r <- batch_retrieve(uri, .self, , rel = rel, ...)
+         if (asNode) {
+            r <- lapply(r, parse_node, .self)
+            # since we have sample, artifact or container we know we can have 
+            # a name
+            names(r) <- sapply(r, function(x) x$name)
+         }
       } else {
          r <- NULL
       }
@@ -856,7 +861,7 @@ LimsRefClass$methods(
       if (!is_exception(x)) {
          rel <- paste0(resource, "s")
          uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
-         r <- batch_retrieve(uri, .self, , rel = paste0(nm, "s"))
+         r <- batch_retrieve(uri, .self, , rel = rel)
          if (asNode) r <- lapply(r, parse_node, .self)
       } else {
          r <- NULL

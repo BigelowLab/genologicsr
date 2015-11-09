@@ -227,8 +227,8 @@ ArtifactRefClass$methods(
 create_artifacts_links <- function(x){
    
    kids <- lapply(x, function(x) {
-      XML::newXMLNode("link", attrs = list(uri = x, rel = 'artifacts'))
-   }
+         XML::newXMLNode("link", attrs = list(uri = x, rel = 'artifacts'))
+      })
    
    XML::newXMLNode("links", namespace = "ri",
       namespaceDefinitions = get_NSMAP()['ri'],

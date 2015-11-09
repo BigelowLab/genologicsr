@@ -12,7 +12,7 @@ create_sample_node(name = NULL, project_uri = NULL, container_uri = NULL,
 
 \item{project_uri}{character uri of project (required)}
 
-\item{container_uri}{character uri of the container}
+\item{container_uri}{character uri of the container (required)}
 
 \item{well}{character location on the well such as 'A:1' (required)}
 }

@@ -4,7 +4,7 @@
 \alias{create_container_node}
 \title{Create a container XML::xmlNode suitable for POSTing}
 \usage{
-create_container_node(type_uri, name = NULL)
+create_container_node(type_uri, name = NULL, type = NULL)
 }
 \arguments{
 \item{type_uri}{character uri of container type (required)}
