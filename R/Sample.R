@@ -22,6 +22,7 @@ SampleRefClass <- setRefClass("SampleRefClass",
    methods = list(
       initialize = function(...){
          callSuper(...)
+         .self$verbs <- c('GET', 'PUT', 'BROWSE')
          .self$name = .self$get_name()
          .self$type = .self$get_type()
          .self$date_received =  get_childvalue(.self$node, 'date-received') 

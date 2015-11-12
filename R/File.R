@@ -19,6 +19,7 @@ FileRefClass <- setRefClass("FileRefClass",
    methods = list(
       initialize = function(...){
          callSuper(...)
+         .self$verbs <- c("DELETE", "GET", "PUT", "BROWSE")
          if (is_xmlNode(.self$node)){
             nm <- names(.self$node)
             if ('attached-to' %in% nm)

@@ -26,7 +26,7 @@ InputOutputMapRefClass <- setRefClass("InputOutputMapRefClass",
    methods = list(
       initialize = function(...){
          callSuper(...)
-         
+         .self$verbs <- c("FOO")
          x <- XML::xmlAttrs(.self$node[['input']])
          .self$input_uri <- trimuri(x[['uri']])
          .self$input_limsid <- x[['limsid']]
@@ -96,4 +96,22 @@ InputOutputMapRefClass$methods(
       cat("InputOutputMapRefClass_DELETE in not a permitted transaction\n")
    })
           
-      
+
+################################################################################
+
+#' Create an 'input-output-map' node for a shared result file - useful when 
+#' programmatically running a process.  See \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}
+#' 
+#' @export
+#' @param inputartifacturi character vector of URIs
+#' @param output_type character, you shouldn't have to change this
+#' @return an XML::xmlNode of type input-output-artifact
+create_iom_shared_resultfile <- function(inputartifacturi, output_type = 'ResultFile'){
+   
+   inputs <- lapply(inputartifacturi, function(x) XML::newXMLNode("input", attrs = list("uri" = x)) )
+   outputs <- newXMLNode("output", attrs = list(type = output_type))
+   
+   XML::newXMLNode("input-output-map",
+      attrs = list(shared = 'true'),
+      .children = c(inputs, outputs))
+}

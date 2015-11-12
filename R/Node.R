@@ -8,6 +8,7 @@
 #' @field limsid character the limsid of the node (possibly "")
 #' @field ns character the XML::xmlNamespace object (possibly NULL)
 #' @field node XML::xmlNode external pointer to the representation (possibly NULL)
+#' @field verbs character vector of 'GET', 'PUT', 'POST', 'BROWSE', and 'DELETE'
 #' @include Lims.R
 #' @export
 NodeRefClass <- setRefClass("NodeRefClass",
@@ -16,7 +17,8 @@ NodeRefClass <- setRefClass("NodeRefClass",
       uri = 'character',
       limsid = 'character',
       ns = 'ANY',
-      node = 'ANY')
+      node = 'ANY',
+      verbs = 'character')
    )
 
 Node <- getRefClass("NodeRefClass")  
@@ -37,6 +39,7 @@ NodeRefClass$methods(
       }
          
       callSuper(...)
+      .self$verbs <- c("PUT", "GET", "POST", "DELETE", "BROWSE")
       
       if (!inherits(lims, "LimsRefClass") && !is.null(lims) ) 
          stop("NodeRefClass$initialize lims is must be of class LimsRefClass or NULL")
@@ -126,6 +129,9 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    GET = function(...){
+      if (!("GET" %in% .self$verbs)) {
+         stop(methods::classLabel(class(.self)), " GET is not allowed")
+      }
       if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for GET")
       r <- .self$lims$GET(.self$uri, ..., asNode = FALSE)
       ok <- TRUE
@@ -145,6 +151,9 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    PUT = function(...){
+      if (!("PUT" %in% .self$verbs)) {
+         stop(methods::classLabel(class(.self)), " PUT is not allowed")
+      }
       if (!.self$has_lims()) stop("NodeRefClass$PUT lims not available for PUT")
       r <- .self$lims$PUT(.self, ...)
       ok <- TRUE
@@ -166,6 +175,10 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    DELETE = function(...){
+      if (!("DELETE" %in% .self$verbs)) {
+         stop(methods::classLabel(class(.self)), " DELETE is not allowed")
+      }
+
       if (!.self$has_lims()) stop("NodeRefClass$GET lims not available for DELETE")
       r <- .self$lims$DELETE(.self$node, ...)
       ok <- TRUE
@@ -189,6 +202,9 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    POST = function(...){
+      if (!("POST" %in% .self$verbs)) {
+         stop(methods::classLabel(class(.self)), " POST is not allowed")
+      }
       if (!.self$has_lims()) stop("NodeRefClass$POST lims not available for DELETE")
       r <- .self$lims$POST(.self$node, ...)
       ok <- TRUE
@@ -212,6 +228,9 @@ NodeRefClass$methods(
 NULL
 NodeRefClass$methods(
    BROWSE = function(...){
+      if (!("BROWSE" %in% .self$verbs)) {
+         stop(methods::classLabel(class(.self)), " BROWSE is not allowed")
+      }
       if (httr::url_ok(.self$uri)) httr::BROWSE(.self$uri,...)
    })
 

@@ -9,6 +9,7 @@ ProjectsRefClass <- setRefClass("ProjectsRefClass",
    methods = list( 
       initialize = function(...){
          callSuper(...)
+         .self$verbs <- c('GET', 'POST', 'BROWSE')
          .self$update()   
       },
       show = function(prefix = ""){

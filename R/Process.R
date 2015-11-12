@@ -6,10 +6,14 @@
 #' @include Node.R
 #' @export
 ProcessRefClass <- setRefClass("ProcessRefClass",
-   contains = "NodeRefClass")
-
-Process <- getRefClass("ProcessRefClass")
-
+   contains = "NodeRefClass",
+   methods = list(
+      initialize = function(...){
+         callSuper(...)
+         .self$verbs <- c("GET", "PUT", "BROWSE")
+      })
+   )
+   
 #' Show
 #' 
 #' @family Node Process

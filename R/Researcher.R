@@ -19,6 +19,7 @@ ResearcherRefClass <- setRefClass("ResearcherRefClass",
       methods = list(
          initialize = function(...){
             callSuper(...)
+            .self$verbs <- c('GET', 'PUT', 'DELETE', 'BROWSE')
             .self$username = .self$get_username()
             .self$name = .self$get_name()
             .self$email = get_childvalue(.self$node, 'email')

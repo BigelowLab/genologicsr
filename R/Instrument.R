@@ -6,6 +6,7 @@ InstrumentRefClass <- setRefClass("InstrumentRefClass",
    methods = list( 
       initialize = function(...){
          callSuper(...)
+         .self$verbs <- c("GET", "BROWSE")
          .self$update()
       },
    update = function(){

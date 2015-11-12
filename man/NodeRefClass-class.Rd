@@ -20,6 +20,8 @@ The root class that wraps XML::xmlNode
 \item{\code{ns}}{character the XML::xmlNamespace object (possibly NULL)}
 
 \item{\code{node}}{XML::xmlNode external pointer to the representation (possibly NULL)}
+
+\item{\code{verbs}}{character vector of 'GET', 'PUT', 'POST', 'BROWSE', and 'DELETE'}
 }}
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass}},
@@ -56,6 +58,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass_update}};
   \code{\link{ProcessRefClass}},
   \code{\link{ProcessRefClass-class}};
+  \code{\link{ProcessTypeRefClass}},
+  \code{\link{ProcessTypeRefClass-class}};
   \code{\link{ProjectRefClass}},
   \code{\link{ProjectRefClass-class}};
   \code{\link{ProjectsRefClass}},

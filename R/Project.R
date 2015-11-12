@@ -13,6 +13,7 @@ ProjectRefClass <- setRefClass("ProjectRefClass",
    methods = list( 
       initialize = function(...){
          callSuper(...)
+         .self$verbs = c("PUT", "GET", "BROWSE")
          .self$update()  
       },
    update = function(){

@@ -999,6 +999,7 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE){
 #' @export
 #' @param node XML::xmlNode
 #' @param lims LimsRefClass object
+#' @return an object the inherits from NodeRefClass
 parse_node <- function(node, lims){
 
    if (!is_xmlNode(node)) stop("parse_node: node must be XML::xmlNode")
@@ -1019,6 +1020,7 @@ parse_node <- function(node, lims){
        'projects' = ProjectsRefClass$new(node, lims),
        'container-type' = ContainerTypeRefClass$new(node, lims),
        'instrument' = InstrumentRefClass$new(node, lims),
+       'process-type' = ProcessTypeRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

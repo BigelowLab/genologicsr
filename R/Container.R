@@ -17,6 +17,7 @@ ContainerRefClass <- setRefClass("ContainerRefClass",
    methods = list( 
       initialize = function(...){
          callSuper(...)
+         .self$verbs <- c("GET", "PUT", 'DELETE', 'BROWSE')
          .self$name = XML::xmlValue(.self$node[['name']]) 
          .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
          .self$state = XML::xmlValue(.self$node[['state']])    

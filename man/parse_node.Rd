@@ -11,6 +11,9 @@ parse_node(node, lims)
 
 \item{lims}{LimsRefClass object}
 }
+\value{
+an object the inherits from NodeRefClass
+}
 \description{
 Convert a node to an object inheriting from NodeRefClass
 }

@@ -42,6 +42,7 @@ ContainerTypeRefClass <- setRefClass("ContainerTypeRefClass",
       },      
       initialize = function(...){
          callSuper(...)
+         .self$verbs <- c("GET", "BROWSE")
          .self$name = XML::xmlAttrs(.self$node)[['name']]
          .self$xdim = .self$get_dim(what="x")
          .self$ydim = .self$get_dim(what="y")
@@ -50,3 +51,4 @@ ContainerTypeRefClass <- setRefClass("ContainerTypeRefClass",
       ) # methods
       
    ) #setRefClass
+

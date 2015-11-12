@@ -43,6 +43,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass_update}};
   \code{\link{NodeRefClass}},
   \code{\link{NodeRefClass-class}};
+  \code{\link{ProcessTypeRefClass}},
+  \code{\link{ProcessTypeRefClass-class}};
   \code{\link{ProjectRefClass}},
   \code{\link{ProjectRefClass-class}};
   \code{\link{ProjectsRefClass}},

@@ -25,6 +25,7 @@ Collate:
     'InputOutputMap.R'
     'Instrument.R'
     'Process.R'
+    'Processtype.R'
     'Project.R'
     'Projects.R'
     'Researcher.R'

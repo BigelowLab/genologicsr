@@ -56,6 +56,8 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass-class}};
   \code{\link{ProcessRefClass}},
   \code{\link{ProcessRefClass-class}};
+  \code{\link{ProcessTypeRefClass}},
+  \code{\link{ProcessTypeRefClass-class}};
   \code{\link{ProjectRefClass}},
   \code{\link{ProjectRefClass-class}};
   \code{\link{ProjectsRefClass}},
