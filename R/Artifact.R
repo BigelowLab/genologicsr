@@ -21,10 +21,6 @@ ArtifactRefClass <- setRefClass("ArtifactRefClass",
       })
    )
 
-Artifact <- getRefClass("ArtifactRefClass")
-
-
-
 #' Show
 #' 
 #' @family Node Artifact

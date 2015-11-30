@@ -66,7 +66,7 @@ InputOutputMapRefClass$methods(
 NULL
 InputOutputMapRefClass$methods(
    GET = function(){
-      cat("ArtifactRefClass_GET in not a permitted transaction\n")
+      cat("InputOutputMapRefClass_GET in not a permitted transaction\n")
    })
 
 #' PUT is disallowed for input-output-map
@@ -75,7 +75,7 @@ InputOutputMapRefClass$methods(
 NULL
 InputOutputMapRefClass$methods(
    PUT = function(){
-      cat("ArtifactRefClass_PUT in not a permitted transaction\n")
+      cat("InputOutputMapRefClass_PUT in not a permitted transaction\n")
    })
    
 #' POST is disallowed for input-output-map
@@ -84,7 +84,7 @@ InputOutputMapRefClass$methods(
 NULL
 InputOutputMapRefClass$methods(
    POST = function(){
-      cat("ArtifactRefClass_POST in not a permitted transaction\n")
+      cat("InputOutputMapClass_POST in not a permitted transaction\n")
    })
 
 #' DELETE is disallowed for artifacts

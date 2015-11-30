@@ -151,7 +151,7 @@ NULL
 LimsRefClass$methods(
    BROWSE = function(x, ...){
    
-      stopifnot(is.interactive())
+      stopifnot(interactive())
       
       if (is_xmlNode(x)){
          uri <- trimuri(XML::xmlAttrs(x)[['uri']])
@@ -317,7 +317,7 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    PUSH = function(x, ..., filename = "", 
-      use = c("duck", "scp", "cp", "curl")[4]){
+      use = c("duck", "scp", "cp", "curl")[2]){
       
       stopifnot(inherits(x, 'ArtifactRefClass'))
       

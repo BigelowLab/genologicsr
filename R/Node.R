@@ -231,7 +231,7 @@ NodeRefClass$methods(
       if (!("BROWSE" %in% .self$verbs)) {
          stop(methods::classLabel(class(.self)), " BROWSE is not allowed")
       }
-      if (httr::url_ok(.self$uri)) httr::BROWSE(.self$uri,...)
+      if (httr::url_ok(.self$uri)) (httr::BROWSE(.self$uri,...))
    })
 
 #' Retrieve a vector of unique child names
