@@ -67,7 +67,7 @@ FileRefClass$methods(
 #' @return numeric code where 0 means success
 NULL
 FileRefClass$methods(
-   download = function(dest = NULL, use = c("duck", "scp")[1], 
+   download = function(dest = NULL, use = c("duck", "scp")[2], 
       up = NULL, ...){
       
       if (nchar(.self$content_location) == 0) stop("FileRefClass$download: Node is not populated")
