@@ -40,7 +40,7 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
    
    CMD <- paste("scp",
       extra,
-      paste0(username, '@', puri$hostname, ':', p$path),
+      paste0(username, '@', p$hostname, ':', p$path),
       dest[1])
       
    if (verbose) cat(CMD, "\n")  
@@ -81,7 +81,7 @@ scp_upload <- function(filename, url, username = "foo", password = "bar"){
    
    CMD <- paste("scp",
       shQuote(filename[1]),
-      paste0(username, '@', puri$hostname, ':', p$path))
+      paste0(username, '@', p$hostname, ':', p$path))
       
    if (verbose) cat(CMD, "\n")   
    
