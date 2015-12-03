@@ -6,7 +6,7 @@
 \arguments{
 \item{dest}{filename for destination, by default the basename of the 'content_location'}
 
-\item{use}{character indicating download tool to use.  Currently just 'duck'}
+\item{use}{character indicating download tool to use, defaults to 'scp'.}
 
 \item{up}{character vector of two elements [username, password].  If not
 provided the then the credentials are derived from the File nodes' Lims.}
@@ -14,7 +14,7 @@ provided the then the credentials are derived from the File nodes' Lims.}
 \item{...}{further arguments for the download tool}
 }
 \value{
-numeric code where 0 means success
+named logical
 }
 \description{
 Download tools include
