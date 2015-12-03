@@ -28,6 +28,7 @@ Download a file using duck
 }
 \seealso{
 Other file_transfer: \code{\link{duck_upload}};
-  \code{\link{has_duck}}
+  \code{\link{has_duck}}; \code{\link{has_scp}};
+  \code{\link{scp_download}}; \code{\link{scp_upload}}
 }
 

@@ -76,6 +76,8 @@ FileRefClass$methods(
       switch(tolower(use[1]),
          'duck' = duck_download(.self$content_location[1], dest[1],
             username = up[1], password = up[2],...),
+         'scp' = scp_download(.self$content_location[1], dest[1],
+            username = up[1], password = up[2],...),
          function(){ cat("Download tool not known", use[1], "\n") ; return(1) })
    })
 
