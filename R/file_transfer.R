@@ -40,7 +40,7 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
    
    CMD <- paste("scp",
       extra,
-      paste0(username, '@', p$hostname, ':', p$path),
+      paste0(username, '@', p$hostname, ':/', p$path),
       dest[1])
       
    if (verbose) cat(CMD, "\n")  
@@ -72,7 +72,7 @@ scp_upload <- function(filename, url, username = "foo", password = "bar"){
    
    MKDIR <- paste('ssh',
       paste0(username,'@',p$server), 
-      shQuote(paste('mkdir -p', dirname(p$path))))
+      shQuote(paste('mkdir -p', paste0('/',dirname(p$path)))))
    ok <- system(MKDIR)
    if (ok != 0) {
       cat("unable to create destination path:", p$path, "\n")
@@ -81,7 +81,7 @@ scp_upload <- function(filename, url, username = "foo", password = "bar"){
    
    CMD <- paste("scp",
       shQuote(filename[1]),
-      paste0(username, '@', p$hostname, ':', p$path))
+      paste0(username, '@', p$hostname, ':/', p$path))
       
    if (verbose) cat(CMD, "\n")   
    
