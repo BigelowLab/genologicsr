@@ -54,7 +54,7 @@ FileRefClass$methods(
 #' Download tools include 
 #' \itemize{
 #'    \item{duck}{From Cyberduck \url{https://duck.sh/}}
-#'    \item{scp}{not implemented yet}
+#'    \item{scp}{assumes ssh keys have been setup}
 #'    \item{curl}{not implemented yet}
 #' }
 #' @family File
