@@ -16,7 +16,9 @@ See \url{https://cyberduck.io/}
 }
 \seealso{
 Other file_transfer: \code{\link{duck_download}};
-  \code{\link{duck_upload}}; \code{\link{has_scp}};
-  \code{\link{scp_download}}; \code{\link{scp_upload}}
+  \code{\link{duck_upload}}; \code{\link{has_rsync}};
+  \code{\link{has_scp}}; \code{\link{rsync_download}};
+  \code{\link{rsync_upload}}; \code{\link{scp_download}};
+  \code{\link{scp_upload}}
 }
 

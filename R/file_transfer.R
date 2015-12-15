@@ -1,7 +1,113 @@
 # file_transfer.R
 
+#' Test if rsync is installed on the host platform
+#' Perhaps silly but symmetric with others.
+#'
+#' @family file_transfer
+#' @export
+#' @return logical, TRUE if rsync is present
+has_rsync <- function() {
+   basename(Sys.which("rsync")) == "rsync"
+} 
 
 
+#' Download a file using rsync - rsync and then rename
+#'
+#' This assumes that SSH public-key authentication is set up.
+#'
+#' @family file_transfer
+#' @export
+#' @param url
+#' @param dest character destination filename, by default the basename of the URL
+#' @param username the username (required)
+#' @param password the password (required)
+#' @param verbose logical, if TRUE then echo the command string
+#' @param extra character extra params for scp, currently "-ze ssh"
+#' @return integer with 0 for success
+rsync_download <- function(url, dest, 
+   username = 'foo', password = 'bar',
+   verbose = FALSE, extra = '-ze ssh'){
+   
+   #https://kb.iu.edu/d/agye
+   #scp [options] username1@source_host:directory1/filename1 username2@destination_host:directory2/filename2
+   stopifnot(has_rsync())
+   stopifnot(!missing(url))
+   if (missing(dest)) dest <- file.path(getwd(),basename(url[1]))
+   destdir <- dirname(dest)
+   stopifnot(username != 'foo')
+   stopifnot(password != 'bar')  
+   
+   p <- httr::parse_url(url)
+   # first we copy the file to the destdir - it will hve the url basename
+   CMD <- paste("rsync",
+      extra,
+      paste0(username, '@', p$hostname, ':/', p$path),
+      destdir) 
+   if (verbose) cat(CMD, "\n")  
+   ok <- system(CMD)
+   if (ok != 0) return(ok)
+   
+   # now we rename the file - ugggg
+   CMD <- paste('mv -f', 
+      file.path(destdir, basename(p$path)),
+      dest)
+   if (verbose) cat(CMD, "\n")
+   system(CMD)
+}
+
+
+#' Upload a file using rsync.  
+#'
+#' This assumes that SSH public-key authentication is set up.
+#' 
+#' @family file_transfer
+#' @export
+#' @param filename the fully qualified filename of file to upload
+#' @param url the destination url
+#' @param username the username (required)
+#' @param password the password (required)
+#' @return integer 0 for success
+rsync_upload <- function(filename, url, username = "foo", password = "bar"){
+
+   stopifnot(has_rsync())
+   stopifnot(!missing(filename))
+   stopifnot(!missing(url))
+   stopifnot(file.exists(filename))
+   stopifnot(username != 'foo')
+   stopifnot(password != 'bar')
+   
+   p <- httr::parse_url(url)
+   
+   # make sure the path exist
+   MKDIR <- paste('ssh',
+      paste0(username,'@',p$server), 
+      shQuote(paste('mkdir -p', paste0('/',dirname(p$path)))))
+   ok <- system(MKDIR)
+   if (ok != 0) {
+      cat("unable to create destination path:", p$path, "\n")
+      return(ok)
+   }
+   
+   # now copy filename to the destdir
+   CMD <- paste("rsync",
+      shQuote(filename[1]),
+      paste0(username, '@', p$hostname, ':/', dirname(p$path)))
+   if (verbose) cat(CMD, "\n")   
+   ok <- system(CMD)
+   if (ok != 0) return(ok)
+   
+   # now move the file - uggg.
+   from <- file.path(dirname(p$path), shQuote(filename[1]))
+   to <- p$path
+   CMD <- paste('ssh',
+      paste0(username,'@',p$server),
+      shQuote(paste('mv -f', from, to)) )
+   if (verbose) cat(CMD, "\n")   
+   system(CMD)
+}
+
+
+################################################################################
 #' Test if scp is installed on the host platform
 #' Perhaps silly but symmetric with others.
 #'
@@ -62,7 +168,7 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
 #' @return integer 0 for success
 scp_upload <- function(filename, url, username = "foo", password = "bar"){
 
-   stopifnot(has_duck())
+   stopifnot(has_scp())
    stopifnot(!missing(filename) && !missing(url))
    stopifnot(file.exists(filename))
    stopifnot(username != 'foo')
@@ -87,8 +193,6 @@ scp_upload <- function(filename, url, username = "foo", password = "bar"){
    
    system(CMD)
 }
-
-
 
 
 ################################################################################
