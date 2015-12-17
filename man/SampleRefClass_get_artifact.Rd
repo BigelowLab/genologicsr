@@ -13,7 +13,8 @@ character of NodeRefClass, possibly "" or NULL
 Get artifact as uri or Node
 }
 \seealso{
-Other Sample: \code{\link{SampleRefClass_get_biosource}};
+Other Sample: \code{\link{SampleRefClass_get_all_artifacts}};
+  \code{\link{SampleRefClass_get_biosource}};
   \code{\link{SampleRefClass_get_container}};
   \code{\link{SampleRefClass_get_project}};
   \code{\link{SampleRefNode_DELETE}};

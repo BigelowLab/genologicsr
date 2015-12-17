@@ -13,7 +13,8 @@ ContainerRefClass or uri (or NULL or "")
 Get the sample container as uri or NodeRefClass
 }
 \seealso{
-Other Sample: \code{\link{SampleRefClass_get_artifact}};
+Other Sample: \code{\link{SampleRefClass_get_all_artifacts}};
+  \code{\link{SampleRefClass_get_artifact}};
   \code{\link{SampleRefClass_get_biosource}};
   \code{\link{SampleRefClass_get_project}};
   \code{\link{SampleRefNode_DELETE}};

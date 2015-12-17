@@ -9,7 +9,10 @@ POST is disallowed for projects - although see this...
 \url{http://genologics.com/files/permanent/API/latest/rest.version.projects.limsid.html}
 }
 \seealso{
-Other Project: \code{\link{ProjectRefClass_get_researcher}};
+Other Project: \code{\link{ProjectRefClass_get_artifacts}};
+  \code{\link{ProjectRefClass_get_containers}};
+  \code{\link{ProjectRefClass_get_researcher}};
+  \code{\link{ProjectRefClass_get_samples}};
   \code{\link{ProjectRefNode_DELETE}}
 }
 

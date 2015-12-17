@@ -9,7 +9,7 @@
 \item{resource}{character, one resource to search, by default 'artifacts'}
 }
 \value{
-a list of XML::xmlNode objects
+a list of NodeRefClass objects
 }
 \description{
 Retrieve a resource by limsid

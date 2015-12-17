@@ -12,7 +12,7 @@ It is possible to also filter the query on UDF values but it may be easier to}
 \item{optional}{projectname character of one or more projectname values}
 }
 \value{
-a named list of container XML::xmlNode or NULL
+a named list of SampleRefClass or NULL
 }
 \description{
 Get one or more samples using queries on name, projectlimsid, projectname

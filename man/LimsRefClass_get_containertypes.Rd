@@ -7,7 +7,7 @@
 \item{optional}{name a character vector of one or more container type names}
 }
 \value{
-a named list of container type NodeRefClass objects or NULL
+a named list of ContainerTypeRefClass objects or NULL
 }
 \description{
 Get the container type(s) in the system

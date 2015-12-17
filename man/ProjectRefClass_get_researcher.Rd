@@ -10,7 +10,10 @@ ResearcherRefClass node or NULL
 Retrieve the Researcher assigned to the project
 }
 \seealso{
-Other Project: \code{\link{ProjectRefNode_DELETE}};
+Other Project: \code{\link{ProjectRefClass_get_artifacts}};
+  \code{\link{ProjectRefClass_get_containers}};
+  \code{\link{ProjectRefClass_get_samples}};
+  \code{\link{ProjectRefNode_DELETE}};
   \code{\link{ProjectRefNode_POST}}
 }
 

@@ -67,6 +67,60 @@ ProjectRefClass$methods(
       invisible(x)
    })
 
+#' Retrieve the samples associated with a project
+#'
+#' This method may take a while depending upon the number of samples in the 
+#' system.
+#'
+#' @family Project
+#' @name ProjectRefClass_get_samples
+#' @return a list of zero or more SampleRefClass or NULL
+NULL
+ProjectRefClass$methods(
+   get_samples = function(){
+      .self$lims$get_samples(projectlimsid = .self$limsid)
+   })
+
+#' Retrieve the artifacts associated with a project
+#'
+#' This method may take a while depending upon the number of samples in the 
+#' system. Also, each sample may have one or more artifacts submitted and derived.
+#'
+#' @family Project
+#' @name ProjectRefClass_get_artifacts
+#' @param what request either 'submitted' or 'all' (default) sample artifacts
+#' @param SS optional list of Samples in the Project.  If NULL then these
+#'    are first retrieved which can be slow.
+#' @return a list of list of zero or more SampleRefClass or NULL
+NULL
+ProjectRefClass$methods(
+   get_artifacts = function(what = c('all', 'submitted')[1], SS = NULL){
+      if (is.null(SS)) SS <- .self$get_samples()
+      if (tolower(what) == 'all'){
+         SSlimsid <- sapply(SS, function(x) x$limsid)
+         AA <- .self$lims$get_artifacts(limsid = SSlimsid)
+      } else {
+         AA <- sapply(SS, function(x) x$get_artifact(form = 'uri'))
+         AA <- .self$lims$batchretreive(AA, rel = 'artifacts')
+      }
+      AA
+   })
+      
+#' Retrieve the containers associated with a project
+#' 
+#' @family Project
+#' @name ProjectRefClass_get_containers
+#' @param AA optional list of Artifacts in the Project.  If NULL then these
+#'    are first retrieved which can be slow.
+#' @return a list of zero or more ContainerRefClass or NULL
+NULL
+ProjectRefClass$methods(
+   get_containers = function(x, AA = NULL){
+      if (is.null(AA)) AA <- .self$get_artifacts(what = 'all')
+      CC <- unique(sapply(unlist(AA), function(x) x$get_container(form = 'uri')))
+      .self$lims$batchretrieve(CC, rel = 'containers')
+   })
+
 ###### Methods above
 ###### Functions below
 

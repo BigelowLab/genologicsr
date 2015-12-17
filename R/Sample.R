@@ -88,7 +88,18 @@ SampleRefClass$methods(
       return(x)
    })
  
-  
+
+#' Get ALL associated artifacts
+#' 
+#' @family Sample
+#' @name SampleRefClass_get_all_artifacts
+#' @return list of ArtifactRefClass, possibly "" or NULL
+NULL
+SampleRefClass$methods(
+   get_all_artifacts = function(){
+      .self$lims$get_artifacts(samplelimsid = .self$limsid)
+   }) 
+     
 #' Get artifact as uri or Node
 #' 
 #' @family Sample

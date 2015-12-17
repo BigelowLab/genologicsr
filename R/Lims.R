@@ -406,7 +406,7 @@ LimsRefClass$methods(
 #' @name LimsRefClass_get_byLimsid
 #' @param lismid character, one or more limsids
 #' @param resource character, one resource to search, by default 'artifacts'
-#' @return a list of XML::xmlNode objects
+#' @return a list of NodeRefClass objects
 NULL
 LimsRefClass$methods(
    get_byLimsid = function(limsid, 
@@ -426,7 +426,7 @@ LimsRefClass$methods(
 #' @param optional type character of one or more container types ("384 well plate", etc)
 #' @param optional state character of one or more contain states ("Discarded", "Populated",...)
 #' @param optional last_modified a character vector of last modification date in YYYY-MM-DDThh:mm:ssTZD format
-#' @return a named list of container XML::xmlNode or NULL
+#' @return a named list of ContainerRefClass or NULL
 NULL
 LimsRefClass$methods(
    get_containers = function(name = NULL, type = NULL, state = NULL,
@@ -438,7 +438,7 @@ LimsRefClass$methods(
       if (!is.null(state)) queryl[['state']] <- state
       if (!is.null(last_modified)) queryl[['last-modified']] <- last_modified
       if(length(queryl) == 0) 
-         stop("LimsRefClass$get_containers please specify at leatst one or more of name, type, state or last_modified")
+         stop("LimsRefClass$get_containers please specify at least one or more of name, type, state or last_modified")
       query <- build_query(queryl)
       x <- .self$GET(file.path(.self$baseuri, resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
@@ -458,7 +458,7 @@ LimsRefClass$methods(
 #' @family Lims Container
 #' @name LimsRefClass_get_containertypes
 #' @param optional name a character vector of one or more container type names
-#' @return a named list of container type NodeRefClass objects or NULL
+#' @return a named list of ContainerTypeRefClass objects or NULL
 NULL
 LimsRefClass$methods(
    get_containertypes = function(name = NULL){
@@ -474,9 +474,65 @@ LimsRefClass$methods(
       } else {
          x <- NULL
       }
-      
+
       invisible(x)
    })
+
+
+
+#' Get one or more artifacts using queries on name, type, process-type, working-flag
+#' qc-flag, sample-name, samplelimsid, containername, containerlimsid, reagent-label
+#'
+#' @family Lims Artifact
+#' @name LimsRefClass_get_artifacts
+#' @param name one or more artifact names or NULL to ignore
+#' @param type character one or more character types or NULL to ignore
+#' @param process_type character parent process type or NULL to ignore
+#' @param working_flag character 'true' or 'false'  or NULL to ignore
+#' @param qc_flag character on of UNKNOWN, PASSED, FAILED, CONTINUE or NULL to ignore
+#' @param sample_name character one or more submitted sample names or NULL to ignore
+#' @param samplelimsid character one or more submitted sample limsid  or NULL to ignore
+#' @param artifactgroup character one or more experiment names  or NULL to ignore
+#' @param container_name character one or more container names or NULL to ignore
+#' @param containerlimsid character one or more container limsid  or NULL to ignore 
+#' @param reagent-label character one or more reagent names or NULL to ignore
+#' @return a list of ArtifactRefClass objects or NULL
+NULL
+LimsRefClass$methods(
+   get_artifacts = function(name = NULL, type = NULL, process_type = NULL,
+       working_flag = NULL,qc_flag = NULL,sample_name = NULL,samplelimsid = NULL,
+       artifactgroup = NULL,container_name = NULL,containerlimsid = NULL,
+       reagent_label = NULL){
+       
+      resource <- 'artifacts'
+      query = list()
+      if (!is.null(name)) query[['name']] <- name
+      if (!is.null(type)) query[['type']] <- type
+      if (!is.null(process_type)) query[['process-type']] <- process_type
+      if (!is.null(working_flag)) query[['working-flag']] <- working_flag
+      if (!is.null(qc_flag)) query[['qc-flag']] <- qc_flag
+      if (!is.null(sample_name)) query[['sample-name']] <- sample_name
+      if (!is.null(samplelimsid)) query[['samplelimsid']] <- samplelimsid
+      if (!is.null(artifactgroup)) query[['artifactgroup']] <- artifactgroup
+      if (!is.null(container_name)) query[['container-name']] <- container_name
+      if (!is.null(containerlimsid)) query[['containerlimsid']] <- containerlimsid
+      if (!is.null(reagent_label)) query[['reagent-label']] <- reagent_label
+      if(length(query) == 0) 
+         stop("LimsRefClass$get_artifacts please specify at least one or more of search parameters")
+      query <- build_query(query)
+      
+      x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE) 
+      if (!is_exception(x)){
+         if (length(XML::xmlChildren(x))==0) return(NULL)
+         uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+         x <- batch_retrieve(uri, .self, rel = 'artifacts')
+         x <- lapply(x, function(x) ArtifactRefClass$new(x, .self))
+         names(x) <- sapply(x, '[[', 'name')
+      }
+      invisible(x)
+
+   }) # get_artifacts
+
 
 
 #' Get one or more samples using queries on name, projectlimsid, projectname
@@ -488,7 +544,7 @@ LimsRefClass$methods(
 #' @param optional name a character vector of one or more names
 #' @param optional projectlimsid character of one or more projectlimsid values
 #' @param optional projectname character of one or more projectname values
-#' @return a named list of container XML::xmlNode or NULL
+#' @return a named list of SampleRefClass or NULL
 NULL
 LimsRefClass$methods(
    get_samples = function(name = NULL, projectlimsid = NULL, projectname = NULL){

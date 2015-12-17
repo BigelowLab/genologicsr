@@ -13,7 +13,7 @@
 \item{optional}{last_modified a character vector of last modification date in YYYY-MM-DDThh:mm:ssTZD format}
 }
 \value{
-a named list of container XML::xmlNode or NULL
+a named list of ContainerRefClass or NULL
 }
 \description{
 Get one or more containers by name, state, etc
