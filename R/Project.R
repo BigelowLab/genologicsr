@@ -84,21 +84,26 @@ ProjectRefClass$methods(
 #' Retrieve the artifacts associated with a project
 #'
 #' This method may take a while depending upon the number of samples in the 
-#' system. Also, each sample may have one or more artifacts submitted and derived.
+#' system. The 'all' option is available but may be ill advised as it can be
+#' very very slow.
 #'
 #' @family Project
 #' @name ProjectRefClass_get_artifacts
-#' @param what request either 'submitted' or 'all' (default) sample artifacts
+#' @param what request either 'submitted' (default) or 'all'  sample artifacts
 #' @param SS optional list of Samples in the Project.  If NULL then these
 #'    are first retrieved which can be slow.
 #' @return a list of list of zero or more SampleRefClass or NULL
 NULL
 ProjectRefClass$methods(
-   get_artifacts = function(what = c('all', 'submitted')[1], SS = NULL){
+   get_artifacts = function(what = c('all', 'submitted')[2], SS = NULL){
       if (is.null(SS)) SS <- .self$get_samples()
       if (tolower(what) == 'all'){
-         SSlimsid <- sapply(SS, function(x) x$limsid)
-         AA <- .self$lims$get_artifacts(limsid = SSlimsid)
+         # this makes too big of a URL query ?name=foo&name=bar&...
+         #SSlimsid <- sapply(SS, function(x) x$limsid)
+         #AA <- .self$lims$get_artifacts(samplelimsid = SSlimsid)
+         # so we iterate like this - who knows, maybe this is better as we 
+         # retain one list element per sample (each element with one or more Artifacts)
+         AA <- lapply(SS, function(x) x$get_all_artifacts())
       } else {
          AA <- sapply(SS, function(x) x$get_artifact(form = 'uri'))
          AA <- .self$lims$batchretreive(AA, rel = 'artifacts')
@@ -116,7 +121,7 @@ ProjectRefClass$methods(
 NULL
 ProjectRefClass$methods(
    get_containers = function(x, AA = NULL){
-      if (is.null(AA)) AA <- .self$get_artifacts(what = 'all')
+      if (is.null(AA)) AA <- .self$get_artifacts(what = 'submitted')
       CC <- unique(sapply(unlist(AA), function(x) x$get_container(form = 'uri')))
       .self$lims$batchretrieve(CC, rel = 'containers')
    })
