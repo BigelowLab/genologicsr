@@ -101,7 +101,7 @@ ProjectRefClass$methods(
          AA <- .self$lims$get_artifacts(limsid = SSlimsid)
       } else {
          AA <- sapply(SS, function(x) x$get_artifact(form = 'uri'))
-         AA <- .self$lims$batchretreive(AA, rel = 'artifacts')
+         AA <- .self$lims$batchretrieve(AA, rel = 'artifacts')
       }
       AA
    })
