@@ -89,11 +89,12 @@ SampleRefClass$methods(
    })
  
 
-#' Get ALL associated artifacts
+#' Get ALL associated artifacts.  This can be painfully slow and probably is
+#' not worth doing.
 #' 
 #' @family Sample
 #' @name SampleRefClass_get_all_artifacts
-#' @return list of ArtifactRefClass, possibly "" or NULL
+#' @return list of ArtifactRefClass or NULL
 NULL
 SampleRefClass$methods(
    get_all_artifacts = function(){

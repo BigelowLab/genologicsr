@@ -2,12 +2,14 @@
 % Please edit documentation in R/Sample.R
 \name{SampleRefClass_get_all_artifacts}
 \alias{SampleRefClass_get_all_artifacts}
-\title{Get ALL associated artifacts}
+\title{Get ALL associated artifacts.  This can be painfully slow and probably is
+not worth doing.}
 \value{
-list of ArtifactRefClass, possibly "" or NULL
+list of ArtifactRefClass or NULL
 }
 \description{
-Get ALL associated artifacts
+Get ALL associated artifacts.  This can be painfully slow and probably is
+not worth doing.
 }
 \seealso{
 Other Sample: \code{\link{SampleRefClass_get_artifact}};
