@@ -109,7 +109,7 @@ InputOutputMapRefClass$methods(
 create_iom_shared_resultfile <- function(inputartifacturi, output_type = 'ResultFile'){
    
    inputs <- lapply(inputartifacturi, function(x) XML::newXMLNode("input", attrs = list("uri" = x)) )
-   outputs <- newXMLNode("output", attrs = list(type = output_type))
+   outputs <- XML::newXMLNode("output", attrs = list(type = output_type))
    
    XML::newXMLNode("input-output-map",
       attrs = list(shared = 'true'),
