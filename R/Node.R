@@ -155,6 +155,14 @@ NodeRefClass$methods(
          stop(methods::classLabel(class(.self)), " PUT is not allowed")
       }
       if (!.self$has_lims()) stop("NodeRefClass$PUT lims not available for PUT")
+      
+      # file:file, udf:field, udf:type, ri:externalid
+      # must be bounded so we have to add to each of these
+      # xmlns:file="http://genologics.com/ri/file"
+      # udf:type xmlns:udf="http://genologics.com/ri/userdefined"
+      # udf:field xmlns:udf="http://genologics.com/ri/userdefined"
+      # xmlns:ri="http://genologics.com/ri"
+      # see XML::newXMLNamespace and misc::get_NSMAP
       r <- .self$lims$PUT(.self, ...)
       ok <- TRUE
       if (!is_exception(r)) {
