@@ -163,6 +163,8 @@ NodeRefClass$methods(
       # udf:field xmlns:udf="http://genologics.com/ri/userdefined"
       # xmlns:ri="http://genologics.com/ri"
       # see XML::newXMLNamespace and misc::get_NSMAP
+      #.self$add_namespaces()
+      
       r <- .self$lims$PUT(.self, ...)
       ok <- TRUE
       if (!is_exception(r)) {
@@ -241,6 +243,41 @@ NodeRefClass$methods(
       }
       if (httr::url_ok(.self$uri)) (httr::BROWSE(.self$uri,...))
    })
+
+
+#' Return a character vector of required namespace names
+#'
+#' @family Node
+#' @name NodeRefClass_required_namespaces
+#' @return character vector (possible empty)
+NULL
+NodeRefClass$methods(
+   required_namespaces = function(){
+      return(character())
+   })
+
+#' Add namespaces to the XML::xmlNode as required - useful before a PUT
+#'
+#' @family Node
+#' @name NodeRefClass_add_namespaces
+#' @return the NodeRefClass invisibly
+NULL
+NodeRefClass$methods(
+   add_namespaces = function(){
+      # each class 'knows' what is required - if none then return
+      need_ns <- .self$required_namespaces()
+      if (length(need_ns) <= 0) return(invisible(.self))
+      # see what exists already - if needed already then then return
+      current_ns <- names(XML::xmlNamespaces(.self$node, simplify = TRUE))
+      names_ns <- need_ns[!(need_ns %in% current_ns)]
+      if (length(names_ns) <= 0) return(invisible(.self))
+      # other wise add the new namespaces - this feels awkward
+      # why can't we simple have XML::addNamespaces ?
+      add_ns <- get_NSMAP()[names_ns]
+      NS <- XML::newXMLNamespace(.self$node, add_ns)
+      invisible(.self)
+   })
+   
 
 #' Retrieve a vector of unique child names
 #'

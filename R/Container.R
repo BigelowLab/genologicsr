@@ -22,8 +22,9 @@ ContainerRefClass <- setRefClass("ContainerRefClass",
          .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
          .self$state = XML::xmlValue(.self$node[['state']])    
       },
-   update = function(){
-      callSuper(.self$node)
+   update = function(x){
+      if (missing(x)) x <- .self$node
+      callSuper(x)
       .self$name = XML::xmlValue(.self$node[['name']]) 
       .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
       .self$state = XML::xmlValue(.self$node[['state']])    
@@ -46,6 +47,18 @@ ContainerRefClass$methods(
       cat(prefix, "  Container occupied wells: ", .self$n_occupied(), 
          " (", .self$n_empty(), " empty)\n", sep = "")
    })  
+
+
+#' Return a character vector of required namespace names
+#'
+#' @family Container
+#' @name ContainerRefClass_required_namespaces
+#' @return character vector
+NULL
+ContainerRefClass$methods(
+   required_namespaces = function(){
+      c(field = "udf")
+   })
 
 #' POST is disallowed for containers
 #' @family Container

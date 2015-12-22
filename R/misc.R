@@ -157,6 +157,7 @@ udf_type2R <- function(x){
       return(lut)
    }
 }
+ 
       
 #' Retrieve the Genologics namespace map
 #' @export

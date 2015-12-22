@@ -127,7 +127,9 @@ LimsRefClass$methods(
          x <- .self$create_exception(message = "error extracting response content")
          return(invisible(x))
       }
-      x <- try(XML::xmlTreeParse(x, asText = TRUE, encoding = .self$encoding, useInternalNodes = TRUE))
+      x <- try(XML::xmlTreeParse(x, asText = TRUE, 
+         encoding = .self$encoding, useInternalNodes = TRUE,
+         fullNamespaceInfo = TRUE))
       if (inherits(x, "try-error")){
          x <- .self$create_exception(message = "error with xmlTreeParse")
          return(invisible(x))
@@ -987,23 +989,25 @@ batch_retrieve <- function(uri, lims,
          'sample' = 'smp',
          'file' = 'file')
          
-      nmspc <- unclass(XML::xmlNamespace(x))
-      x <- x[singleName]
+      nmspc <- unclass(XML::xmlNamespaces(x, simplify = TRUE))
+      xx <- x[singleName]
       # transfer the the xmlnamespace to each child node
-      uristub = get_NSMAP()[[nm]]
-      x <- lapply(x, 
+      # uristub = get_NSMAP()[[nm]]
+      xx <- lapply(xx, 
          function(x, nm=NULL) {
-                  XML::xmlNamespace(x) <- nm
+                  for (n in names(nm)) dummy <- XML::newXMLNamespace(x,nm[n])
                   x}, 
             nm = nmspc)
       if (rm_dups == FALSE) {
          # name each node
-         names(x) <- sapply(x, function(x) XML::xmlAttrs(x)["limsid"])
+         names(xx) <- sapply(xx, function(x) XML::xmlAttrs(x)["limsid"])
          # rebuild the list with duplicates
-         x <- x[limsid_all]
+         xx <- xx[limsid_all]
       }
+   } else {
+      xx <- x
    }
-   invisible(x) 
+   invisible(xx) 
 } # batch_retrieve
 
 
