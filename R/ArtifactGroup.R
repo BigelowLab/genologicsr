@@ -57,10 +57,10 @@ ArtifactGroupRefClass$methods(
 
 #' DELETE is disallowed for ArtifactGroup
 #' @family ArtifactGroup
-#' @name ArtifactGrouptRefNode_DELETE
+#' @name ArtifactGroupRefNode_DELETE
 NULL
 ArtifactGroupRefClass$methods(
    DELETE = function(){
-      cat("ArtifactGrouptRefClass_DELETE in not a permitted transaction\n")
+      cat("ArtifactGroupRefClass_DELETE in not a permitted transaction\n")
    })
    

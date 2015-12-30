@@ -43,9 +43,11 @@ ContainerRefClass$methods(
       callSuper(prefix = prefix)
       cat(prefix, "  Container name: ", .self$name, "\n", sep = "")
       cat(prefix, "  Container type: ", .self$type, "\n", sep = "")
-      cat(prefix, "  Container state: ", .self$state, "\n", sep = "")
-      cat(prefix, "  Container occupied wells: ", .self$n_occupied(), 
-         " (", .self$n_empty(), " empty)\n", sep = "")
+      #cat(prefix, "  Container state: ", .self$state, "\n", sep = "")
+      #cat(prefix, "  Container occupied wells: ", .self$n_occupied(), 
+      #   " (", .self$n_empty(), " empty)\n", sep = "")
+      cat(sprintf("%s  Container state: %s [%i of %i occupied]\n", 
+         prefix, .self$state, .self$n_occupied(), .self$n_wells()) )
    })  
 
 
@@ -112,6 +114,20 @@ ContainerRefClass$methods(
          '12 well plate' = 12,
          1)
    }) #n_wells  
+
+#' Retrieve a named vector of container type attributes (uri and name)
+#' 
+#' @family Container
+#' @name ContainerRefClass_get_type
+#' @return a named vector of uri and name, or NULL
+NULL
+ContainerRefClass$methods(
+   get_type = function(){
+      x <- if (is.null(.self$node[['type']])) NULL else XML::xmlAttrs(.self$node[['type']])
+      x
+   })
+
+
 
 #' Retrieve a named vector of placements uri
 #' 
