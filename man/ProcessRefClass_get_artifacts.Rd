@@ -8,14 +8,20 @@
 
 \item{form}{character of either 'Node' or 'uri'}
 
-\item{a}{list of ArtifactRefClass objects or uri unless \code{what} is both in which case
-a list is returned with 'input' and 'output' elements}
+\item{iom}{an optional data frame of input-output-map data as per
+\code{get_inputoutputmap(asDataFrame = TRUE)}.  If not provided (or NULL)
+then this method will fetch it.}
+}
+\value{
+a list of ArtifactRefClass objects or uri unless \code{what} is
+   both in which case a list is returned with 'input' and 'output' elements
 }
 \description{
 Get either the input or the output artifacts (or both!) as NodeRefClass or uri
 }
 \seealso{
 Other Process: \code{\link{ProcessRefClass_date_run}};
+  \code{\link{ProcessRefClass_get_file_artifacts}};
   \code{\link{ProcessRefClass_get_parent_process}};
   \code{\link{ProcessRefClass_get_type}};
   \code{\link{ProcessRefClass_technician}};

@@ -15,6 +15,7 @@ Get the parent_process assocated with this process
 \seealso{
 Other Process: \code{\link{ProcessRefClass_date_run}};
   \code{\link{ProcessRefClass_get_artifacts}};
+  \code{\link{ProcessRefClass_get_file_artifacts}};
   \code{\link{ProcessRefClass_get_type}};
   \code{\link{ProcessRefClass_technician}};
   \code{\link{create_process_node}}

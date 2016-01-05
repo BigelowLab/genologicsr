@@ -10,8 +10,8 @@ a named vector of ArtifactRefClass objects
 Retrieve a list ArtifactRefClass objects
 }
 \seealso{
-Other ArtifactGroup: \code{\link{ArtifactGroupRefNode_POST}};
-  \code{\link{ArtifactGroupRefNode_PUT}};
-  \code{\link{ArtifactGrouptRefNode_DELETE}}
+Other ArtifactGroup: \code{\link{ArtifactGroupRefNode_DELETE}};
+  \code{\link{ArtifactGroupRefNode_POST}};
+  \code{\link{ArtifactGroupRefNode_PUT}}
 }
 

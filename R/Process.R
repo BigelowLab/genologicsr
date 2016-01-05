@@ -152,14 +152,19 @@ ProcessRefClass$methods(
 #' @name ProcessRefClass_get_artifacts
 #' @param what either 'input', 'output' or 'both'
 #' @param form character of either 'Node' or 'uri'
-#' @param a list of ArtifactRefClass objects or uri unless \code{what} is both in which case
-#'    a list is returned with 'input' and 'output' elements
+#' @param iom an optional data frame of input-output-map data as per 
+#'   \code{get_inputoutputmap(asDataFrame = TRUE)}.  If not provided (or NULL)
+#'   then this method will fetch it.
+#' @return a list of ArtifactRefClass objects or uri unless \code{what} is 
+#'    both in which case a list is returned with 'input' and 'output' elements
 NULL
 ProcessRefClass$methods(
-   get_artifacts = function(what = c("input", "output", "both")[1],
-      form = c("Node", "uri")[1]){
+   get_artifacts = function(
+      what = c("input", "output", "both")[1],
+      form = c("Node", "uri")[1], 
+      iom = NULL){
       
-      iom <- .self$get_inputoutputmap(asDataFrame = TRUE)
+      if (is.null(iom)) iom <- .self$get_inputoutputmap(asDataFrame = TRUE)
       what <- tolower(what[1])
       form <- tolower(form[1])
       
@@ -190,6 +195,68 @@ ProcessRefClass$methods(
          
       invisible(x)
    }) # get_artifacts
+
+
+#' Retrieve file artifacts (either input, output or both) - very similar to 
+#' get_artifacts but looks for Artifacts types with the keyword 'file' - 'ResultFile',
+#' 'SharedResultFile', etc.  Requestion 'output' is fairly quick as the 
+#' input-output-map carris the output-type attribute. Requesting 'input' requires 
+#' more time as each input artifact must be fetched before determining it's type.
+#' 
+#' @family Process
+#' @name ProcessRefClass_get_file_artifacts
+#' @param what character of 'input', 'output' or 'both'
+#' @param form character of either 'Node' or 'uri'
+#' @param iom an optional data frame of input-output-map data as per 
+#'   \code{get_inputoutputmap(asDataFrame = TRUE)}.  If not provided (or NULL)
+#'   then this method will fetch it.
+#' @return a two element list of ArtifactRefClass objects or uri unless \code{what}
+#' with zero or more elements of 'input' and zero or more elements of 'output'
+NULL
+ProcessRefClass$methods(
+   get_file_artifacts = function(
+      what = c("input", "output", "both")[1],
+      form = c("Node", "uri")[1], 
+      iom = NULL){
+      
+      if (is.null(iom)) iom <- .self$get_inputoutputmap(asDataFrame = TRUE) 
+      what <- tolower(what[1])
+      form <- tolower(form[1])
+      
+      IN <- NULL
+      if (what %in% c("both", "input")){
+         input_uri <- unique(iom[,'input_uri'])
+         AA <- .self$lims$batchretrieve(input_uri, rel = 'artifacts')
+         ix <- grepl('file', tolower(sapply(AA,function(x) x$type)), fixed = TRUE)
+         if (any(ix)){
+            IN <- sapply(AA, function(x) XML::xmlAttrs(x$node[['file']])[['uri']] )
+            if (form == "node") IN <- lapply(IN, function(x) .self$lims$GET(x) )  
+         } # any files?
+      }
+      
+      OUT <- NULL
+      if (what %in% c("both", "output")){
+         ix <- grepl('file', tolower(iom[,'output_type']), fixed = TRUE)
+         if (any(ix)){
+            AA <- .self$lims$batchretrieve(iom[ix,'output_uri'], rel = 'artifacts')
+            OUT <- sapply(AA, function(x) XML::xmlAttrs(x$node[['file']])[['uri']] )
+            if (form == "node") OUT <- lapply(OUT, function(x) .self$lims$GET(x) )
+         } # any files? 
+      }
+      
+      X <- list()
+      if (!is.null(IN)) X[['input']] <- IN
+      if (!is.null(OUT))  X[['output']] <- OUT
+      
+      if (length(X) == 0){
+         return(NULL)
+      } else {
+         return(X)
+      }
+   }) # get_file_artifacts
+   
+   
+   
 
 ######## methods above
 ######## functions below

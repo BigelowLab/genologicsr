@@ -15,6 +15,7 @@ Retrieve the technican "First Last" name
 \seealso{
 Other Process: \code{\link{ProcessRefClass_date_run}};
   \code{\link{ProcessRefClass_get_artifacts}};
+  \code{\link{ProcessRefClass_get_file_artifacts}};
   \code{\link{ProcessRefClass_get_parent_process}};
   \code{\link{ProcessRefClass_get_type}};
   \code{\link{create_process_node}}

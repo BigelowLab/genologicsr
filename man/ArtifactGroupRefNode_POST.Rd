@@ -8,7 +8,7 @@ POST is disallowed for artifact groups
 }
 \seealso{
 Other ArtifactGroup: \code{\link{ArtifactGroupRefClass_get_artifacts}};
-  \code{\link{ArtifactGroupRefNode_PUT}};
-  \code{\link{ArtifactGrouptRefNode_DELETE}}
+  \code{\link{ArtifactGroupRefNode_DELETE}};
+  \code{\link{ArtifactGroupRefNode_PUT}}
 }
 

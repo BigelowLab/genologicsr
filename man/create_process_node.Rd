@@ -29,6 +29,7 @@ Create a process node used for process creation
 \seealso{
 Other Process: \code{\link{ProcessRefClass_date_run}};
   \code{\link{ProcessRefClass_get_artifacts}};
+  \code{\link{ProcessRefClass_get_file_artifacts}};
   \code{\link{ProcessRefClass_get_parent_process}};
   \code{\link{ProcessRefClass_get_type}};
   \code{\link{ProcessRefClass_technician}}
