@@ -50,23 +50,43 @@ ProcessRefClass$methods(
 #' 
 #' @family Process
 #' @name ProcessRefClass_technician
-#' @param form 'First Last', or 'uri'
-#' @return character or "" if not available
+#' @param form 'First Last', "Node" or 'uri'
+#' @return ResearcherRefClass, character or NULL if not available
 NULL
 ProcessRefClass$methods(
-   technician = function(form = c("First Last", "uri")[1]){
+   technician = function(form = c("First Last", "Node", "uri")[1]){
       technode <- .self$node[['technician']]
       if (is.null(technode)){
-         x <- ""
+         x <- NULL
       } else {
-         x <- switch(form,
+         x <- switch(tolower(form[1]),
             'uri' = XML::xmlAttrs(technode)[['uri']],
+            'node' = .self$lims$GET(XML::xmlAttrs(technode)[['uri']]), 
             paste(XML::xmlValue(technode[['first-name']]),
                XML::xmlValue(technode[['last-name']]) ) )
       }
       x
    }) #technician
-   
+
+#' Retrieve instrument information (if any)
+#'
+#' @family Process
+#' @name ProcessRefClass_instrument
+#' @param form 'Node', or 'uri'
+#' @return InstrumentRefClass, character or NULL if not available
+NULL
+ProcessRefClass$methods(
+   instrument = function(form = c("Node", "uri")[1]){
+      inode <- .self$node[['instrument']]
+      if (!is.null(typenode)) {
+         x <- XML::xmlAttrs(typenode)[['uri']]
+         if (tolower(form == 'node')) x <- .self$lims$GET(x)
+      } else {
+         x <- NULL
+      }
+      x
+   }) #instrument
+     
 #' Retrieve the process type, overrides NodeRefClass_get_type
 #'
 #' @family Process

@@ -4,10 +4,10 @@
 \alias{ProcessRefClass_technician}
 \title{Retrieve the technican "First Last" name}
 \arguments{
-\item{form}{'First Last', or 'uri'}
+\item{form}{'First Last', "Node" or 'uri'}
 }
 \value{
-character or "" if not available
+ResearcherRefClass, character or NULL if not available
 }
 \description{
 Retrieve the technican "First Last" name
@@ -18,6 +18,7 @@ Other Process: \code{\link{ProcessRefClass_date_run}};
   \code{\link{ProcessRefClass_get_file_artifacts}};
   \code{\link{ProcessRefClass_get_parent_process}};
   \code{\link{ProcessRefClass_get_type}};
+  \code{\link{ProcessRefClass_instrument}};
   \code{\link{create_process_node}}
 }
 
