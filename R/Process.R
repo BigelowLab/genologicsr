@@ -78,8 +78,8 @@ NULL
 ProcessRefClass$methods(
    instrument = function(form = c("Node", "uri")[1]){
       inode <- .self$node[['instrument']]
-      if (!is.null(typenode)) {
-         x <- XML::xmlAttrs(typenode)[['uri']]
+      if (!is.null(inode)) {
+         x <- XML::xmlAttrs(inode)[['uri']]
          if (tolower(form == 'node')) x <- .self$lims$GET(x)
       } else {
          x <- NULL
