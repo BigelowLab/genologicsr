@@ -6,7 +6,7 @@
 \arguments{
 \item{optional}{name character a vector of one or more names}
 
-\item{asDataFrame}{logical, return a data.frame or list of Nodes}
+\item{form}{character, return a 'data.frame' or list of Nodes}
 }
 \value{
 a list of  InstrumentRefClass, a data frame or NULL

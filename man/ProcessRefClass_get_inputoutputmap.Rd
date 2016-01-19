@@ -4,7 +4,7 @@
 \alias{ProcessRefClass_get_inputoutputmap}
 \title{Get the input-output-maps as InputOutputMapRefClass or a data.frame}
 \arguments{
-\item{asDataFrame}{logical, if TRUE then return a data.frame}
+\item{form}{character return 'data.frame' or 'Node'}
 }
 \value{
 a list of InputOutputMapRefClass or a data.frame or NULL if not available

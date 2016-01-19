@@ -579,11 +579,12 @@ LimsRefClass$methods(
 #' @family Lims Instrument
 #' @name LimsRefClass_get_instruments
 #' @param optional name character a vector of one or more names
-#' @param asDataFrame logical, return a data.frame or list of Nodes
+#' @param form character, return a 'data.frame' or list of Nodes
 #' @return a list of  InstrumentRefClass, a data frame or NULL
 NULL
 LimsRefClass$methods(
-   get_instruments = function(name = NULL, asDataFrame = TRUE){
+   get_instruments = function(name = NULL, 
+      form = c('data.frame', 'Node')[1]){
    
       resource <- 'instruments'
       
@@ -596,25 +597,26 @@ LimsRefClass$methods(
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
-      if (asDataFrame){
+      if (tolower(form[1]) == 'data.frame'){
          x <- data.frame (limsid = basename(uri),
             name = sapply(x, function(x) x$name),
             type = sapply(x, function(x) x$type),
             stringsAsFactors = FALSE)
       }
       invisible(x)
-   })
+   }) # get_instruments
 
 #' Retrieve a list of ResearcherRefNodes or a data.frame of the good stuff
 #' 
 #' @family Lims Researcher
 #' @name LimsRefClass_get_researchers
 #' @param optional username character a vector of one or more user names like 'btupper' etc.
-#' @param asDataFrame logical, return a data.frame or list of Nodes
+#' @param form character, return a 'data.frame' or list of Nodes
 #' @return a list of  ResearcherRefClass, a data frame or NULL
 NULL
 LimsRefClass$methods(
-   get_researchers = function(username = NULL, asDataFrame = TRUE){
+   get_researchers = function(username = NULL, 
+      form = c('data.frame', 'Node')[1]){
    
       resource <- 'researchers'
       
@@ -627,7 +629,7 @@ LimsRefClass$methods(
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
-      if (asDataFrame){
+      if (tolower(form[1]) == 'data.frame'){
          x <- data.frame (limsid = basename(uri),
             name = sapply(x, function(x) x$name),
             username = sapply(x, function(x) x$username),
@@ -637,7 +639,7 @@ LimsRefClass$methods(
             stringsAsFactors = FALSE)
       }
       invisible(x)
-   })
+   }) # get_researchers
 
 
 #' Get one or more Processes - does not leverage /batch/retrieve resources

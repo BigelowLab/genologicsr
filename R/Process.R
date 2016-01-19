@@ -135,11 +135,11 @@ ProcessRefClass$methods(
 #'
 #' @family Process InputOutputMap
 #' @name ProcessRefClass_get_inputoutputmap
-#' @param asDataFrame logical, if TRUE then return a data.frame
+#' @param form character return 'data.frame' or 'Node'
 #' @return a list of InputOutputMapRefClass or a data.frame or NULL if not available
 NULL
 ProcessRefClass$methods(
-   get_inputoutputmap = function(asDataFrame = TRUE){
+   get_inputoutputmap = function(form = c("data.frame", "Node")[1]){
       
       if (!is_xmlNode(.self$node) || !.self$has_child('input-output-map')) {
          return(NULL)
@@ -148,7 +148,7 @@ ProcessRefClass$methods(
             InputOutputMap$new(x, lims)
          }, lims = .self$lims)
          
-      if (asDataFrame == TRUE){
+      if (tolower(form[1]) == 'data.frame'){
          inputlimsid <- sapply(x, "[[", "input_limsid")
          output_limsid = sapply(x, "[[", "output_limsid")
          x <- data.frame(
@@ -173,7 +173,7 @@ ProcessRefClass$methods(
 #' @param what either 'input', 'output' or 'both'
 #' @param form character of either 'Node' or 'uri'
 #' @param iom an optional data frame of input-output-map data as per 
-#'   \code{get_inputoutputmap(asDataFrame = TRUE)}.  If not provided (or NULL)
+#'   \code{get_inputoutputmap(form = 'data.frame')}.  If not provided (or NULL)
 #'   then this method will fetch it.
 #' @return a list of ArtifactRefClass objects or uri unless \code{what} is 
 #'    both in which case a list is returned with 'input' and 'output' elements
@@ -184,7 +184,7 @@ ProcessRefClass$methods(
       form = c("Node", "uri")[1], 
       iom = NULL){
       
-      if (is.null(iom)) iom <- .self$get_inputoutputmap(asDataFrame = TRUE)
+      if (is.null(iom)) iom <- .self$get_inputoutputmap(form = 'data.frame')
       what <- tolower(what[1])
       form <- tolower(form[1])
       
@@ -228,7 +228,7 @@ ProcessRefClass$methods(
 #' @param what character of 'input', 'output' or 'both'
 #' @param form character of either 'Node' or 'uri'
 #' @param iom an optional data frame of input-output-map data as per 
-#'   \code{get_inputoutputmap(asDataFrame = TRUE)}.  If not provided (or NULL)
+#'   \code{get_inputoutputmap(form = 'data.frame')}.  If not provided (or NULL)
 #'   then this method will fetch it.
 #' @return a two element list of ArtifactRefClass objects or uri unless \code{what}
 #' with zero or more elements of 'input' and zero or more elements of 'output'
@@ -239,7 +239,7 @@ ProcessRefClass$methods(
       form = c("Node", "uri")[1], 
       iom = NULL){
       
-      if (is.null(iom)) iom <- .self$get_inputoutputmap(asDataFrame = TRUE) 
+      if (is.null(iom)) iom <- .self$get_inputoutputmap(form = 'data.frame') 
       what <- tolower(what[1])
       form <- tolower(form[1])
       

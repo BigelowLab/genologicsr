@@ -9,7 +9,7 @@
 \item{form}{character of either 'Node' or 'uri'}
 
 \item{iom}{an optional data frame of input-output-map data as per
-\code{get_inputoutputmap(asDataFrame = TRUE)}.  If not provided (or NULL)
+\code{get_inputoutputmap(form = 'data.frame')}.  If not provided (or NULL)
 then this method will fetch it.}
 }
 \value{

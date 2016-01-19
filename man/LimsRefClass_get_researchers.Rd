@@ -6,7 +6,7 @@
 \arguments{
 \item{optional}{username character a vector of one or more user names like 'btupper' etc.}
 
-\item{asDataFrame}{logical, return a data.frame or list of Nodes}
+\item{form}{character, return a 'data.frame' or list of Nodes}
 }
 \value{
 a list of  ResearcherRefClass, a data frame or NULL
