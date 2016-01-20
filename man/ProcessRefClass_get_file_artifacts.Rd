@@ -4,8 +4,8 @@
 \alias{ProcessRefClass_get_file_artifacts}
 \title{Retrieve file artifacts (either input, output or both) - very similar to
 get_artifacts but looks for Artifacts types with the keyword 'file' - 'ResultFile',
-'SharedResultFile', etc.  Requestion 'output' is fairly quick as the
-input-output-map carris the output-type attribute. Requesting 'input' requires
+'SharedResultFile', etc.  Requesting 'output' is fairly quick as the
+input-output-map carries the output-type attribute. Requesting 'input' requires
 more time as each input artifact must be fetched before determining it's type.}
 \arguments{
 \item{what}{character of 'input', 'output' or 'both'}
@@ -23,8 +23,8 @@ with zero or more elements of 'input' and zero or more elements of 'output'
 \description{
 Retrieve file artifacts (either input, output or both) - very similar to
 get_artifacts but looks for Artifacts types with the keyword 'file' - 'ResultFile',
-'SharedResultFile', etc.  Requestion 'output' is fairly quick as the
-input-output-map carris the output-type attribute. Requesting 'input' requires
+'SharedResultFile', etc.  Requesting 'output' is fairly quick as the
+input-output-map carries the output-type attribute. Requesting 'input' requires
 more time as each input artifact must be fetched before determining it's type.
 }
 \seealso{

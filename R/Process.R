@@ -219,8 +219,8 @@ ProcessRefClass$methods(
 
 #' Retrieve file artifacts (either input, output or both) - very similar to 
 #' get_artifacts but looks for Artifacts types with the keyword 'file' - 'ResultFile',
-#' 'SharedResultFile', etc.  Requestion 'output' is fairly quick as the 
-#' input-output-map carris the output-type attribute. Requesting 'input' requires 
+#' 'SharedResultFile', etc.  Requesting 'output' is fairly quick as the 
+#' input-output-map carries the output-type attribute. Requesting 'input' requires 
 #' more time as each input artifact must be fetched before determining it's type.
 #' 
 #' @family Process
@@ -258,9 +258,8 @@ ProcessRefClass$methods(
       if (what %in% c("both", "output")){
          ix <- grepl('file', tolower(iom[,'output_type']), fixed = TRUE)
          if (any(ix)){
-            AA <- .self$lims$batchretrieve(iom[ix,'output_uri'], rel = 'artifacts')
-            OUT <- sapply(AA, function(x) XML::xmlAttrs(x$node[['file']])[['uri']] )
-            if (form == "node") OUT <- lapply(OUT, function(x) .self$lims$GET(x) )
+            OUT <- .self$lims$batchretrieve(iom[ix,'output_uri'], rel = 'artifacts')
+            if (form == "uri") OUT <- sapply(OUT, function(x) x$uri )
          } # any files? 
       }
       
