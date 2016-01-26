@@ -99,9 +99,36 @@ InputOutputMapRefClass$methods(
 
 ################################################################################
 
-#' Create an 'input-output-map' node for a shared result file - useful when 
-#' programmatically running a process.  See \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}
+#' Create an 'input-output-map' node for Analyte - useful when 
+#' programmatically running a process. 
 #' 
+#' @export
+#' @seealso \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}
+#' @param inputartifacturi character vector of input artifact URIs
+#' @param container_uri character vector, the uri of the destination container
+#' @param placement character vector, the 'A:1' form well placement
+#' @param output_type character, you shouldn't have to change this
+#' @return an XML::xmlNode of type input-output-map for 'Analyte'
+create_iom_analyte <- function(inputartifacturi, 
+   container_uri = "container_uri", 
+   placement = "A:1",
+   output_type = 'Analyte'){
+   
+   input <- XML::newXMLNode("input", attrs = list("uri" = inputartifacturi))
+   output <- XML::newXMLNode("output", attrs = list(type = output_type),
+      .children = list(XML::newXMLNode("location", 
+         .children = list(
+            XML::newXMLNode("container", attrs = list("uri" = container_uri)),
+            XML::newXMLNode("value", placement) )) ) )
+
+   XML::newXMLNode("input-output-map", attrs = list("shared" = "false"),
+      .children = c(input, output))
+}
+
+#' Create an 'input-output-map' node for a shared result file - useful when 
+#' programmatically running a process. 
+#' 
+#' @seealso \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}
 #' @export
 #' @param inputartifacturi character vector of URIs
 #' @param output_type character, you shouldn't have to change this
