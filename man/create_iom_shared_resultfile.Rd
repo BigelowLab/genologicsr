@@ -3,7 +3,7 @@
 \name{create_iom_shared_resultfile}
 \alias{create_iom_shared_resultfile}
 \title{Create an 'input-output-map' node for a shared result file - useful when
-programmatically running a process.}
+programmatically running a process. Multiple inputs = one output}
 \usage{
 create_iom_shared_resultfile(inputartifacturi, output_type = "ResultFile")
 }
@@ -17,7 +17,7 @@ an XML::xmlNode of type input-output-artifact
 }
 \description{
 Create an 'input-output-map' node for a shared result file - useful when
-programmatically running a process.
+programmatically running a process. Multiple inputs = one output
 }
 \seealso{
 \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}

@@ -125,8 +125,27 @@ create_iom_analyte <- function(inputartifacturi,
       .children = c(input, output))
 }
 
+
+#' Create an 'input-output-map' node for a result file - useful when 
+#' programmatically running a process.  One input = one output
+#' 
+#' @seealso \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}
+#' @export
+#' @param inputartifacturi character URI for input artifact
+#' @param output_type character, you shouldn't have to change this
+#' @return an XML::xmlNode of type input-output-map
+create_iom_resultfile <- function(inputartifacturi, output_type = 'ResultFile'){
+   
+   inputs <-  XML::newXMLNode("input", attrs = list(uri = inputartifacturi)) 
+   outputs <- XML::newXMLNode("output", attrs = list(type = output_type))
+   
+   XML::newXMLNode("input-output-map",
+      attrs = list(shared = 'false'),
+      .children = c(inputs, outputs))
+}
+
 #' Create an 'input-output-map' node for a shared result file - useful when 
-#' programmatically running a process. 
+#' programmatically running a process. Multiple inputs = one output
 #' 
 #' @seealso \url{https://genologics.zendesk.com/entries/23659973-Running-a-Process}
 #' @export
