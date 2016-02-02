@@ -20,6 +20,7 @@ Collate:
     'ArtifactGroup.R'
     'Container.R'
     'Containertype.R'
+    'Exception.R'
     'Field.R'
     'File.R'
     'InputOutputMap.R'

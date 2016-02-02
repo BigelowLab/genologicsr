@@ -2,9 +2,10 @@
 % Please edit documentation in R/file_transfer.R
 \name{rsync_upload}
 \alias{rsync_upload}
-\title{Upload a file using rsync.}
+\title{Upload a local file using rsync.}
 \usage{
-rsync_upload(filename, url, username = "foo", password = "bar")
+rsync_upload(filename, url, username = "foo", password = "bar",
+  extra = "-q")
 }
 \arguments{
 \item{filename}{the fully qualified filename of file to upload}
@@ -14,6 +15,8 @@ rsync_upload(filename, url, username = "foo", password = "bar")
 \item{username}{the username (required)}
 
 \item{password}{the password (required)}
+
+\item{extra}{character extra params for scp, currently "-q"}
 }
 \value{
 integer 0 for success

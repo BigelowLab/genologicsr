@@ -5,7 +5,7 @@
 \title{Download a file using rsync - rsync and then rename}
 \usage{
 rsync_download(url, dest, username = "foo", password = "bar",
-  verbose = FALSE, extra = "-ze ssh")
+  verbose = FALSE, extra = "-q")
 }
 \arguments{
 \item{url}{}
@@ -18,7 +18,7 @@ rsync_download(url, dest, username = "foo", password = "bar",
 
 \item{verbose}{logical, if TRUE then echo the command string}
 
-\item{extra}{character extra params for scp, currently "-ze ssh"}
+\item{extra}{character extra params for scp, currently "-q"}
 }
 \value{
 integer with 0 for success

@@ -54,13 +54,14 @@ xmlString <- function(x){
 }
 
 
-#' Test XML::xmlNode is an exception
+#' Test XML::xmlNode or NodeRefClass is an exception
 #'
 #' @export
 #' @param node object to test
 #' @param space the namespace to test
 #' @return logical
 is_exception <- function(x, space = 'exc'){
+   if (inherits(x, 'NodeRefClass')) x <- x$node
    is_xmlNode(x) && ("exc" %in% names(XML::xmlNamespace(x)) )
 }
 

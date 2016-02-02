@@ -8,6 +8,9 @@
 
 \item{uri}{character if NULL taken from \code{x}}
 
+\item{asNode}{logical, if TRUE return a class that inherits NodeRefClass.
+This should be FALSE for batch processing.}
+
 \item{...}{further arguments for httr::POST}
 }
 \value{

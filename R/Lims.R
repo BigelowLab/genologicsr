@@ -238,14 +238,15 @@ LimsRefClass$methods(
 #' @name LimsRefClass_POST
 #' @param x XML::xmlNode to or NodeRefClass POST
 #' @param uri character if NULL taken from \code{x}
+#' @param asNode logical, if TRUE return a class that inherits NodeRefClass.
+#'    This should be FALSE for batch processing. 
 #' @param ... further arguments for httr::POST
 #' @return XML::xmlNode
 NULL
 LimsRefClass$methods(
-   POST = function(x, uri = NULL, ...){
+   POST = function(x, uri = NULL, asNode = FALSE, ...){
       if (missing(x)) 
          stop("LimsRefClass$POST x as XML::xmlNode or NodeRefClass is required")
-         
          
       if (inherits(x, 'NodeRefClass')){
          if (is.null(uri)) uri <- x$uri
@@ -260,7 +261,9 @@ LimsRefClass$methods(
          httr::content_type_xml(),
          handle = .self$handle,
          .self$auth) 
-      .self$check(r)
+      r <- .self$check(r)
+      if (asNode) r <- try(parse_node(r, .self))
+      r
    }) # POST
    
 #' DELETE a resource

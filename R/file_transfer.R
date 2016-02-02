@@ -22,14 +22,14 @@ has_rsync <- function() {
 #' @param username the username (required)
 #' @param password the password (required)
 #' @param verbose logical, if TRUE then echo the command string
-#' @param extra character extra params for scp, currently "-ze ssh"
+#' @param extra character extra params for scp, currently "-q"
 #' @return integer with 0 for success
 rsync_download <- function(url, dest, 
    username = 'foo', password = 'bar',
-   verbose = FALSE, extra = '-ze ssh'){
+   verbose = FALSE, extra = '-q'){
    
    #https://kb.iu.edu/d/agye
-   #scp [options] username1@source_host:directory1/filename1 username2@destination_host:directory2/filename2
+   #rsync [options] username1@source_host:directory1/filename1 username2@destination_host:directory2/filename2
    stopifnot(has_rsync())
    stopifnot(!missing(url))
    if (missing(dest)) dest <- file.path(getwd(),basename(url[1]))
@@ -56,7 +56,7 @@ rsync_download <- function(url, dest,
 }
 
 
-#' Upload a file using rsync.  
+#' Upload a local file using rsync.  
 #'
 #' This assumes that SSH public-key authentication is set up.
 #' 
@@ -66,8 +66,9 @@ rsync_download <- function(url, dest,
 #' @param url the destination url
 #' @param username the username (required)
 #' @param password the password (required)
+#' @param extra character extra params for scp, currently "-q"
 #' @return integer 0 for success
-rsync_upload <- function(filename, url, username = "foo", password = "bar"){
+rsync_upload <- function(filename, url, username = "foo", password = "bar", extra = '-q'){
 
    stopifnot(has_rsync())
    stopifnot(!missing(filename))
@@ -89,7 +90,7 @@ rsync_upload <- function(filename, url, username = "foo", password = "bar"){
    }
    
    # now copy filename to the destdir
-   CMD <- paste("rsync",
+   CMD <- paste("rsync", extra,
       shQuote(filename[1]),
       paste0(username, '@', p$hostname, ':/', dirname(p$path)))
    if (verbose) cat(CMD, "\n")   
