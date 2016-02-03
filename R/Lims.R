@@ -122,7 +122,7 @@ LimsRefClass$methods(
          print(httr::content(rsp))
       }
       
-      x <- try(httr::content(rsp, as = "text")) #, type = "text/xml"))
+      x <- try(httr::content(rsp, as = "text", encoding = .self$encoding))
       if (inherits(x, 'try-error')){
          x <- .self$create_exception(message = "error extracting response content")
          return(invisible(x))
@@ -301,7 +301,7 @@ LimsRefClass$methods(
       invisible(httr::status_code(r) == 204)
    }) # POST
 
-#' PUSH a file - not really a RESTfule action but a combination of steps
+#' PUSH a file - not really a RESTful action but a combination of steps
 #' 
 #' given an artifact node and a filename
 #' if the artifact has a file then 
@@ -314,7 +314,7 @@ LimsRefClass$methods(
 #      
 #' @family Lims
 #' @name LimsRefClass_PUSH
-#' @param x XML::xmlNode of the artifact to attach to 
+#' @param x ArtifactRefClass of the artifact to attach to 
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
 #' @param use character the type of file transfer to use: duck, scp, cp or curl

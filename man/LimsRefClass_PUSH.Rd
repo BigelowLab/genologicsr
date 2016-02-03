@@ -2,9 +2,9 @@
 % Please edit documentation in R/Lims.R
 \name{LimsRefClass_PUSH}
 \alias{LimsRefClass_PUSH}
-\title{PUSH a file - not really a RESTfule action but a combination of steps}
+\title{PUSH a file - not really a RESTful action but a combination of steps}
 \arguments{
-\item{x}{XML::xmlNode of the artifact to attach to}
+\item{x}{ArtifactRefClass of the artifact to attach to}
 
 \item{...}{further arguments for httr::GET/DELETE/POST}
 
