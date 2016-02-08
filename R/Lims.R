@@ -116,10 +116,15 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    check = function(rsp, msg = NULL){
-      w <- httr::warn_for_status(rsp)
+      # with httr 1.1 httr::warn_for_status no longer returns a logical
+      # instead it returns either the response (no warning) or a condition error
+      # see https://cran.r-project.org/web/packages/httr/news.html
+      # so now we switch to httr::http_error()
+      #w <- httr::warn_for_status(rsp) 
+      w <- httr::http_error(rsp)
       if (!is.logical(w)) {
          print(rsp)
-         print(httr::content(rsp))
+         print(httr::content(rsp, as = "text", encoding = .self$encoding))
       }
       
       x <- try(httr::content(rsp, as = "text", encoding = .self$encoding))
@@ -375,8 +380,11 @@ LimsRefClass$methods(
             paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
          ok <- system(cmd)
       } else if (use == "cp"){
-         # not implemented?
-         stop("cp not implemented")
+         MKDIR <- shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) ) )
+         ok <- system(MKDIR)
+         cmd <- paste("cp", filename[1],
+            paste0("/", puri[['path']]) )
+         ok <- system(cmd)
       } else if (use == "curl"){
          cmd <- paste("curl --ftp-create-dirs",
             "-u", .self$fileauth[['options']][['userpwd']],
