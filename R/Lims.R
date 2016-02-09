@@ -800,7 +800,7 @@ LimsRefClass$methods(
    }) # get_processtypes
 
 #' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
-#'
+#' 
 #' @family Lims Node
 #' @name LimsRefClass_batchretrieve
 #' @param uri a vector of one or more uri for atomic entities in the GLS API
@@ -815,7 +815,12 @@ LimsRefClass$methods(
       rm_dups = TRUE, asNode = TRUE, ...){
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
          stop("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers")
-      x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
+      if ((.self$version == "v1") && (rel %in% c('samples', 'files')) ){
+         x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
+      } else {
+         x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
+      }
+      #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
       if (asNode) {
          x <- lapply(x, parse_node, .self)
          names(x) <- switch(rel[1],
