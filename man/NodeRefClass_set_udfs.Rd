@@ -48,6 +48,7 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass_new}};
   \code{\link{NodeRefClass_required_namespaces}};
   \code{\link{NodeRefClass_show}};
+  \code{\link{NodeRefClass_toString}},
   \code{\link{NodeRefClass_toString}};
   \code{\link{NodeRefClass_unames}};
   \code{\link{NodeRefClass_update}};

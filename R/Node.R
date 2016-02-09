@@ -244,6 +244,17 @@ NodeRefClass$methods(
       httr::BROWSE(.self$uri,...)
    })
 
+#' Convert the XML node to string
+#'
+#' @family Node
+#' @name NodeRefClass_toString
+#' @return text reprepresentation of the node's xml data
+NULL
+NodeRefClass$methods(
+   toString = function(){
+      return(xmlString(.self$node))
+   })
+ 
 
 #' Return a character vector of required namespace names
 #'
