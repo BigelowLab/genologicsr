@@ -5,7 +5,7 @@
 \title{Create a sample XML::xmlNode suitable for POSTing}
 \usage{
 create_sample_node(name = NULL, project_uri = NULL, container_uri = NULL,
-  well = NULL)
+  well = NULL, date_received = NULL, date_completed = NULL)
 }
 \arguments{
 \item{name}{character container name (required)}
@@ -15,6 +15,10 @@ create_sample_node(name = NULL, project_uri = NULL, container_uri = NULL,
 \item{container_uri}{character uri of the container (required)}
 
 \item{well}{character location on the well such as 'A:1' (required)}
+
+\item{date_received}{optional character date in the form 'YYYY-MM-DD'}
+
+\item{date_completed}{optional character date in the form 'YYYY-MM-DD'}
 }
 \value{
 XML::xmlNode

@@ -199,9 +199,12 @@ create_samples_details <- function(x){
 #' @param project_uri character uri of project (required)
 #' @param container_uri character uri of the container (required)
 #' @param well character location on the well such as 'A:1' (required)
+#' @param date_received optional character date in the form 'YYYY-MM-DD'
+#' @param date_completed optional character date in the form 'YYYY-MM-DD'
 #' @return XML::xmlNode
 create_sample_node <- function(name = NULL, 
-   project_uri = NULL, container_uri = NULL, well = NULL){
+   project_uri = NULL, container_uri = NULL, well = NULL,
+   date_received = NULL, date_completed = NULL){
    
       if (is.null(name)) stop("create_sample_node name is required")
       if (is.null(project_uri)) stop("create_sample_node project_uri is required")
@@ -220,7 +223,12 @@ create_sample_node <- function(name = NULL,
                )
             )
          )
-      
+      if (!is.null(date_received)){
+         kids <- c(kids, XML::newXMLNode("date-received", date_received[1]))
+      }
+      if (!is.null(date_completed)){
+         kids <- c(kids, XML::newXMLNode("date-completed", date_completed[1]))
+      }      
       XML::newXMLNode('samplecreation',
          namespace = nmsp,
          namespaceDefinitions = get_NSMAP()[nmsp],
