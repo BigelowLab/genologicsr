@@ -47,10 +47,15 @@ is_xmlNode <- function(x, classname = 'XMLAbstractNode'){
 #' Convert XML::xmlNode to character
 #' 
 #' @export
-#' @param x xmlNode
+#' @param x xmlNode or NodeRefClass
 #' @return character
 xmlString <- function(x){
-   gsub("\n","", XML::toString.XMLNode(x))
+   if (inherits(x, 'NodeRefClass')){
+      r <- xmlString(x$node)
+   } else {
+      r <- gsub("\n","", XML::toString.XMLNode(x))
+   }
+   return(r)
 }
 
 

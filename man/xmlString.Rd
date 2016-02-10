@@ -7,7 +7,7 @@
 xmlString(x)
 }
 \arguments{
-\item{x}{xmlNode}
+\item{x}{xmlNode or NodeRefClass}
 }
 \value{
 character
