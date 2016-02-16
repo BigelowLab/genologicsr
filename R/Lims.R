@@ -380,7 +380,7 @@ LimsRefClass$methods(
             paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
          ok <- system(cmd)
       } else if (use == "cp"){
-         MKDIR <- shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) ) )
+         MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
          ok <- system(MKDIR)
          cmd <- paste("cp", filename[1],
             paste0("/", puri[['path']]) )

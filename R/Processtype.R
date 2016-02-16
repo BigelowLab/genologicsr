@@ -34,6 +34,23 @@ ProcessTypeRefClass <- setRefClass("ProcessTypeRefClass",
    )# setRefClass
          
 
+#' Retrieve a named list of fields
+#'
+#' @family Processtype
+#' @name ProcessTypeRefClass_get_fields
+#' @return a named list of FieldRefClass or  NULL
+NULL
+ProcessTypeRefClass$methods(
+   get_fields = function(){
+      ff <- .self$node['field-definition']
+      if (is.null(ff)) return(NULL)
+      ff_uri <- sapply(ff, function(x) XML::xmlAttrs(x)[['uri']])
+      FF <- lapply(ff_uri, function(x) .self$lims$GET(x))
+      names(FF) <- sapply(FF, "[[", "name")
+      FF
+   })
+
+
 #' Retrieve a named list of process-inputs
 #'
 #' @family Processtype

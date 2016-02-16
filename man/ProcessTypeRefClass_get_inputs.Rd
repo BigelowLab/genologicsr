@@ -10,6 +10,7 @@ a named list of inputs NULL
 Retrieve a named list of process-inputs
 }
 \seealso{
-Other Processtype: \code{\link{ProcessTypeRefClass_get_outputs}}
+Other Processtype: \code{\link{ProcessTypeRefClass_get_fields}};
+  \code{\link{ProcessTypeRefClass_get_outputs}}
 }
 
