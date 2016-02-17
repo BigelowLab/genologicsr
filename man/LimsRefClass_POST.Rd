@@ -14,7 +14,7 @@ This should be FALSE for batch processing.}
 \item{...}{further arguments for httr::POST}
 }
 \value{
-XML::xmlNode
+XML::xmlNode or NodeRefClass
 }
 \description{
 POST a resource

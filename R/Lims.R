@@ -246,7 +246,7 @@ LimsRefClass$methods(
 #' @param asNode logical, if TRUE return a class that inherits NodeRefClass.
 #'    This should be FALSE for batch processing. 
 #' @param ... further arguments for httr::POST
-#' @return XML::xmlNode
+#' @return XML::xmlNode or NodeRefClass
 NULL
 LimsRefClass$methods(
    POST = function(x, uri = NULL, asNode = FALSE, ...){
@@ -1099,6 +1099,7 @@ parse_node <- function(node, lims){
        'container-type' = ContainerTypeRefClass$new(node, lims),
        'instrument' = InstrumentRefClass$new(node, lims),
        'process-type' = ProcessTypeRefClass$new(node, lims),
+       'exception' = ExceptionRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

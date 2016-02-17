@@ -9,16 +9,29 @@
 ExceptionRefClass <- setRefClass("ExceptionRefClass",
    contains = "NodeRefClass",
       fields = list(
-         message = 'character'),
+         category = 'character',
+         code = 'character',
+         message = 'character',
+         suggested_actions = 'character'),
       methods = list(
          initialize = function(...){
-            callSuper(...)
+            x <- list(...)
+            .self$node <- x[[1]]
             .self$verbs <- "NONE"
-            .self$message = get_childvalue(.self$node, 'message')
+            atts <- XML::xmlAttrs(.self$node)
+            if ('category' %in% names(atts)) .self$category = atts[['category']]
+            if ('code' %in% names(atts)) .self$category = atts[['code']]
+            if ('message' %in% names(.self$node))   
+               .self$message = get_childvalue(.self$node, 'message')
+            if ('suggested-actions' %in% names(.self$node))
+               .self$suggested_actions = get_childvalue(.self$node, 'suggested_actions')
          },
       show = function(prefix = ""){
             callSuper(prefix = prefix)
+            cat(prefix, "  Exception category: ", .self$category, "\n", sep = "")
+            cat(prefix, "  Exception code: ", .self$code, "\n", sep = "")
             cat(prefix, "  Exception message: ", .self$message, "\n", sep = "")
+            cat(prefix, "  Exception suggested-actions: ", .self$suggested_actions, "\n", sep = "")
          }
       )
    )
