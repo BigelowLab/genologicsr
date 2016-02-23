@@ -143,7 +143,8 @@ ContainerRefClass$methods(
       names(puri) <- sapply(.self$node['placement'], XML::xmlValue)
       if (!is.null(placement)) {
          placement <- A01(placement, form = "A:1")
-         if (!(placement %in% names(puri))){
+         ix <- placement %in% names(puri)
+         if (!all(ix)){
             cat("ContainerRefClass$get_placements name(s) not found:", paste(placement, collapse = " "), "\n")
             return(character())
          }
