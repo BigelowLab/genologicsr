@@ -17,7 +17,7 @@ has_rsync <- function() {
 #'
 #' @family file_transfer
 #' @export
-#' @param url
+#' @param url character
 #' @param dest character destination filename, by default the basename of the URL
 #' @param username the username (required)
 #' @param password the password (required)
@@ -125,7 +125,7 @@ has_scp <- function() {
 #'
 #' @family file_transfer
 #' @export
-#' @param url
+#' @param url the url of the file
 #' @param dest character destination filename, by default the basename of the URL
 #' @param username the username (required)
 #' @param password the password (required)
@@ -238,7 +238,7 @@ duck_upload <- function(filename, url, username = "foo", password = "bar"){
 #'
 #' @family file_transfer
 #' @export
-#' @param url
+#' @param url the url of the file
 #' @param dest character destination filename, by default the basename of the URL
 #' @param username the username (required)
 #' @param password the password (required)

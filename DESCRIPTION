@@ -35,3 +35,4 @@ Collate:
     'file_transfer.R'
     'genologicsr_package.R'
     'misc.R'
+RoxygenNote: 5.0.1

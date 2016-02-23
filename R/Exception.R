@@ -3,7 +3,10 @@
 #' An Exception representation that sublcasses from NodeRefClass
 #' 
 #' @family Node
-#' @field messgae
+#' @field category character, the category (if any)
+#' @field code character, the error code (if any)
+#' @field message character, the value of the message
+#' @field suggested_actions character, (if any)
 #' @include Node.R
 #' @export
 ExceptionRefClass <- setRefClass("ExceptionRefClass",
