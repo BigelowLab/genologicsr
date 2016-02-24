@@ -8,7 +8,8 @@
 
 \item{...}{further arguments for httr::GET/DELETE/POST}
 
-\item{filename}{character, the fully qualified name of the file we are pushing}
+\item{filename}{character, the fully qualified name of the file we are pushing
+Note that the caller must specify filename = 'some/file/name' explicitly.}
 
 \item{use}{character the type of file transfer to use: duck, scp, cp or curl}
 }

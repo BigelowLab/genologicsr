@@ -230,8 +230,8 @@ ProcessRefClass$methods(
 #' @param iom an optional data frame of input-output-map data as per 
 #'   \code{get_inputoutputmap(form = 'data.frame')}.  If not provided (or NULL)
 #'   then this method will fetch it.
-#' @return a two element list of ArtifactRefClass objects or uri unless \code{what}
-#' with zero or more elements of 'input' and zero or more elements of 'output'
+#' @return a two element list ('input', 'output') of ArtifactRefClass objects or uri 
+#'  depending upon the value of \code{what} one list may be empty
 NULL
 ProcessRefClass$methods(
    get_file_artifacts = function(
@@ -264,8 +264,8 @@ ProcessRefClass$methods(
       }
       
       X <- list()
-      if (!is.null(IN)) X[['input']] <- IN
-      if (!is.null(OUT))  X[['output']] <- OUT
+      X[['input']] <- IN
+      X[['output']] <- OUT
       
       if (length(X) == 0){
          return(NULL)

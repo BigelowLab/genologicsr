@@ -163,27 +163,28 @@ ArtifactRefClass$methods(
    })  
   
   
-#' Get the artifact group assocated with this artifact
+#' Get the artifact groups associated with this artifact if any
 #'
 #' @family Artifact ArtifactGroup
-#' @name ArtifactRefClass_get_artifact_group
+#' @name ArtifactRefClass_get_artifact_groups
 #' @param form character flag of type to return "Node" or "uri" or "name"
-#' @return XML::xmlNode (or NULL) or the uri (or "")
+#' @return list of ArtifactGroupRefClass (or NULL) or vector of names or uris (or "")
 ArtifactRefClass$methods(
-   get_artifact_group = function(form = c("Node", "uri", "name")[2]){
-      if (!.self$has_child("artifact-group")){
+   get_artifact_groups = function(form = c("Node", "uri", "name")[2]){
+      agroups <- .self$node['artifact-group']
+      if (!is.null(agroups)){
          x <- switch(tolower(form),
             "uri" = "",
             "name" = "",
             NULL)
          return(x)
       }
-      atts <- XML::xmlAttrs(.self$node[["artifact-group"]])
-      thisuri <- trimuri(atts[['uri']])
-      thisname <- atts[['name']]
+      atts <- lapply(agroups,function(x) XML::xmlAttrs(x))
+      thisuri <- trimuri(sapply(atts, '[[', 'uri'))
+      thisname <- sapply(atts, '[[', 'name')
       x <- switch(tolower(form),
          "uri" = thisuri,
-         "node" = self$lims$GET(thisuri, asNode = TRUE),
+         "node" = lapply(thisuri, function(x) .self$lims$GET(x, asNode = TRUE)),
          "name" = thisname)
       invisible(x)
    })
@@ -192,8 +193,8 @@ ArtifactRefClass$methods(
 #'
 #' @family Artifact
 #' @name ArtifactRefClass_get_sample
-#' @param form character flag of type to return "xmlNode" or "uri"
-#' @return XML::xmlNode (or NULL) or the uri (or "")
+#' @param form character flag of type to return "Node" or "uri"
+#' @return SampleRefClass (or NULL) or the uri (or "")
 ArtifactRefClass$methods(
    get_sample = function(form = c("Node", "uri")[2]){
       if (!.self$has_child("sample")){
@@ -210,6 +211,30 @@ ArtifactRefClass$methods(
       }
       invisible(x)
    }) 
+
+#' Retrieve the artifact's file artifact (if any)
+#' 
+#'
+#' @family Artifact
+#' @name ArtifactRefClass_get_file_artifact
+#' @param form character flag of type to return "Node" or "uri"
+#' @return FileRefClass (or NULL) or the uri (or "")
+ArtifactRefClass$methods(
+   get_file_artifact = function(form = c('Node','uri')[1]){
+      fnode <- .self$node[['file']]
+      if (is.null(fnode)){
+         x <- switch(tolower(form[1]),
+            "node" = NULL,
+            "")
+      } else {
+         x <- XML::xmlAtts(fnode)
+         if (tolower(form[1]) == 'node'){
+            x <- .self$lims$GET(x)
+         }
+      }
+   invisible(x)
+})
+      
    
 #### methods above
 #### functions below

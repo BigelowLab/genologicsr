@@ -322,6 +322,7 @@ LimsRefClass$methods(
 #' @param x ArtifactRefClass of the artifact to attach to 
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
+#'  Note that the caller must specify filename = 'some/file/name' explicitly.
 #' @param use character the type of file transfer to use: duck, scp, cp or curl
 #' @return XML::xmlNode or FileRefClass
 NULL
@@ -376,7 +377,7 @@ LimsRefClass$methods(
 
          # https://kb.iu.edu/d/agye
          # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
-         cmd <- paste('scp', filename[1], 
+         cmd <- paste('scp -q', filename[1], 
             paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
          ok <- system(cmd)
       } else if (use == "cp"){

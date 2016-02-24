@@ -13,7 +13,8 @@ ContainerRefClass or uri (or NULL or "")
 Get the artifact container as uri or NodeRefClass
 }
 \seealso{
-Other Artifact: \code{\link{ArtifactRefClass_get_parent_process}},
+Other Artifact: \code{\link{ArtifactRefClass_get_file_artifact}},
+  \code{\link{ArtifactRefClass_get_parent_process}},
   \code{\link{ArtifactRefClass_get_sample}},
   \code{\link{ArtifactRefClass_get_wellname}},
   \code{\link{ArtifactRefClass_location}},

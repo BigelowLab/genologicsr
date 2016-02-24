@@ -17,8 +17,8 @@ more time as each input artifact must be fetched before determining it's type.}
 then this method will fetch it.}
 }
 \value{
-a two element list of ArtifactRefClass objects or uri unless \code{what}
-with zero or more elements of 'input' and zero or more elements of 'output'
+a two element list ('input', 'output') of ArtifactRefClass objects or uri 
+ depending upon the value of \code{what} one list may be empty
 }
 \description{
 Retrieve file artifacts (either input, output or both) - very similar to 
