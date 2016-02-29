@@ -266,7 +266,7 @@ ProcessRefClass$methods(
       
       X <- list(input = IN, output = OUT)
       
-    return(x)
+    return(X)
    }) # get_file_artifacts
    
    
