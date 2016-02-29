@@ -13,8 +13,8 @@
 then this method will fetch it.}
 }
 \value{
-a list of ArtifactRefClass objects or uri unless \code{what} is 
-   both in which case a list is returned with 'input' and 'output' elements
+two element list of 'input' and 'output' ArtifactRefClass objects (lists) 
+ or uri (charcater vectors)
 }
 \description{
 Get either the input or the output artifacts (or both!) as NodeRefClass or uri

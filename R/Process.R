@@ -175,8 +175,8 @@ ProcessRefClass$methods(
 #' @param iom an optional data frame of input-output-map data as per 
 #'   \code{get_inputoutputmap(form = 'data.frame')}.  If not provided (or NULL)
 #'   then this method will fetch it.
-#' @return a list of ArtifactRefClass objects or uri unless \code{what} is 
-#'    both in which case a list is returned with 'input' and 'output' elements
+#' @return two element list of 'input' and 'output' ArtifactRefClass objects (lists) 
+#'  or uri (charcater vectors)
 NULL
 ProcessRefClass$methods(
    get_artifacts = function(
@@ -188,32 +188,33 @@ ProcessRefClass$methods(
       what <- tolower(what[1])
       form <- tolower(form[1])
       
+      
+      R <- list(input = NULL, output = NULL)
       if (what == "input"){
       
-         x <- iom[,'input_uri']
+         R[['input']] <- iom[,'input_uri']
          if (form == "node"){
-            x <- .self$lims$batchretrieve(x, rel = 'artifacts')
+            R[['input']] <- .self$lims$batchretrieve(R[['input']], rel = 'artifacts')
          }
          
       } else if (what == "output"){
       
-         x <- iom[,'output_uri']
+         R[['output']] <- iom[,'output_uri']
          if (form == "node"){
-            x <- .self$lims$batchretrieve(x, rel = 'artifacts')
+            R[['output']] <- .self$lims$batchretrieve(R[['output']], rel = 'artifacts')
          }
          
       } else {  # both!
       
-         input <- iom[,'input_uri']
-         output <- iom[,'output_uri']
+         R[['input']] <- iom[,'input_uri']
+         R[['output']] <- iom[,'output_uri']
          if (form == "node"){
-            input <- .self$lims$batchretrieve(input, rel = 'artifacts', rm_dups = FALSE)
-            output <- .self$lims$batchretrieve(output, rel = 'artifacts', rm_dups = FALSE)
-         }
-         x <- list(input = input, output = output)      
-      }
+            R[['input']] <- .self$lims$batchretrieve(R[['input']], rel = 'artifacts', rm_dups = FALSE)
+            R[['output']] <- .self$lims$batchretrieve(R[['output']], rel = 'artifacts', rm_dups = FALSE)
+        }
+     }
          
-      invisible(x)
+    invisible(R)
    }) # get_artifacts
 
 
@@ -263,15 +264,9 @@ ProcessRefClass$methods(
          } # any files? 
       }
       
-      X <- list()
-      X[['input']] <- IN
-      X[['output']] <- OUT
+      X <- list(input = IN, output = OUT)
       
-      if (length(X) == 0){
-         return(NULL)
-      } else {
-         return(X)
-      }
+    return(x)
    }) # get_file_artifacts
    
    
