@@ -59,6 +59,38 @@ xmlString <- function(x){
 }
 
 
+#' Extract the name from a simple XML::xmlNode object
+#'
+#' @export
+#' @param x XML::xmlNode with a value
+#' @param ... further arguments for \code{XML::xmlName()}
+#' @param the name of the node
+xml_value  <- function(x, ...){
+    XML::xmlName(x, ...)
+}
+
+#' Extract the value from a simple XML::xmlNode object
+#'
+#' @export
+#' @param x XML::xmlNode with a value
+#' @param ... further arguments for \code{XML::xmlValue()}
+#' @param the value of the node
+xml_value  <- function(x, ...){
+    XML::xmlValue(x, ...)
+}
+
+#' Extract the attributes from a simple XML::xmlNode object
+#'
+#' @export
+#' @param x XML::xmlNode with attributes
+#' @param ... further arguments for \code{XML::xmlAttrs()}
+#' @param character vector of the attributes
+xml_atts  <- function(x, ...){
+    XML::xmlAttrs(x, ...)
+}
+
+
+
 #' Test XML::xmlNode or NodeRefClass is an exception
 #'
 #' @export
