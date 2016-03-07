@@ -19,7 +19,7 @@ See the [wiki](https://github.com/BigelowLab/genologicsr/wiki) for details and e
 
 #### Installation
 
-The configuration file can be saved in a user's home directory by any name, choosing a hidden file in the home directory makes a lot of sense.
+As with [genologics](https://github.com/SciLifeLab/genologics) a  configuration file can be saved in a user's home directory by any name, choosing a hidden file in the home directory makes a lot of sense.
 
 Create a file, such as `~/.clarityrc` with the contents below and edit appropriately for your platform.
 
