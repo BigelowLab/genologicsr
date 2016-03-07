@@ -24,7 +24,6 @@ The configuration file can be saved in a user's home directory by any name, choo
 Create a file, such as `~/.clarityrc` with the contents below and edit appropriately for your platform.
 
 ```
-# make a copy of this as ~/.genologcsrc
 # edit as needed [genologics] section is required anyhting else is optional
 [genologics]
 BASEURI=http://my-server.my.host.org:8080
