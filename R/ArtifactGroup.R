@@ -18,7 +18,7 @@ ArtifactGroupRefClass <- setRefClass("ArtifactGroupRefClass",
       },
    update = function(){
          callSuper(.self$node)
-         .self$name = XML::xmlValue(.self$node[['name']])  
+         .self$name = xml_value(.self$node[['name']])  
       })
    )
 
@@ -31,7 +31,7 @@ NULL
 ArtifactGroupRefClass$methods(
    get_artifacts = function(){
       uris <- sapply(.self$node['artifact'], 
-         function(x) XML::xmlAttrs(x)[['uri']])
+         function(x) xml_atts(x)[['uri']])
       AA <- .self$lims$batchretrieve(uris,rel = 'artifacts', asNode = TRUE)
       invisible(AA)
    })

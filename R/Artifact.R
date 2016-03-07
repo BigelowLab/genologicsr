@@ -70,7 +70,7 @@ ArtifactRefClass$methods(
       
       if (.self$has_child("location")){
       
-         x <- trimuri(XML::xmlAttrs(.self$node[['location']][['container']])[['uri']])
+         x <- trimuri(xml_atts(.self$node[['location']][['container']])[['uri']])
          if (tolower(form[1]) == "node") x <- .self$lims$GET(x, asNode = TRUE)
          
       } else {
@@ -91,7 +91,7 @@ NULL
 ArtifactRefClass$methods(
    get_wellname = function(){
       if (.self$has_child("location")) {
-         x <- XML::xmlValue(.self$node[['location']][['value']])
+         x <- xml_value(.self$node[['location']][['value']])
       } else {
          x <- ""
       }
@@ -107,8 +107,8 @@ NULL
 ArtifactRefClass$methods(
    location = function(){
       if (.self$has_child("location")){
-         con <- XML::xmlAttrs(.self$node[['location']][['container']])[['limsid']]
-         plc <- XML::xmlValue(.self$node[['location']][['value']])
+         con <- xml_atts(.self$node[['location']][['container']])[['limsid']]
+         plc <- xml_value(.self$node[['location']][['value']])
          r <- paste(basename(con), plc, sep = "_")
       } else {
          r <- ""
@@ -153,7 +153,7 @@ ArtifactRefClass$methods(
             NULL)
          return(x)
       }
-      thisuri <- trimuri(XML::xmlAttrs(.self$node[["parent-process"]])[['uri']])
+      thisuri <- trimuri(xml_atts(.self$node[["parent-process"]])[['uri']])
       if (tolower(form == "uri")){
          x <- thisuri
       } else {
@@ -179,7 +179,7 @@ ArtifactRefClass$methods(
             NULL)
          return(x)
       }
-      atts <- lapply(agroups,function(x) XML::xmlAttrs(x))
+      atts <- lapply(agroups,function(x) xml_atts(x))
       thisuri <- trimuri(sapply(atts, '[[', 'uri'))
       thisname <- sapply(atts, '[[', 'name')
       x <- switch(tolower(form),
@@ -203,7 +203,7 @@ ArtifactRefClass$methods(
             NULL)
          return(x)
       }
-      thisuri <- trimuri(XML::xmlAttrs(.self$node[["sample"]])[['uri']])
+      thisuri <- trimuri(xml_atts(.self$node[["sample"]])[['uri']])
       if (tolower(form == "uri")){
          x <- thisuri
       } else {
@@ -227,7 +227,7 @@ ArtifactRefClass$methods(
             "node" = NULL,
             "")
       } else {
-         x <- XML::xmlAtts(fnode)
+         x <- xml_atts(fnode)[['uri']]
          if (tolower(form[1]) == 'node'){
             x <- .self$lims$GET(x)
          }
@@ -271,7 +271,7 @@ create_artifacts_details <- function(x){
       x <- lapply(x, "[[", "node")      
    }
    
-   nm <- sapply(x, XML::xmlName)
+   nm <- sapply(x, xml_name)
    if (!all(tolower(nm) == "artifact")) stop("create_artifact_details: input nodes must be of type artifact")
    XML::newXMLNode("details",
       namespace = "art",

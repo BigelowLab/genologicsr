@@ -87,7 +87,7 @@ ResearcherRefClass$methods(
       
       nd <- .self$node[['credentials']]
       if (is_xmlNode(nd)){
-         role <- sapply(nd['role'], function(x) XML::xmlAttrs(x)[['roleName']])
+         role <- sapply(nd['role'], function(x) xml_atts(x)[['roleName']])
          x <- paste(unname(role), collapse = sep)
       } else {
          x <- 'none'
@@ -105,7 +105,7 @@ ResearcherRefClass$methods(
    get_username = function(){
       nd <- .self$node[['credentials']]
       if (is_xmlNode(nd)){
-         x <- XML::xmlValue(.self$node[['credentials']][['username']])
+         x <- xml_value(.self$node[['credentials']][['username']])
       } else {
          x <- ""
       }

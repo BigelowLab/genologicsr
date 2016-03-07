@@ -27,12 +27,12 @@ InputOutputMapRefClass <- setRefClass("InputOutputMapRefClass",
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c("FOO")
-         x <- XML::xmlAttrs(.self$node[['input']])
+         x <- xml_atts(.self$node[['input']])
          .self$input_uri <- trimuri(x[['uri']])
          .self$input_limsid <- x[['limsid']]
          .self$post_process_uri <- trimuri(x[['post-process-uri']])
          
-         x <- XML::xmlAttrs(.self$node[['output']])
+         x <- xml_atts(.self$node[['output']])
          .self$output_uri <- trimuri(x[['uri']])
          .self$output_limsid <- x[['limsid']]
          .self$output_generation_type <- x[['output-generation-type']]

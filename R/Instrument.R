@@ -11,8 +11,8 @@ InstrumentRefClass <- setRefClass("InstrumentRefClass",
       },
    update = function(){
       callSuper(.self$node)
-      .self$name = XML::xmlValue(.self$node[['name']]) 
-      .self$type = XML::xmlValue(.self$node[['type']]) 
+      .self$name = xml_value(.self$node[['name']]) 
+      .self$type = xml_value(.self$node[['type']]) 
       },
    show = function(prefix = ""){
       callSuper(prefix = prefix)

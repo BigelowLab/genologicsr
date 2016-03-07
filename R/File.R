@@ -23,13 +23,13 @@ FileRefClass <- setRefClass("FileRefClass",
          if (is_xmlNode(.self$node)){
             nm <- names(.self$node)
             if ('attached-to' %in% nm)
-               .self$attached_to <- XML::xmlValue(.self$node[['attached-to']])
+               .self$attached_to <- xml_value(.self$node[['attached-to']])
             if ('content-location' %in% nm)
-               .self$content_location <- XML::xmlValue(.self$node[['content-location']]) 
+               .self$content_location <- xml_value(.self$node[['content-location']]) 
             if ('original-location' %in% nm)
-               .self$original_location <- XML::xmlValue(.self$node[['original-location']]) 
+               .self$original_location <- xml_value(.self$node[['original-location']]) 
             if ('is-published' %in% nm)
-               .self$is_published <- XML::xmlValue(.self$node[['is-published']]) 
+               .self$is_published <- xml_value(.self$node[['is-published']]) 
          }
       })
    )

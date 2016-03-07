@@ -82,7 +82,7 @@ SampleRefClass$methods(
       x <- ""
       nd <- .self$node[['biosource']]
       if (!is.null(nd)) {
-         atts <- XML::xmlAttrs(nd)
+         atts <- xml_atts(nd)
          if ( !is.null(atts) && ("name" %in% names(atts) )) x <- atts[['name']] 
       }
       return(x)
@@ -117,7 +117,7 @@ SampleRefClass$methods(
             x <- NULL
          }
       } else {
-         x <- trimuri(XML::xmlAttrs(.self$node[['artifact']])[['uri']])
+         x <- trimuri(xml_atts(.self$node[['artifact']])[['uri']])
          if (tolower(form) == "node") x <- .self$lims$GET(x, asNode = TRUE)
          
       }
@@ -159,7 +159,7 @@ SampleRefClass$methods(
             x <- NULL
          }
       } else {
-         x <- XML::xmlAttrs(.self$node[['project']])[['uri']]
+         x <- xml_atts(.self$node[['project']])[['uri']]
          if (tolower(form) == "node"){
             x <- .self$lims$GET(x, asNode = TRUE)
          }
@@ -182,7 +182,7 @@ create_samples_details <- function(x){
    if (inherits(x, "SampleRefClass")){
       x <- lapply(x, "[[", "node")      
    }
-   nm <- sapply(x, xmlName)
+   nm <- sapply(x, xml_name)
    if (!all(nm %in% c("sample", "samplecreation") )) stop("create_samples_details: input nodes must be of type sample")
    
    XML::newXMLNode("details",

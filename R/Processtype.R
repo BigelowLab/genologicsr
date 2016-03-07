@@ -22,13 +22,13 @@ ProcessTypeRefClass <- setRefClass("ProcessTypeRefClass",
       get_field_names = function(){
          sapply(.self$node['field-definition'], 
             function(x){
-               XML::xmlAttrs(x)[['name']]
+               xml_atts(x)[['name']]
             })
       },
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c("GET", "BROWSE")
-         .self$name <- XML::xmlAttrs(.self$node)[['name']]
+         .self$name <- xml_atts(.self$node)[['name']]
          .self$fields <- .self$get_field_names()
       })
    )# setRefClass
@@ -44,7 +44,7 @@ ProcessTypeRefClass$methods(
    get_fields = function(){
       ff <- .self$node['field-definition']
       if (is.null(ff)) return(NULL)
-      ff_uri <- sapply(ff, function(x) XML::xmlAttrs(x)[['uri']])
+      ff_uri <- sapply(ff, function(x) xml_atts(x)[['uri']])
       FF <- lapply(ff_uri, function(x) .self$lims$GET(x))
       names(FF) <- sapply(FF, "[[", "name")
       FF
@@ -63,9 +63,9 @@ ProcessTypeRefClass$methods(
       if (is.null(pinputs)) return(NULL)
       inputs <- lapply(pinputs, function(x) {
             list(
-               artifact_type = XML::xmlValue(x[['artifact-type']]),
-               display_name = XML::xmlValue(x[['display-name']]),
-               remove_working_flag = XML::xmlValue(x[['remove-working-flag']])
+               artifact_type = xml_value(x[['artifact-type']]),
+               display_name = xml_value(x[['display-name']]),
+               remove_working_flag = xml_value(x[['remove-working-flag']])
                )
             }
          )
@@ -85,12 +85,12 @@ ProcessTypeRefClass$methods(
       if (is.null(poutputs)) return(NULL)
       out <- lapply(poutputs, function(x) {
          list(
-            artifact_type = XML::xmlValue(x[['artifact-type']]),
-            display_name = XML::xmlValue(x[['display-name']]),
-            output_generation_type = XML::xmlValue(x[['output-generation-type']]),
-            variablility_type = XML::xmlValue(x[['variability-type']]),
-            number_of_outputs = XML::xmlValue(x[['number-of-outputs']]),
-            output_name = XML::xmlValue(x[['output-name']])
+            artifact_type = xml_value(x[['artifact-type']]),
+            display_name = xml_value(x[['display-name']]),
+            output_generation_type = xml_value(x[['output-generation-type']]),
+            variablility_type = xml_value(x[['variability-type']]),
+            number_of_outputs = xml_value(x[['number-of-outputs']]),
+            output_name = xml_value(x[['output-name']])
             )
          }
       )

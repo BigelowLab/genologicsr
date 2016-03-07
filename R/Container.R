@@ -18,16 +18,16 @@ ContainerRefClass <- setRefClass("ContainerRefClass",
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c("GET", "PUT", 'DELETE', 'BROWSE')
-         .self$name = XML::xmlValue(.self$node[['name']]) 
-         .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
-         .self$state = XML::xmlValue(.self$node[['state']])    
+         .self$name = xml_value(.self$node[['name']]) 
+         .self$type = xml_atts(.self$node[['type']])[['name']]
+         .self$state = xml_value(.self$node[['state']])    
       },
    update = function(x){
       if (missing(x)) x <- .self$node
       callSuper(x)
-      .self$name = XML::xmlValue(.self$node[['name']]) 
-      .self$type = XML::xmlAttrs(.self$node[['type']])[['name']]
-      .self$state = XML::xmlValue(.self$node[['state']])    
+      .self$name = xml_value(.self$node[['name']]) 
+      .self$type = xml_atts(.self$node[['type']])[['name']]
+      .self$state = xml_value(.self$node[['state']])    
    })
    )
    
@@ -81,7 +81,7 @@ ContainerRefClass$methods(
    n_occupied = function(){
       nd <- .self$node[['occupied-wells']]
       if (!is.null(nd)) {
-         x <- as.numeric(XML::xmlValue(nd))
+         x <- as.numeric(xml_value(nd))
       } else {
          x <- NA
       }
@@ -123,7 +123,7 @@ ContainerRefClass$methods(
 NULL
 ContainerRefClass$methods(
    get_type = function(){
-      x <- if (is.null(.self$node[['type']])) NULL else XML::xmlAttrs(.self$node[['type']])
+      x <- if (is.null(.self$node[['type']])) NULL else xml_atts(.self$node[['type']])
       x
    })
 
@@ -139,8 +139,8 @@ NULL
 ContainerRefClass$methods(
    get_placements = function(placement = NULL){
       if ( !.self$has_child("placement") ) return(character())
-      puri <- sapply(.self$node['placement'], function(x) XML::xmlAttrs(x)[['uri']])
-      names(puri) <- sapply(.self$node['placement'], XML::xmlValue)
+      puri <- sapply(.self$node['placement'], function(x) xml_atts(x)[['uri']])
+      names(puri) <- sapply(.self$node['placement'], xml_value)
       if (!is.null(placement)) {
          placement <- A01(placement, form = "A:1")
          ix <- placement %in% names(puri)
@@ -166,7 +166,7 @@ ContainerRefClass$methods(
       if (length(puri) == 0) return(NULL)
       AA <- .self$lims$batchretrieve(puri,rel = 'artifacts', asNode = TRUE)
       # we could copy names over from puri, but it might be better to dig them out
-      names(AA) <- sapply(AA, function(x) XML::xmlValue(x$node[['location']]))
+      names(AA) <- sapply(AA, function(x) xml_value(x$node[['location']]))
       invisible(AA)
    })
    
@@ -190,7 +190,7 @@ ContainerRefClass$methods(
       } else {
          SS <- .self$lims$batchretrieve(suri, rel = 'samples', asNode = asNode)
       }
-      names(SS) <- sapply(.self$node['placement'], XML::xmlValue)
+      names(SS) <- sapply(.self$node['placement'], xml_value)
       invisible(SS)
    })
    
@@ -212,7 +212,7 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
       x <- lapply(x, "[[", "node")      
    }
    
-   nm <- sapply(x, XML::xmlName)
+   nm <- sapply(x, xml_name)
    if (!all(tolower(nm) == "container")) stop("create_container_details: input nodes must be of type container")
    
    XML::newXMLNode("details",

@@ -161,7 +161,7 @@ LimsRefClass$methods(
       stopifnot(interactive())
       
       if (is_xmlNode(x)){
-         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+         uri <- trimuri(xml_atts(x)[['uri']])
       } else if (inherits(x, 'character')) {
          uri <- x[1]
       } else if (inherits(x, 'NodeRefClass')){
@@ -222,7 +222,7 @@ LimsRefClass$methods(
          uri <- x$uri
          body <- x$toString()
       } else if (is_xmlNode(x)) {
-         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+         uri <- trimuri(xml_atts(x)[['uri']])
          body <- XML::toString.XMLNode(x)
       } else {
          stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
@@ -257,7 +257,7 @@ LimsRefClass$methods(
          if (is.null(uri)) uri <- x$uri
          body <- x$toString()
       } else {
-         if (is.null(uri)) uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+         if (is.null(uri)) uri <- trimuri(xml_atts(x)[['uri']])
          body <- XML::toString.XMLNode(x)
       }
       r <- httr::POST(uri, 
@@ -288,7 +288,7 @@ LimsRefClass$methods(
       if (inherits(x, "NodeRefClass")){
          uri <- x$uri
       } else if (is_xmlNode(x)) {
-         uri <- trimuri(XML::xmlAttrs(x)[['uri']])
+         uri <- trimuri(xml_atts(x)[['uri']])
       } else if (inherits(x, 'character')) {
          uri <- trimuri(x)
       } else {
@@ -339,7 +339,7 @@ LimsRefClass$methods(
       # if the artifact node has a file element
       # then we need to DELETE it
       if ( !is.null(x$node[["file"]]) ) {
-         fileuri <- XML::xmlAttrs(x$node[["file"]])["uri"]
+         fileuri <- xml_atts(x$node[["file"]])["uri"]
          ok <- .self$DELETE(fileuri, ...)
          if (!ok) {
             e <- create_exception_node(message = "LimsRefClass$PUSH: Unable to delete existing file")
@@ -457,7 +457,7 @@ LimsRefClass$methods(
       x <- .self$GET(file.path(.self$baseuri, resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
          if (length(XML::xmlChildren(x))==0) return(NULL)
-         uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+         uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'containers')
          x <- lapply(x, function(x) ContainerRefClass$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
@@ -482,8 +482,8 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri("containertypes"), query = query, 
          depaginate = TRUE, asNode = FALSE)
       if (!is_exception(x) && length(x['container-type']) > 0){
-         uris <- sapply(x['container-type'], function(x) XML::xmlAttrs(x)[['uri']])
-         names(uris) <- sapply(x['container-type'], function(x) XML::xmlAttrs(x)[['name']])
+         uris <- sapply(x['container-type'], function(x) xml_atts(x)[['uri']])
+         names(uris) <- sapply(x['container-type'], function(x) xml_atts(x)[['name']])
          x <- lapply(uris, function(x) .self$GET(x))
       } else {
          x <- NULL
@@ -538,7 +538,7 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE) 
       if (!is_exception(x)){
          if (length(XML::xmlChildren(x))==0) return(NULL)
-         uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+         uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
          x <- batch_retrieve(uri, .self, rel = 'artifacts')
          x <- lapply(x, function(x) ArtifactRefClass$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
@@ -572,7 +572,7 @@ LimsRefClass$methods(
       query <- build_query(query)
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
-         uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+         uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
          len <- sapply(uri, length)
          if (all(len == 0)) return(NULL)
          if (.self$version == "v1"){
@@ -605,7 +605,7 @@ LimsRefClass$methods(
       RR <- .self$GET(.self$uri(resource), query = query)
       rr <- RR$node['instrument']
       if (length(rr) == 0) return(NULL)
-      uri <- sapply(rr, function(x) XML::xmlAttrs(x)[['uri']])
+      uri <- sapply(rr, function(x) xml_atts(x)[['uri']])
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
@@ -637,7 +637,7 @@ LimsRefClass$methods(
       RR <- .self$GET(.self$uri(resource), query = query)
       rr <- RR$node['researcher']
       if (length(rr) == 0) return(NULL)
-      uri <- sapply(rr, function(x) XML::xmlAttrs(x)[['uri']])
+      uri <- sapply(rr, function(x) xml_atts(x)[['uri']])
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
@@ -689,7 +689,7 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (length(XML::xmlChildren(x)) == 0) return(NULL)
       
-      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
       x <- lapply(uri, 
          function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
@@ -722,13 +722,13 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (length(XML::xmlChildren(x)) == 0) return(NULL)
       
-      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
       x <- lapply(uri, 
          function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, 
          lims = .self)
-      names(x) <- sapply(x, function(x) XML::xmlValue(x$node[['name']]) )
+      names(x) <- sapply(x, function(x) xml_value(x$node[['name']]) )
       invisible(x)
    }) # get_labs
 
@@ -758,7 +758,7 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (length(XML::xmlChildren(x)) == 0) return(NULL)
       
-      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
       x <- lapply(uri, 
          function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
@@ -790,13 +790,13 @@ LimsRefClass$methods(
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (length(XML::xmlChildren(x)) == 0) return(NULL)
       
-      uri <- sapply(XML::xmlChildren(x), function(x) XML::xmlAttrs(x)[['uri']])
+      uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
       x <- lapply(uri, 
          function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, 
          lims = .self)
-      names(x) <- sapply(x, function(x) XML::xmlAttrs(x$node)[['name']] )
+      names(x) <- sapply(x, function(x) xml_atts(x$node)[['name']] )
       invisible(x)
    }) # get_processtypes
 
@@ -826,7 +826,7 @@ LimsRefClass$methods(
          x <- lapply(x, parse_node, .self)
          names(x) <- switch(rel[1],
             'files' = names(x),
-            sapply(x, function(x) XML::xmlValue(x$node[['name']]))  )
+            sapply(x, function(x) xml_value(x$node[['name']]))  )
       }
       invisible(x)
    })
@@ -852,7 +852,7 @@ LimsRefClass$methods(
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
          stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
-      nm <- unique(sapply(x, XML::xmlName))
+      nm <- unique(sapply(x, xml_name))
       if (length(nm) > 1) 
          stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
       if (!(nm %in% c("artifact", "sample", "container")))
@@ -875,7 +875,7 @@ LimsRefClass$methods(
       x <- .self$check(r)
       if (!is_exception(x)) {
          rel <- paste0(nm, "s")
-         uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
+         uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
          r <- batch_retrieve(uri, .self, , rel = rel, ...)
          if (asNode) {
             r <- lapply(r, parse_node, .self)
@@ -909,7 +909,7 @@ LimsRefClass$methods(
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
          stop("LimsRefClass$batchcreate: inputs must inherit xmlNode or NodeRefClass")
-      nm <- unique(sapply(x, XML::xmlName))
+      nm <- unique(sapply(x, xml_name))
       if (length(nm) > 1) 
          stop("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
       if (!(nm %in% c("samplecreation", "container")))
@@ -937,7 +937,7 @@ LimsRefClass$methods(
       x <- .self$check(r)
       if (!is_exception(x)) {
          rel <- paste0(resource, "s")
-         uri <- sapply(x['link'], function(x) XML::xmlAttrs(x)[['uri']])
+         uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
          r <- batch_retrieve(uri, .self, , rel = rel)
          if (asNode) r <- lapply(r, parse_node, .self)
       } else {
@@ -1019,7 +1019,7 @@ batch_retrieve <- function(uri, lims,
             nm = nmspc)
       if (rm_dups == FALSE) {
          # name each node
-         names(xx) <- sapply(xx, function(x) XML::xmlAttrs(x)["limsid"])
+         names(xx) <- sapply(xx, function(x) xml_atts(x)["limsid"])
          # rebuild the list with duplicates
          xx <- xx[limsid_all]
       }
@@ -1056,7 +1056,7 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE){
       
       x <- lims$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
-         yuri <- no_plus_uri(XML::xmlAttrs(x[['next-page']])[['uri']])
+         yuri <- no_plus_uri(xml_atts(x[['next-page']])[['uri']])
          doNext <- TRUE
          while(doNext){
             y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
@@ -1064,7 +1064,7 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE){
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
-            if (doNext) yuri <- no_plus_uri(XML::xmlAttrs(y[["next-page"]])[["uri"]])
+            if (doNext) yuri <- no_plus_uri(xml_atts(y[["next-page"]])[["uri"]])
          } # doNext while loop
          x <- XML::removeChildren(x, kids = x["next-page"])
       }
@@ -1084,7 +1084,7 @@ parse_node <- function(node, lims){
    if (!is_xmlNode(node)) stop("parse_node: node must be XML::xmlNode")
    if (!inherits(lims, 'LimsRefClass')) stop("assign_node: lims must be LimsRefClass")
    
-   nm <- XML::xmlName(node)[1]
+   nm <- xml_name(node)[1]
    switch(nm,
        'artifact' = ArtifactRefClass$new(node, lims),
        'processes' = ProcessRefClass$new(node, lims),

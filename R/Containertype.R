@@ -28,22 +28,22 @@ ContainerTypeRefClass <- setRefClass("ContainerTypeRefClass",
          what = paste0(tolower(what[1]), "-dimension")
          x <- .self$node[[what]]
          list(
-            is_alpha = XML::xmlValue(x[['is-alpha']]) == "true",
-            offset = as.numeric(XML::xmlValue(x[['offset']])),
-            size = as.numeric(XML::xmlValue(x[['size']])))
+            is_alpha = xml_value(x[['is-alpha']]) == "true",
+            offset = as.numeric(xml_value(x[['offset']])),
+            size = as.numeric(xml_value(x[['size']])))
       },
       test_if_tube = function(){
          if (.self$lims$version == 'v1'){
             istube <- (.self$xdim[['size']] * .self$ydim[['size']]) == 1
          } else {
-            istube <- XML::xmlValue(.self$node[['is-tube']]) == 'true'
+            istube <- xml_value(.self$node[['is-tube']]) == 'true'
          }
          return(istube)
       },      
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c("GET", "BROWSE")
-         .self$name = XML::xmlAttrs(.self$node)[['name']]
+         .self$name = xml_atts(.self$node)[['name']]
          .self$xdim = .self$get_dim(what="x")
          .self$ydim = .self$get_dim(what="y")
          .self$is_tube = .self$test_if_tube()

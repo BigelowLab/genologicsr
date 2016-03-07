@@ -32,8 +32,8 @@ ProjectsRefClass$methods(
       if (is_xmlNode(.self$node)){
          p <- .self$node['project']
          if (!is.null(p)){
-           r <- sapply(p, function(x) XML::xmlAttrs(x)[['uri']])
-           names(r) <- sapply(p, function(x) XML::xmlValue(x))
+           r <- sapply(p, function(x) xml_atts(x)[['uri']])
+           names(r) <- sapply(p, function(x) xml_value(x))
          }
       } 
       invisible(r)

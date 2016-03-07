@@ -102,7 +102,7 @@ NodeRefClass$methods(
       .self$field('node', x)
       .self$field('ns', XML::xmlNamespace(.self$node))
        
-      atts <- XML::xmlAttrs(.self$node)
+      atts <- xml_atts(.self$node)
       if('uri' %in% names(atts)) .self$field('uri', trimuri(atts[['uri']]))
       if ('limsid' %in% names(atts)) .self$field('limsid', atts[['limsid']])
    }) # update
@@ -171,7 +171,7 @@ NodeRefClass$methods(
          .self$update(r)
       } else {
          cat("NodeRefClass: PUT exception\n")
-         cat(XML::xmlValue(r[['message']]), "\n")
+         cat(xml_value(r[['message']]), "\n")
          ok <- FALSE
       }
       ok
@@ -197,7 +197,7 @@ NodeRefClass$methods(
          .self$lims <- NULL
       } else {
          cat("NodeRefClass: DELETE exception\n")
-         cat(XML::xmlValue(r[['message']]), "\n")
+         cat(xml_value(r[['message']]), "\n")
          ok <- FALSE
       }
       ok
@@ -223,7 +223,7 @@ NodeRefClass$methods(
       } else {
          cat("NodeRefClass: POST exception\n")
          cat("NodeRefClass: node not POSTed because...\n")
-         cat(XML::xmlValue(r[['message']]), "\n")
+         cat(xml_value(r[['message']]), "\n")
          ok <- FALSE
       }
       ok
@@ -429,7 +429,7 @@ NodeRefClass$methods(
 get_childvalue <- function(x, name){
 
    sapply(name, function(nm,x=NULL){
-         if (nm %in% names(x)) XML::xmlValue(x[[name]]) else ""
+         if (nm %in% names(x)) xml_value(x[[name]]) else ""
       }, x = if (inherits(x, 'NodeRefClass')) x$node else x )
 
 }

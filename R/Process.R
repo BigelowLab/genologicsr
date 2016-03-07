@@ -38,7 +38,7 @@ ProcessRefClass$methods(
    date_run = function(as_POSIX = FALSE){
       dr <- .self$node[['date-run']]
       if (!is.null(dr)) {
-         x <- XML::xmlValue(dr)
+         x <- xml_value(dr)
          if (as_POSIX) x <- as.POSIXct(x)
       } else {
          x <- ""
@@ -60,10 +60,10 @@ ProcessRefClass$methods(
          x <- NULL
       } else {
          x <- switch(tolower(form[1]),
-            'uri' = XML::xmlAttrs(technode)[['uri']],
-            'node' = .self$lims$GET(XML::xmlAttrs(technode)[['uri']]), 
-            paste(XML::xmlValue(technode[['first-name']]),
-               XML::xmlValue(technode[['last-name']]) ) )
+            'uri' = xml_atts(technode)[['uri']],
+            'node' = .self$lims$GET(xml_atts(technode)[['uri']]), 
+            paste(xml_value(technode[['first-name']]),
+               xml_value(technode[['last-name']]) ) )
       }
       x
    }) #technician
@@ -79,7 +79,7 @@ ProcessRefClass$methods(
    instrument = function(form = c("Node", "uri")[1]){
       inode <- .self$node[['instrument']]
       if (!is.null(inode)) {
-         x <- XML::xmlAttrs(inode)[['uri']]
+         x <- xml_atts(inode)[['uri']]
          if (tolower(form == 'node')) x <- .self$lims$GET(x)
       } else {
          x <- NULL
@@ -99,8 +99,8 @@ ProcessRefClass$methods(
       typenode <- .self$node[['type']]
       if (!is.null(typenode)) {
          x <- switch(form,
-            'uri' = XML::xmlAttrs(typenode)[['uri']],
-            XML::xmlValue(typenode) )
+            'uri' = xml_atts(typenode)[['uri']],
+            xml_value(typenode) )
       } else {
          x <- ""
       }
@@ -122,7 +122,7 @@ ProcessRefClass$methods(
             NULL)
          return(x)
       }
-      thisuri <- trimuri(XML::xmlAttrs(.self$node[["parent-process"]])[['uri']])
+      thisuri <- trimuri(xml_atts(.self$node[["parent-process"]])[['uri']])
       if (tolower(form == "uri")){
          x <- thisuri
       } else {
@@ -250,7 +250,7 @@ ProcessRefClass$methods(
          AA <- .self$lims$batchretrieve(input_uri, rel = 'artifacts')
          ix <- grepl('file', tolower(sapply(AA,function(x) x$type)), fixed = TRUE)
          if (any(ix)){
-            IN <- sapply(AA, function(x) XML::xmlAttrs(x$node[['file']])[['uri']] )
+            IN <- sapply(AA, function(x) xml_atts(x$node[['file']])[['uri']] )
             if (form == "node") IN <- lapply(IN, function(x) .self$lims$GET(x) )  
          } # any files?
       }

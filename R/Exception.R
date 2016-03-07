@@ -21,7 +21,7 @@ ExceptionRefClass <- setRefClass("ExceptionRefClass",
             x <- list(...)
             .self$node <- x[[1]]
             .self$verbs <- "NONE"
-            atts <- XML::xmlAttrs(.self$node)
+            atts <- xml_atts(.self$node)
             if ('category' %in% names(atts)) .self$category = atts[['category']]
             if ('code' %in% names(atts)) .self$category = atts[['code']]
             if ('message' %in% names(.self$node))   

@@ -36,7 +36,7 @@ FieldRefClass <- setRefClass("FieldRefClass",
             nm <- names(.self$node)
             ix <- nm %in% 'preset'
             if (any(ix)){
-               p <- sapply(.self$node['preset'], function(x) XML::xmlValue(x))
+               p <- sapply(.self$node['preset'], function(x) xml_value(x))
             } else {
                p <- ""
             }
@@ -98,6 +98,6 @@ FieldRefClass$methods(
 NULL
 FieldRefClass$methods(
    get_type = function(){
-      XML::xmlAttrs(.self$node)[['type']]
+      xml_atts(.self$node)[['type']]
    })   
 

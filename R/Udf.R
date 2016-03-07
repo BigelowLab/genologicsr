@@ -110,10 +110,10 @@ extract_udfs <- function(x){
       r <- list()
    } else {
       r <- lapply(ff, function(x){
-         att <- XML::xmlAttrs(x)
+         att <- xml_atts(x)
          nm <- att[['name']]
          typ <- att[['type']]
-         val <- as(XML::xmlValue(x), udf_type2R(typ))
+         val <- as(xml_value(x), udf_type2R(typ))
          list(name = nm, type = typ, value = val )
          })  
       names(r) <- sapply(r, "[[", "name")  

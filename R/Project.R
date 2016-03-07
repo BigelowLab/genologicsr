@@ -19,7 +19,7 @@ ProjectRefClass <- setRefClass("ProjectRefClass",
    update = function(){
          callSuper(.self$node)
          if ("name" %in% names(XML::xmlChildren(.self$node))) {
-            .self$name = XML::xmlValue(.self$node[['name']])
+            .self$name = xml_value(.self$node[['name']])
          } else {
             .self$name <- ""
          }
@@ -61,7 +61,7 @@ ProjectRefClass$methods(
    get_researcher = function(){
       x <- NULL
       if ("researcher" %in% names(XML::xmlChildren(.self$node))){
-         URI <- XML::xmlAttrs(.self$node[['researcher']])
+         URI <- xml_atts(.self$node[['researcher']])
          x <- .self$lims$GET(URI)
       }
       invisible(x)

@@ -65,7 +65,7 @@ xmlString <- function(x){
 #' @param x XML::xmlNode with a value
 #' @param ... further arguments for \code{XML::xmlName()}
 #' @param the name of the node
-xml_value  <- function(x, ...){
+xml_name  <- function(x, ...){
     XML::xmlName(x, ...)
 }
 
