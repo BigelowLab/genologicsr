@@ -800,6 +800,47 @@ LimsRefClass$methods(
       invisible(x)
    }) # get_processtypes
 
+
+#' Get one or more fields (UDF) as Nodes
+#' 
+#' @family Lims Field
+#' @name LimsRefClass_get_fields
+#' @param name one or more optional UDF names
+#' @param attach_to_name one name of a container, sample, project, process
+#' @param attach-to-category If 'attach_to_name' is the name of a process, 
+#'  specify 'ProcessType'. Must not be provided otherwise. 
+#' @param ... further arguments for GET method
+#' @return a list of FieldRefClass or NULL
+NULL
+LimsRefClass$methods(
+    get_fields = function(
+        name = NULL, 
+        attach_to_name = NULL, 
+        attach_to_category = NULL,
+        ...){
+       
+        resource <- 'configuration/udfs'
+        
+        query <- list()
+        if (!is.null(name)) query[["displayname"]] <- name
+        if (!is.null(attach_to_name)) query[["attach-to-name"]] <- attach_to_name
+        if (!is.null(attach_to_category)) query[["attach-to-category"]] <- attach_to_category
+        
+        x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE,...)
+        if (length(XML::xmlChildren(x)) == 0) return(NULL)
+        
+        uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
+        x <- lapply(uri, 
+           function(x, lims = NULL) {
+              lims$GET(x, asNode = TRUE)
+           }, 
+           lims = .self)
+        names(x) <- sapply(x, function(x) xml_atts(x$node)[['name']] )
+        invisible(x)
+    }) # get_fields
+    
+
+
 #' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
 #' 
 #' @family Lims Node
