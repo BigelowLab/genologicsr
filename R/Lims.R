@@ -1037,9 +1037,11 @@ batch_retrieve <- function(uri, lims,
 #' @param lims a LimsRefClass node
 #' @param ... further arguments for httr::GET()
 #' @param depaginate logical, if TRUE (the default) then depaginate the results
+#' @param verbose logical if TRUE be verbose
 #' @return XML::xmlNode
-get_uri <- function(uri, lims, ..., depaginate = TRUE){
+get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
 
+      if (verbose) cat("get_uri:", uri, "\n")
       # first pass
       x <- httr::GET(uri,  
          ...,
