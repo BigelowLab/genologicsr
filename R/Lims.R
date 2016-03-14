@@ -1154,8 +1154,7 @@ parse_node <- function(node, lims){
 #' @export
 #' @param configfile character, the fully qualified path to the config file
 #' @return a LimsRefClass instance or NULL
-Lims <- function(configfile){
-   if (missing(configfile)) stop("configfile is required")
+Lims <- function(configfile = build_config_path()){
    if (!file.exists(configfile[1])) stop("configfile not found:", configfile[1])
    x <- try(read_config(configfile[1]))
    if (inherits(x, "try-error")) stop("Error reading config file")

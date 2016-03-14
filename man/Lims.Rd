@@ -4,7 +4,7 @@
 \alias{Lims}
 \title{Instantiate a LimsRefClass object}
 \usage{
-Lims(configfile)
+Lims(configfile = build_config_path())
 }
 \arguments{
 \item{configfile}{character, the fully qualified path to the config file}

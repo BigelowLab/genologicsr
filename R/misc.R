@@ -103,6 +103,30 @@ is_exception <- function(x, space = 'exc'){
 }
 
 
+#' Create a configuration file name in the form of \code{/path/to/.hostname-rc}
+#' 
+#' @export
+#' @param hostname character hostname
+#' @param path character the directory of the configuration file
+#' @return the complete configuration file path
+#' @examples
+#'  \dontrun{
+#'  build_config_path()
+#'  [1] "~/.scgc-clarity-dev-rc"
+#'  build_config_path(hostname = 'foo')
+#'  [1] "~/.foo-rc"
+#'  build_config_path(hostname = 'foo', path = '/stairway/to/heaven')
+#'  [1] "/stairway/to/heaven/.foo-rc"
+#'  build_config_path(hostname = 'foo.bar.org', path = '/stairway/to/heaven')
+#'  [1] "/stairway/to/heaven/.foo-rc"
+#'  }
+build_config_path <- function(
+    hostname = system('hostname', intern = TRUE),
+    path = "~"){
+    
+    x <- strsplit(hostname, ".", fixed = TRUE)[[1]][1]
+    file.path(path, paste0(".", x, "-rc"))
+}
 
 #' Read a configuration file
 #' @param filename the name of the file

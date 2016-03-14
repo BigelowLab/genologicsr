@@ -10,6 +10,8 @@
 
 \item{attach-to-category}{If 'attach_to_name' is the name of a process,
 specify 'ProcessType'. Must not be provided otherwise.}
+
+\item{...}{further arguments for GET method}
 }
 \value{
 a list of FieldRefClass or NULL
