@@ -796,7 +796,7 @@ LimsRefClass$methods(
             lims$GET(x, asNode = TRUE)
          }, 
          lims = .self)
-      names(x) <- sapply(x, function(x) xml_atts(x$node)[['name']] )
+      names(x) <- sapply(x, '[[','name' )
       invisible(x)
    }) # get_processtypes
 
@@ -821,11 +821,12 @@ LimsRefClass$methods(
        
         resource <- 'configuration/udfs'
         
-        query <- list()
-        if (!is.null(name)) query[["displayname"]] <- name
-        if (!is.null(attach_to_name)) query[["attach-to-name"]] <- attach_to_name
-        if (!is.null(attach_to_category)) query[["attach-to-category"]] <- attach_to_category
-        
+        queryl <- list()
+        if (!is.null(name)) queryl[["displayname"]] <- name
+        if (!is.null(attach_to_name)) queryl[["attach-to-name"]] <- attach_to_name
+        if (!is.null(attach_to_category)) 
+            queryl[["attach-to-category"]] <- attach_to_category
+        query <- build_query(queryl)
         x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE,...)
         if (length(XML::xmlChildren(x)) == 0) return(NULL)
         
@@ -835,7 +836,7 @@ LimsRefClass$methods(
               lims$GET(x, asNode = TRUE)
            }, 
            lims = .self)
-        names(x) <- sapply(x, function(x) xml_atts(x$node)[['name']] )
+        names(x) <- sapply(x, '[[','name')
         invisible(x)
     }) # get_fields
     
