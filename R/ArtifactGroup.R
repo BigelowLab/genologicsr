@@ -19,6 +19,10 @@ ArtifactGroupRefClass <- setRefClass("ArtifactGroupRefClass",
    update = function(){
          callSuper(.self$node)
          .self$name = xml_value(.self$node[['name']])  
+      },
+    show = function(prefix = ""){
+         callSuper(prefix = prefix)
+         cat(prefix, "  Artifactgroup name: ", .self$name, "\n", sep = "")
       })
    )
 

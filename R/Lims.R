@@ -471,7 +471,7 @@ LimsRefClass$methods(
 #' 
 #' @family Lims Container
 #' @name LimsRefClass_get_containertypes
-#' @param optional name a character vector of one or more container type names
+#' @param name a character vector of one or more container type names
 #' @return a named list of ContainerTypeRefClass objects or NULL
 NULL
 LimsRefClass$methods(
@@ -493,6 +493,32 @@ LimsRefClass$methods(
    })
 
 
+#' Get artifact group(s) in the system
+#' 
+#' 
+#' @family Lims
+#' @name LimsRefClass_get_artifactgroups
+#' @param artifactgroup a character vector of one or more artifact group names
+#' @return a named list of ArtifactGroupTypeRefClass objects or NULL
+NULL
+LimsRefClass$methods(
+   get_artifactgroups = function(artifactgroup = NULL){
+      queryl = list()
+      if (!is.null(artifactgroup)) queryl[['artifactgroup']] <- artifactgroup
+      query <- build_query(queryl)
+      x <- .self$GET(.self$uri("artifactgroups"), query = query, 
+         depaginate = TRUE, asNode = FALSE)
+      if (!is_exception(x) && length(x['artifactgroup']) > 0){
+         uris <- sapply(x['artifactgroup'], function(x) xml_atts(x)[['uri']])
+         #names(uris) <- sapply(x['artifactgroup'], function(x) xml_atts(x)[['name']])
+         x <- lapply(uris, function(x) .self$GET(x))
+         names(x) <- sapply(x, "[[", "name")
+      } else {
+         x <- NULL
+      }
+
+      invisible(x)
+   })
 
 #' Get one or more artifacts using queries on name, type, process-type, working-flag
 #' qc-flag, sample-name, samplelimsid, containername, containerlimsid, reagent-label
@@ -1083,13 +1109,8 @@ batch_retrieve <- function(uri, lims,
 #' @return XML::xmlNode
 get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
 
+
       if (verbose) cat("get_uri:", uri, "\n")
-      # first pass
-      x <- httr::GET(uri,  
-         ...,
-         encoding = lims$encoding,
-         handle = lims$handle,
-         lims$auth)
 
       # since when has LIMS substituted "+" for spaces ("%20")?
       # @param uri
@@ -1098,6 +1119,15 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
          file.path(dirname(x), gsub("+", "%20", basename(x), fixed = TRUE))
       }
       
+      uri <- no_plus_uri(uri)
+      # first pass
+      x <- httr::GET(uri,  
+         ...,
+         encoding = lims$encoding,
+         handle = lims$handle,
+         lims$auth)
+
+
       x <- lims$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
          yuri <- no_plus_uri(xml_atts(x[['next-page']])[['uri']])
@@ -1145,6 +1175,7 @@ parse_node <- function(node, lims){
        'instrument' = InstrumentRefClass$new(node, lims),
        'process-type' = ProcessTypeRefClass$new(node, lims),
        'exception' = ExceptionRefClass$new(node, lims),
+       'artifactgroup' = ArtifactGroupRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

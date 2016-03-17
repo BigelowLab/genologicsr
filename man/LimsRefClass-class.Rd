@@ -29,6 +29,7 @@ Other Lims: \code{\link{LimsRefClass_BROWSE}};
   \code{\link{LimsRefClass_PUSH}};
   \code{\link{LimsRefClass_PUT}};
   \code{\link{LimsRefClass_check}};
+  \code{\link{LimsRefClass_get_artifactgroups}};
   \code{\link{LimsRefClass_get_byLimsid}};
   \code{\link{LimsRefClass_uri}};
   \code{\link{LimsRefClass_userpwd}};

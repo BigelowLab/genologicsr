@@ -4,7 +4,7 @@
 \alias{LimsRefClass_get_containertypes}
 \title{Get the container type(s) in the system}
 \arguments{
-\item{optional}{name a character vector of one or more container type names}
+\item{name}{a character vector of one or more container type names}
 }
 \value{
 a named list of ContainerTypeRefClass objects or NULL
