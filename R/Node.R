@@ -108,6 +108,17 @@ NodeRefClass$methods(
    }) # update
 
 
+#' Retrieve the limsid (if any)
+#'
+#' @family Node
+#' @name NodeRefClass_limsid
+#' @return character (possibly an empty string)
+NULL
+NodeRefClass$methods(
+    limsid = function(){
+        basename(.self$uri)
+    })
+
 #' Determine if http transactions (GET, PATCH, POST, HEAD, PUT, and DELETE) 
 #' are possible for this Node
 #' 
