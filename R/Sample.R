@@ -195,7 +195,7 @@ create_samples_details <- function(x){
 #' 
 #' @export
 #' @family Lims Sample
-#' @param name character container name (required)
+#' @param name character sample name (required)
 #' @param project_uri character uri of project (required)
 #' @param container_uri character uri of the container (required)
 #' @param well character location on the well such as 'A:1' (required)

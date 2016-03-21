@@ -626,7 +626,7 @@ LimsRefClass$methods(
    
       resource <- 'instruments'
       
-      query <- if(is.null(name)) NULL else build_query(list(username=username))
+      query <- if(is.null(name)) NULL else build_query(list(name=name))
       
       RR <- .self$GET(.self$uri(resource), query = query)
       rr <- RR$node['instrument']
