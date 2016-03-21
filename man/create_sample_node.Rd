@@ -8,7 +8,7 @@ create_sample_node(name = NULL, project_uri = NULL, container_uri = NULL,
   well = NULL, date_received = NULL, date_completed = NULL)
 }
 \arguments{
-\item{name}{character container name (required)}
+\item{name}{character sample name (required)}
 
 \item{project_uri}{character uri of project (required)}
 

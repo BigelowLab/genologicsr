@@ -34,6 +34,7 @@ Other Node: \code{\link{ArtifactGroupRefClass}},
   \code{\link{NodeRefClass_add_namespaces}};
   \code{\link{NodeRefClass_get_childv}};
   \code{\link{NodeRefClass_get_field}};
+  \code{\link{NodeRefClass_get_limsid}};
   \code{\link{NodeRefClass_get_type}},
   \code{\link{NodeRefClass_get_type}};
   \code{\link{NodeRefClass_has_child}};

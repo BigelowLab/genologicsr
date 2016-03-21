@@ -44,8 +44,9 @@ is_xmlNode <- function(x, classname = 'XMLAbstractNode'){
    inherits(x, classname)
 }
 
-#' Convert XML::xmlNode to character
+#' Convert XML::xmlNode or NodeRefClass to character
 #' 
+#' @aliases xml_string
 #' @export
 #' @param x xmlNode or NodeRefClass
 #' @return character
@@ -58,6 +59,15 @@ xmlString <- function(x){
    return(r)
 }
 
+#' Convert XML::xmlNode or NodeRefClass to character
+#' 
+#' @aliases xmlString
+#' @export
+#' @param x xmlNode or NodeRefClass
+#' @return character
+xml_string <- function(x){
+    xmlString(x)    
+}
 
 #' Extract the name from a simple XML::xmlNode object
 #'

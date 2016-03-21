@@ -67,7 +67,7 @@ FileRefClass$methods(
 #' @return named logical
 NULL
 FileRefClass$methods(
-   download = function(dest = NULL, use = c("scp","duck")[1], 
+   download = function(dest = NULL, use = c("scp", "cp", "duck")[1], 
       up = NULL, ...){
       
       if (nchar(.self$content_location) == 0) stop("FileRefClass$download: Node is not populated")
@@ -78,6 +78,7 @@ FileRefClass$methods(
             username = up[1], password = up[2],...),
          'scp' = scp_download(.self$content_location[1], dest[1],
             username = up[1], password = up[2],...),
+         'cp' = cp_download(.self$content_location[1], dest[1], ...),
          function(){ cat("Download tool not known", use[1], "\n") ; return(1) })
       sapply(dest[1], file.exists)
    })

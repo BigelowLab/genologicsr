@@ -27,10 +27,10 @@ integer with 0 for success
 This assumes that SSH public-key authentication is set up.
 }
 \seealso{
-Other file_transfer: \code{\link{duck_download}};
-  \code{\link{duck_upload}}; \code{\link{has_duck}};
-  \code{\link{has_rsync}}; \code{\link{has_scp}};
-  \code{\link{rsync_download}}; \code{\link{rsync_upload}};
-  \code{\link{scp_upload}}
+Other file_transfer: \code{\link{cp_download}};
+  \code{\link{duck_download}}; \code{\link{duck_upload}};
+  \code{\link{has_duck}}; \code{\link{has_rsync}};
+  \code{\link{has_scp}}; \code{\link{rsync_download}};
+  \code{\link{rsync_upload}}; \code{\link{scp_upload}}
 }
 

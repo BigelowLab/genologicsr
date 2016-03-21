@@ -223,7 +223,7 @@ LimsRefClass$methods(
          body <- x$toString()
       } else if (is_xmlNode(x)) {
          uri <- trimuri(xml_atts(x)[['uri']])
-         body <- XML::toString.XMLNode(x)
+         body <- xml_string(x)
       } else {
          stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
       }
@@ -471,7 +471,7 @@ LimsRefClass$methods(
 #' 
 #' @family Lims Container
 #' @name LimsRefClass_get_containertypes
-#' @param optional name a character vector of one or more container type names
+#' @param name a character vector of one or more container type names
 #' @return a named list of ContainerTypeRefClass objects or NULL
 NULL
 LimsRefClass$methods(
@@ -493,6 +493,32 @@ LimsRefClass$methods(
    })
 
 
+#' Get artifact group(s) in the system
+#' 
+#' 
+#' @family Lims
+#' @name LimsRefClass_get_artifactgroups
+#' @param artifactgroup a character vector of one or more artifact group names
+#' @return a named list of ArtifactGroupTypeRefClass objects or NULL
+NULL
+LimsRefClass$methods(
+   get_artifactgroups = function(artifactgroup = NULL){
+      queryl = list()
+      if (!is.null(artifactgroup)) queryl[['artifactgroup']] <- artifactgroup
+      query <- build_query(queryl)
+      x <- .self$GET(.self$uri("artifactgroups"), query = query, 
+         depaginate = TRUE, asNode = FALSE)
+      if (!is_exception(x) && length(x['artifactgroup']) > 0){
+         uris <- sapply(x['artifactgroup'], function(x) xml_atts(x)[['uri']])
+         #names(uris) <- sapply(x['artifactgroup'], function(x) xml_atts(x)[['name']])
+         x <- lapply(uris, function(x) .self$GET(x))
+         names(x) <- sapply(x, "[[", "name")
+      } else {
+         x <- NULL
+      }
+
+      invisible(x)
+   })
 
 #' Get one or more artifacts using queries on name, type, process-type, working-flag
 #' qc-flag, sample-name, samplelimsid, containername, containerlimsid, reagent-label
@@ -600,7 +626,7 @@ LimsRefClass$methods(
    
       resource <- 'instruments'
       
-      query <- if(is.null(name)) NULL else build_query(list(username=username))
+      query <- if(is.null(name)) NULL else build_query(list(name=name))
       
       RR <- .self$GET(.self$uri(resource), query = query)
       rr <- RR$node['instrument']
@@ -796,7 +822,7 @@ LimsRefClass$methods(
             lims$GET(x, asNode = TRUE)
          }, 
          lims = .self)
-      names(x) <- sapply(x, function(x) xml_atts(x$node)[['name']] )
+      names(x) <- sapply(x, '[[','name' )
       invisible(x)
    }) # get_processtypes
 
@@ -821,11 +847,12 @@ LimsRefClass$methods(
        
         resource <- 'configuration/udfs'
         
-        query <- list()
-        if (!is.null(name)) query[["displayname"]] <- name
-        if (!is.null(attach_to_name)) query[["attach-to-name"]] <- attach_to_name
-        if (!is.null(attach_to_category)) query[["attach-to-category"]] <- attach_to_category
-        
+        queryl <- list()
+        if (!is.null(name)) queryl[["displayname"]] <- name
+        if (!is.null(attach_to_name)) queryl[["attach-to-name"]] <- attach_to_name
+        if (!is.null(attach_to_category)) 
+            queryl[["attach-to-category"]] <- attach_to_category
+        query <- build_query(queryl)
         x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE,...)
         if (length(XML::xmlChildren(x)) == 0) return(NULL)
         
@@ -835,7 +862,7 @@ LimsRefClass$methods(
               lims$GET(x, asNode = TRUE)
            }, 
            lims = .self)
-        names(x) <- sapply(x, function(x) xml_atts(x$node)[['name']] )
+        names(x) <- sapply(x, '[[','name')
         invisible(x)
     }) # get_fields
     
@@ -971,7 +998,7 @@ LimsRefClass$methods(
       URI <- .self$uri(paste0(resource, "s/batch/create"))
       r <- httr::POST(url=URI, body = xmlString(detail), 
          #httr::add_headers(c("Content-Type"="application/xml")),
-         content_type_xml(),
+         httr::content_type_xml(),
          #handle = .self$handle,
          .self$auth)
       
@@ -1082,13 +1109,8 @@ batch_retrieve <- function(uri, lims,
 #' @return XML::xmlNode
 get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
 
+
       if (verbose) cat("get_uri:", uri, "\n")
-      # first pass
-      x <- httr::GET(uri,  
-         ...,
-         encoding = lims$encoding,
-         handle = lims$handle,
-         lims$auth)
 
       # since when has LIMS substituted "+" for spaces ("%20")?
       # @param uri
@@ -1097,6 +1119,15 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
          file.path(dirname(x), gsub("+", "%20", basename(x), fixed = TRUE))
       }
       
+      uri <- no_plus_uri(uri)
+      # first pass
+      x <- httr::GET(uri,  
+         ...,
+         encoding = lims$encoding,
+         handle = lims$handle,
+         lims$auth)
+
+
       x <- lims$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
          yuri <- no_plus_uri(xml_atts(x[['next-page']])[['uri']])
@@ -1144,6 +1175,7 @@ parse_node <- function(node, lims){
        'instrument' = InstrumentRefClass$new(node, lims),
        'process-type' = ProcessTypeRefClass$new(node, lims),
        'exception' = ExceptionRefClass$new(node, lims),
+       'artifactgroup' = ArtifactGroupRefClass$new(node, lims),
        NodeRefClass$new(node, lims))
 
 }

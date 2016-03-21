@@ -24,6 +24,7 @@ create_udf_node <- function(x, namespace = 'udf', parent = NULL, ...) {
    newNode <- XML::newXMLNode("field", 
       attrs = atts, 
       namespace = namespace, 
+      namespaceDefinitions = c(udf="http://genologics.com/ri/userdefined"),
       parent = parent, ...) 
    
    if ("value" %in% names(x)) XML::xmlValue(newNode) <- x[["value"]]

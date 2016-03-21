@@ -104,21 +104,24 @@ NodeRefClass$methods(
        
       atts <- xml_atts(.self$node)
       if('uri' %in% names(atts)) .self$field('uri', trimuri(atts[['uri']]))
-      if ('limsid' %in% names(atts)) .self$field('limsid', atts[['limsid']])
+      if ('limsid' %in% names(atts)){
+        .self$field('limsid', atts[['limsid']])
+      } else {
+        .self$field('limsid',.self$get_limsid())
+      }
    }) # update
-
 
 #' Retrieve the limsid (if any)
 #'
 #' @family Node
-#' @name NodeRefClass_limsid
+#' @name NodeRefClass_get_limsid
 #' @return character (possibly an empty string)
 NULL
 NodeRefClass$methods(
-    limsid = function(){
+    get_limsid = function(){
         basename(.self$uri)
     })
-
+    
 #' Determine if http transactions (GET, PATCH, POST, HEAD, PUT, and DELETE) 
 #' are possible for this Node
 #' 

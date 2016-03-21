@@ -1,5 +1,30 @@
 # file_transfer.R
 
+
+#' Download files using system cp
+#'
+#' This assumes permissions have been set up
+#'
+#' @family file_transfer
+#' @export
+#' @param url character
+#' @param dest character destination filename, by default the basename of the URL
+#' @param verbose logical, if TRUE then echo the command string
+#' @param extra character extra params for cp, currently ""
+#' @return integer with 0 for success
+cp_download <- function(url, dest, 
+    verbose = FALSE, extra = ""){
+    
+    p <- httr::parse_url(url[1])
+    CMD <- if(nchar(extra) > 0) paste("cp", extra) else "cp"
+    CMD <- paste(CMD, paste0("/",p[['path']]), dest[1])
+    if (verbose) cat(CMD, "\n")
+    system(CMD)
+}
+
+
+
+
 #' Test if rsync is installed on the host platform
 #' Perhaps silly but symmetric with others.
 #'
