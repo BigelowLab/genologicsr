@@ -223,7 +223,7 @@ LimsRefClass$methods(
          body <- x$toString()
       } else if (is_xmlNode(x)) {
          uri <- trimuri(xml_atts(x)[['uri']])
-         body <- XML::toString.XMLNode(x)
+         body <- xml_string(x)
       } else {
          stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
       }
@@ -998,7 +998,7 @@ LimsRefClass$methods(
       URI <- .self$uri(paste0(resource, "s/batch/create"))
       r <- httr::POST(url=URI, body = xmlString(detail), 
          #httr::add_headers(c("Content-Type"="application/xml")),
-         content_type_xml(),
+         httr::content_type_xml(),
          #handle = .self$handle,
          .self$auth)
       
