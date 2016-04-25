@@ -229,7 +229,7 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
 #' @param name character container name (optional)
 #' @param type_uri character uri of container type (required)
 #' @return XML::xmlNode
-create_container_node <- function(type_uri, name = NULL, type = NULL){
+create_container_node <- function(type_uri, name = NULL){
    
       if (missing(type_uri)) stop("create_project_node type uri is required")
       

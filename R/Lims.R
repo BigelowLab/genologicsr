@@ -848,7 +848,7 @@ LimsRefClass$methods(
         resource <- 'configuration/udfs'
         
         queryl <- list()
-        if (!is.null(name)) queryl[["displayname"]] <- name
+        if (!is.null(name)) queryl[["name"]] <- name
         if (!is.null(attach_to_name)) queryl[["attach-to-name"]] <- attach_to_name
         if (!is.null(attach_to_category)) 
             queryl[["attach-to-category"]] <- attach_to_category
