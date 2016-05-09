@@ -21,6 +21,7 @@ Build a uri staring with the baseuri
 }
 \seealso{
 Other Lims: \code{\link{LimsRefClass-class}},
+  \code{\link{LimsRefClass_ATTACH}},
   \code{\link{LimsRefClass_BROWSE}},
   \code{\link{LimsRefClass_DELETE}},
   \code{\link{LimsRefClass_POST}},

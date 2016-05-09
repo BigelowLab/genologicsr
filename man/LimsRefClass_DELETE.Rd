@@ -16,6 +16,7 @@ Typically this is a file (resource = 'files')
 }
 \seealso{
 Other Lims: \code{\link{LimsRefClass-class}},
+  \code{\link{LimsRefClass_ATTACH}},
   \code{\link{LimsRefClass_BROWSE}},
   \code{\link{LimsRefClass_POST}},
   \code{\link{LimsRefClass_PUSH}},

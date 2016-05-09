@@ -414,6 +414,106 @@ LimsRefClass$methods(
    }) # PUSH
 
 
+#' ATTACH a file - not really a RESTful action but a combination of steps
+#'
+#' Differs from PUSH as this is not placed into a genealogical placeholder.
+#' but is simple attached to 'Files' tab if such exists as it does for Process
+#' and Project.  Thus there is no DELETE involved like there might be with
+#' a PUSH.
+#' 
+#' given an [Project,Process] node and a filename
+#' create an unresolved file resource
+#' POST the unresolved file resource to 'glsstore' to get a resolved file resource
+#' Upload the file (scp, cp, or curl)
+#' POST the resolved file resource to 'files'
+#' return the resolved file resource
+#      
+#' @family Lims
+#' @name LimsRefClass_ATTACH
+#' @param x ProcessRefClass or ProjectRefClass to attach to 
+#' @param filename character, the fully qualified name of the file we are pushing
+#'  Note that the caller must specify filename = 'some/file/name' explicitly.
+#' @param use character the type of file transfer to use: duck, scp, cp or curl
+#' @return FileRefClass, NULL or ExceptionRefClass
+NULL
+LimsRefClass$methods(
+   ATTACH = function(x,filename = "", 
+      use = c("duck", "scp", "cp", "curl")[2]){
+      
+      stopifnot(!any(c(inherits(x, 'ArtifactRefClass'), inherits(x, 'ProjectRefClass'))))
+      
+      if (!file.exists(filename[1])) stop("LimsRefClass$ATTACH file not found:", filename[1])
+      
+      attached_to_uri <- trimuri(x[["uri"]])
+      
+      # create an unresolved file resource
+      unresolved_node <- create_file_node(attached_to_uri, filename[1])
+      # POST it
+      uri <- .self$uri("glsstorage")
+      body <- xmlString(unresolved_node)
+      rbefore<- httr::POST(uri,
+         body = body,
+         httr::content_type_xml(),
+         .self$auth)
+      rbefore <- .self$check(rbefore)  
+      
+      if (is_exception(rbefore)){ return(rbeforer)}
+      resolved_node <- parse_node(rbefore, .self)
+      
+      
+      # now we copy the file over...
+      use <- tolower(use[1])
+      dst <- resolved_node[['content_location']]
+      up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
+      puri <- httr::parse_url(resolved_node[['content_location']])
+
+      ok <- 1
+      if (use == "scp"){
+          # first make the directory if it doesn't already exist
+         MKDIR <- paste('ssh',
+            paste0(up[1],'@',puri[['hostname']]), 
+            shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
+         ok <- system(MKDIR)
+
+         # https://kb.iu.edu/d/agye
+         # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
+         cmd <- paste('scp -q', filename[1], 
+            paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
+         ok <- system(cmd)
+      } else if (use == "cp"){
+         MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
+         ok <- system(MKDIR)
+         cmd <- paste("cp", filename[1],
+            paste0("/", puri[['path']]) )
+         ok <- system(cmd)
+      } else if (use == "curl"){
+         cmd <- paste("curl --ftp-create-dirs",
+            "-u", .self$fileauth[['options']][['userpwd']],
+            "-T", filename[1],
+            resolved_node[['content_location']])
+         ok <- system(cmd)   
+      } else if (use == 'duck'){
+         up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
+         ok <- duck_upload(filename[1], resolved_node[['content_location']],
+            username = up[[1]], password = up[[2]])
+      }
+      if (ok != 0) {
+         # now what?
+      }
+      
+      uri <- .self$uri("files")
+      body <- resolved_node$toString() 
+      rafter <- httr::POST(uri,
+         body = body,
+         httr::content_type_xml(),
+         .self$auth)
+      rafter <- .self$check(rafter)  
+      
+      if (is_exception(rafter)){ return(rafter)}
+      parse_node(rafter, .self)
+   }) # ATTACH
+
+
 #' Retrieve a resource by limsid
 #' 
 #' @family Lims 

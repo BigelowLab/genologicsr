@@ -23,7 +23,8 @@ Reference class for Lims instance
 for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/64194_2282137119ca48e1893054091456fe43.html#on-re-using-handles}}
 }}
 \seealso{
-Other Lims: \code{\link{LimsRefClass_BROWSE}},
+Other Lims: \code{\link{LimsRefClass_ATTACH}},
+  \code{\link{LimsRefClass_BROWSE}},
   \code{\link{LimsRefClass_DELETE}},
   \code{\link{LimsRefClass_POST}},
   \code{\link{LimsRefClass_PUSH}},

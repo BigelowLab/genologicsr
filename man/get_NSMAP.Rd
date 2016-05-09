@@ -14,6 +14,7 @@ Retrieve the Genologics namespace map
 }
 \seealso{
 Other Lims: \code{\link{LimsRefClass-class}},
+  \code{\link{LimsRefClass_ATTACH}},
   \code{\link{LimsRefClass_BROWSE}},
   \code{\link{LimsRefClass_DELETE}},
   \code{\link{LimsRefClass_POST}},
