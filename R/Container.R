@@ -190,7 +190,8 @@ ContainerRefClass$methods(
       } else {
          SS <- .self$lims$batchretrieve(suri, rel = 'samples', asNode = asNode)
       }
-      names(SS) <- sapply(.self$node['placement'], xml_value)
+      #names(SS) <- sapply(.self$node['placement'], xml_value)
+      names(SS) <- names(puri)
       invisible(SS)
    })
    
