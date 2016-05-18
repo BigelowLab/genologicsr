@@ -383,7 +383,7 @@ LimsRefClass$methods(
       } else if (use == "cp"){
          MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
          ok <- system(MKDIR)
-         cmd <- paste("cp", filename[1],
+         cmd <- paste("cp", shQuote(filename[1]),
             paste0("/", puri[['path']]) )
          ok <- system(cmd)
       } else if (use == "curl"){
