@@ -5,9 +5,11 @@
 \title{Create an exception node}
 \arguments{
 \item{message}{chracter, some error message}
+
+\item{asNode}{logical if TRUE return ExceptionRefClass}
 }
 \value{
-XML::xmlNode
+XML::xmlNode of ExceptionRefClass
 }
 \description{
 Create an exception node

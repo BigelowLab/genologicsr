@@ -38,3 +38,14 @@ ExceptionRefClass <- setRefClass("ExceptionRefClass",
          }
       )
    )
+
+#' Create an exception node
+#' @export 
+#' @param message character vector message
+#' @return XML::xmlNode 
+create_exception_node = function(message = 'Unspecified exception'){
+    x <- XML::newXMLNode("exception", 
+      namespaceDefinitions = get_NSMAP()[['exc']], 
+      namespace = 'exc')
+    XML::addChildren(x, kids = list(XML::newXMLNode("message", message)) )
+}

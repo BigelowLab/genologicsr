@@ -177,13 +177,17 @@ LimsRefClass$methods(
 #'
 #' @name LimsRefClass_create_exception
 #' @param message chracter, some error message
-#' @return XML::xmlNode
+#' @param asNode logical if TRUE return ExceptionRefClass
+#' @return XML::xmlNode of ExceptionRefClass
 LimsRefClass$methods(
-   create_exception = function(message = 'Unspecified exception'){
-      x <- XML::newXMLNode("exception", 
-         namespaceDefinitions = get_NSMAP()[['exc']], 
-         namespace = 'exc')
-      x <- XML::addChildren(x, kids = list(XML::newXMLNode("message", message)) )
+   create_exception = function(message = 'Unspecified exception',
+        asNode = FALSE){
+      #x <- XML::newXMLNode("exception", 
+      #   namespaceDefinitions = get_NSMAP()[['exc']], 
+      #   namespace = 'exc')
+      #x <- XML::addChildren(x, kids = list(XML::newXMLNode("message", message)) )
+      x <- create_exception_node(message = message)
+      if (asNode) x <- parse_node(x, .self)
       x
    }) #create_exception
 
@@ -342,7 +346,7 @@ LimsRefClass$methods(
          fileuri <- xml_atts(x$node[["file"]])["uri"]
          ok <- .self$DELETE(fileuri, ...)
          if (!ok) {
-            e <- create_exception_node(message = "LimsRefClass$PUSH: Unable to delete existing file")
+            e <- create_exception(message = "LimsRefClass$PUSH: Unable to delete existing file", asNode = TRUE)
             return(e)
          }
       }
@@ -374,18 +378,27 @@ LimsRefClass$methods(
             paste0(up[1],'@',puri[['hostname']]), 
             shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
          ok <- system(MKDIR)
-
-         # https://kb.iu.edu/d/agye
-         # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
-         cmd <- paste('scp -q', filename[1], 
-            paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
-         ok <- system(cmd)
+         if (ok == 0){
+            # https://kb.iu.edu/d/agye
+            # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
+            cmd <- paste('scp -q', filename[1], 
+                paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
+            ok <- system(cmd)
+         } else {
+            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destintion path", asNode = TRUE)
+            return(e)
+         }
       } else if (use == "cp"){
          MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
          ok <- system(MKDIR)
-         cmd <- paste("cp", shQuote(filename[1]),
-            paste0("/", puri[['path']]) )
-         ok <- system(cmd)
+         if (ok == 0){
+             cmd <- paste("cp", shQuote(filename[1]),
+                paste0("/", puri[['path']]) )
+             ok <- system(cmd)
+         } else {
+            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destintion path", asNode = TRUE)
+            return(e)
+         }
       } else if (use == "curl"){
          cmd <- paste("curl --ftp-create-dirs",
             "-u", .self$fileauth[['options']][['userpwd']],
@@ -398,7 +411,8 @@ LimsRefClass$methods(
             username = up[[1]], password = up[[2]])
       }
       if (ok != 0) {
-         # now what?
+         e <- create_exception(message = "LimsRefClass$PUSH: unable to upload file", asNode = TRUE)
+         return(e)
       }
       
       uri <- .self$uri("files")
