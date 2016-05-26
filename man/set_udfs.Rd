@@ -2,7 +2,7 @@
 % Please edit documentation in R/Udf.R
 \name{set_udfs}
 \alias{set_udfs}
-\title{Set one or more UDF fields in an xmlNode}
+\title{Set one or more UDF fields in an xmlNode.}
 \usage{
 set_udfs(x, v)
 }
@@ -16,10 +16,7 @@ each udf vector must have \code{name}, \code{type} and \code{value}}
 the updated xmlNode
 }
 \description{
-Set one or more UDF fields in an xmlNode
-}
-\seealso{
-Other Node Udf: \code{\link{NodeRefClass_get_udfs}},
-  \code{\link{extract_udfs}}, \code{\link{get_udfs}}
+Non-Ascii non-UTF8 characters
+ are scrubbed from the input values.
 }
 

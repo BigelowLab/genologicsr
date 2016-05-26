@@ -17,6 +17,6 @@ Extract the UDFs into a list of udf vectors each with 'name', 'type' and 'value'
 }
 \seealso{
 Other Node Udf: \code{\link{extract_udfs}},
-  \code{\link{get_udfs}}, \code{\link{set_udfs}}
+  \code{\link{get_udfs}}
 }
 

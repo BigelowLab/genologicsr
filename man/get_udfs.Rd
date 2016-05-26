@@ -20,6 +20,6 @@ Retrieve the values of one or more udfs
 }
 \seealso{
 Other Node Udf: \code{\link{NodeRefClass_get_udfs}},
-  \code{\link{extract_udfs}}, \code{\link{set_udfs}}
+  \code{\link{extract_udfs}}
 }
 

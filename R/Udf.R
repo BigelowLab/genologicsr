@@ -35,10 +35,12 @@ create_udf_node <- function(x, namespace = 'udf', parent = NULL, ...) {
 
 
 
-#' Set one or more UDF fields in an xmlNode
+#' Set one or more UDF fields in an xmlNode.  
+#' 
+#' Non-Ascii non-UTF8 characters
+#'  are scrubbed from the input values.
 #' 
 #' @export
-#' @family Node Udf
 #' @param x XML::xmlNode
 #' @param v a list of one or more udf vectors
 #'    each udf vector must have \code{name}, \code{type} and \code{value}
@@ -58,7 +60,7 @@ set_udfs <- function(x, v){
    checkType <- function(typ, value){
       switch(tolower(typ),
         "numeric" =  as.numeric(value),
-        enc2utf8(value))
+        iconv(enc2utf8(value), from = 'UTF-8', to = 'ASCII', sub = ''))
    }
    
    curUdfVals <- extract_udfs(x)
