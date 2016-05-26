@@ -56,7 +56,9 @@ set_udfs <- function(x, v){
    
    
    checkType <- function(typ, value){
-      if(typ == "numeric") as.numeric(value) else  value
+      switch(tolower(typ),
+        "numeric" =  as.numeric(value),
+        enc2utf8(value))
    }
    
    curUdfVals <- extract_udfs(x)
