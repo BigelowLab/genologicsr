@@ -27,12 +27,10 @@ create_udf_node <- function(x, namespace = 'udf', parent = NULL, ...) {
       namespaceDefinitions = c(udf="http://genologics.com/ri/userdefined"),
       parent = parent, ...) 
    
-   if ("value" %in% names(x)) XML::xmlValue(newNode) <- x[["value"]]
+   if ("value" %in% names(x)) XML::xmlValue(newNode) <- check_type(x[['type']], x[['value']])
     
    return(newNode)        
 }
-
-
 
 
 #' Set one or more UDF fields in an xmlNode.  
@@ -56,13 +54,6 @@ set_udfs <- function(x, v){
       stop("set_udfs: the input list of udf vector(s), v, must have at least 'type', 'name' and 'value' elements")
    }
    
-   
-   checkType <- function(typ, value){
-      switch(tolower(typ),
-        "numeric" =  as.numeric(value),
-        iconv(enc2utf8(value), from = 'UTF-8', to = 'ASCII', sub = ''))
-   }
-   
    curUdfVals <- extract_udfs(x)
    newNames <- sapply(v, "[", "name")
    
@@ -82,7 +73,7 @@ set_udfs <- function(x, v){
             # update an exisiting node
             typ <- unname(v[[i]][["type"]])
             name <- unname(v[[i]][["name"]])
-            value <- checkType(typ, v[[i]][["value"]])
+            value <- check_type(typ, v[[i]][["value"]])
             cC <- x['field'][[ix[1]]]
             XML::xmlValue(cC) <- value
          } else{
@@ -96,6 +87,30 @@ set_udfs <- function(x, v){
    return(x)
 }
 
+
+#' Sanitize a character vector to be UTF-8 ASCII
+#'
+#' @export
+#' @param x character vector
+#' @param sub the character used to replace non-ASCII
+#' @return character vector
+as_ascii <- function(x, sub = ''){
+    iconv(enc2utf8(x), from = 'UTF-8', to = 'ASCII', sub = sub)   
+}
+
+
+#' Given a LIMS type code and value, cast the value to be LIMS friendly
+#' 
+#' @export 
+#' @param typ character LIMS type (Numeric, String, Text, etc)
+#' @param value any value
+#' @return the value cast to the specified type
+check_type <- function(typ, value){
+      switch(tolower(typ),
+        "numeric" =  as.numeric(value),
+        as_ascii(value))
+}
+      
 #' Extract a named list of udf vectors from an xmlNode
 #' 
 #' @export
@@ -138,5 +153,6 @@ get_udfs <- function(x, name){
    r <- extract_udfs(x) 
    lapply(r[name], '[[', 'value')
 }
-     
+  
+
 
