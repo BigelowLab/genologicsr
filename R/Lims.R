@@ -1001,7 +1001,13 @@ LimsRefClass$methods(
       if ((.self$version == "v1") && (rel %in% c('samples', 'files')) ){
          x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
       } else {
-         x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
+         uri2 <- split_vector(uri)
+         x <- unlist(lapply(uri2,
+            function(x){
+                batch_retrieve(x,.self, rel = rel[1], rm_dups = rm_dups)
+            }))
+        
+         #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
       }
       #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
       if (asNode) {

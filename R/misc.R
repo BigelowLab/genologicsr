@@ -300,3 +300,15 @@ A01 <- function(well, form = c("A:1", "A01")[1]){
    return(well)
 }
 
+
+#' Split a vector into groups of MAX (or possibly fewer)
+#'
+#' @export
+#' @param v vector or list to split
+#' @param MAX numeric the maximum size per group
+#' @return a list of the vector split into groups
+split_vector <- function(v, MAX = 500){
+    nv <- length(v)
+    if (nv <= MAX) return(list('1' = v))
+    split(v, findInterval(1:nv, seq(from = 1, to = nv, by = MAX)))
+}
