@@ -4,7 +4,7 @@
 \alias{LimsRefClass_batchcreate}
 \title{Create one or more Nodes (samples, containers only)}
 \arguments{
-\item{x}{a list of one or mode XML::xmlNode of NodeRefClass}
+\item{x}{a list of one or more XML::xmlNode or NodeRefClass}
 
 \item{asNode}{logical, if TRUE return NodeRefClass objects otherwise XML::xmlNode}
 

@@ -4,7 +4,7 @@
 \alias{split_vector}
 \title{Split a vector into groups of MAX (or possibly fewer)}
 \usage{
-split_vector(v, MAX = 500)
+split_vector(v, MAX = 200)
 }
 \arguments{
 \item{v}{vector or list to split}

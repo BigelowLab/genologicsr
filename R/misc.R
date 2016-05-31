@@ -307,8 +307,48 @@ A01 <- function(well, form = c("A:1", "A01")[1]){
 #' @param v vector or list to split
 #' @param MAX numeric the maximum size per group
 #' @return a list of the vector split into groups
-split_vector <- function(v, MAX = 500){
+split_vector <- function(v, MAX = 200){
     nv <- length(v)
     if (nv <= MAX) return(list('1' = v))
     split(v, findInterval(1:nv, seq(from = 1, to = nv, by = MAX)))
+}
+
+
+#' Convert to singular from plural
+#' 
+#' @export
+#' @param x character vector
+#' @return character vector
+singular <- function(x){
+
+    len <- sapply(x, nchar)
+
+    ix <- tolower(x) %in% c("artifacts", "samples", "containers", "files", "projects",
+        "artifactgroups", "containertypes", "fields", "files", "instruments",
+        "processtypes", "researchers")
+    x[ix] <- substring(x[ix], 1, len-1)
+    
+    ix <- tolower(x) %in% c("processes")
+    x[ix] <- substring(x[ix], 1, len-2)
+    
+    x
+}
+
+
+#' Convert to plural from singular
+#' 
+#' @export
+#' @param x character vector
+#' @return character vector
+plural <- function(x){
+
+    ix <- tolower(x) %in% c("artifact", "sample", "container", "file", "project",
+        "artifactgroup", "containertype", "field", "file", "instrument",
+        "processtype", "researcher")
+    x[ix] <- paste0(x[ix], "s")
+    
+    ix <- tolower(x) %in% c("process")
+    x[ix] <- paste0(x[ix], "es")
+    
+    x
 }

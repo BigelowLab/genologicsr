@@ -11,15 +11,18 @@ batch_retrieve(uri, lims, rel = c("artifacts", "containers", "files",
 \arguments{
 \item{uri}{character vector of one or more uri}
 
+\item{lims}{LimsRefClass object}
+
 \item{resource}{character}
 
-\item{asList}{logical, if TRUE return a named list of Artifacts}
+\item{asList}{logical, if TRUE return a named list of NodeRefClass objects}
 
 \item{...}{further arguments}
 
 \item{relative}{resource name}
 
-\item{all}{logical, by default we remove duplicates set this to TRUE to retrieve all, ignored if \code{asList = FALSE}}
+\item{all}{logical, by default we remove duplicates set this to TRUE to 
+retrieve all, ignored if \code{asList = FALSE}}
 }
 \value{
 a list of NodeRefClass

@@ -18,6 +18,7 @@ LimsRefClass <- setRefClass('LimsRefClass',
       auth = 'ANY',
       fileauth = 'ANY',
       handle = 'ANY',
+      max_requests = 'numeric',
       timeout = 'integer')
 )  
 
@@ -994,22 +995,21 @@ LimsRefClass$methods(
 #' @return a list of XML::xmlNode or NodeRefClass objects
 NULL
 LimsRefClass$methods(
-   batchretrieve = function(uri, rel = c("artifacts", "samples", "containers", "files")[1], 
+   batchretrieve = function(uri, 
+      rel = c("artifacts", "samples", "containers", "files")[1], 
       rm_dups = TRUE, asNode = TRUE, ...){
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
          stop("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers")
       if ((.self$version == "v1") && (rel %in% c('samples', 'files')) ){
          x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
       } else {
-         uri2 <- split_vector(uri)
+         uri2 <- split_vector(uri, MAX = .self$max_requests)
          x <- unlist(lapply(uri2,
             function(x){
                 batch_retrieve(x,.self, rel = rel[1], rm_dups = rm_dups)
             }))
-        
          #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
-      }
-      #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
+      }  
       if (asNode) {
          x <- lapply(x, parse_node, .self)
          names(x) <- switch(rel[1],
@@ -1045,44 +1045,23 @@ LimsRefClass$methods(
          stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
       if (!(nm %in% c("artifact", "sample", "container")))
          stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
+
+    
+      xx <- split_vector(x, MAX = .self$max_requests)
       
-      detail <- switch(nm,
-         'artifact' = create_artifacts_details(x),
-         'container' = create_containers_details(x),
-         'sample' = create_samples_details(x),
-         NULL)
+      rr <- lapply(xx, 
+        function(x, lims = NULL, asNode = TRUE, rel = "") { 
+                batch_update(x, lims, asNode = asNode, rel = rel)
+            }, lims = .self, asNode = asNode, rel = plural(nm[1]))
       
-      if (is.null(detail)) stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
-      
-      URI <- .self$uri(paste0(nm, "s/batch/update"))
-      r <- httr::POST(URI, ..., body = xmlString(detail), 
-         httr::add_headers(c("Content-Type"="application/xml")),
-         handle = .self$handle,
-         .self$auth)
-      
-      x <- .self$check(r)
-      if (!is_exception(x)) {
-         rel <- paste0(nm, "s")
-         uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
-         r <- batch_retrieve(uri, .self, , rel = rel, ...)
-         if (asNode) {
-            r <- lapply(r, parse_node, .self)
-            # since we have sample, artifact or container we know we can have 
-            # a name
-            names(r) <- sapply(r, function(x) x$name)
-         }
-      } else {
-         r <- NULL
-      }
-      
-      invisible(r)
+      invisible(unlist(rr))
    })
 
 #' Create one or more Nodes (samples, containers only)
 #'
 #' @family Lims Node
 #' @name LimsRefClass_batchcreate
-#' @param x a list of one or mode XML::xmlNode of NodeRefClass
+#' @param x a list of one or more XML::xmlNode or NodeRefClass
 #' @param asNode logical, if TRUE return NodeRefClass objects otherwise XML::xmlNode
 #' @param ... further arguments for httr::POST
 #' @return a list of NodeRefClass or NULL
@@ -1103,36 +1082,20 @@ LimsRefClass$methods(
       if (!(nm %in% c("samplecreation", "container")))
          stop("LimsRefClass$batchcreate: only samplecreation and container types have batch create")
       
-      detail <- switch(nm,
-         'container' = create_containers_details(x),
-         'samplecreation' = create_samples_details(x),
-         NULL)
-         
-      # the name of the nodes may be different than the resource namespace
-      resource <- switch(nm,
-         'samplecreation' = 'sample',
-         nm)
-         
-      if (is.null(detail)) stop("LimsRefClass$batchcreate: only samplecreation and container types have batch create")
       
-      URI <- .self$uri(paste0(resource, "s/batch/create"))
-      r <- httr::POST(url=URI, body = xmlString(detail), 
-         #httr::add_headers(c("Content-Type"="application/xml")),
-         httr::content_type_xml(),
-         #handle = .self$handle,
-         .self$auth)
+      rel <- switch(plural(nm[1]),
+        'samples' = "samples",
+        "containers" = "containers",
+        "samplecreations" = "samples",
+        "")
+        
+      rr <- lapply(split_vector(x, MAX = .self$max_requests),
+          function(x, lims = NULL, asNode = TRUE, rel = ""){
+              batch_create(x, lims, asNode = asNode, rel = rel)
+          }, lims = .self, asNode = asNode, rel = rel)
       
-      x <- .self$check(r)
-      if (!is_exception(x)) {
-         rel <- paste0(resource, "s")
-         uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
-         r <- batch_retrieve(uri, .self, , rel = rel)
-         if (asNode) r <- lapply(r, parse_node, .self)
-      } else {
-         r <- NULL
-      }
-      
-      invisible(r)
+      invisible(unlist(rr))
+
    })
 
 
@@ -1146,14 +1109,16 @@ LimsRefClass$methods(
 #'
 #' @export
 #' @param uri character vector of one or more uri
+#' @param lims LimsRefClass object
 #' @param relative resource name
 #' @param resource character
-#' @param asList logical, if TRUE return a named list of Artifacts
-#' @param all logical, by default we remove duplicates set this to TRUE to retrieve all, ignored if \code{asList = FALSE}
+#' @param asList logical, if TRUE return a named list of NodeRefClass objects
+#' @param all logical, by default we remove duplicates set this to TRUE to 
+#'  retrieve all, ignored if \code{asList = FALSE}
 #' @param ... further arguments
 #' @return a list of NodeRefClass
 batch_retrieve <- function(uri, lims,
-   rel = c("artifacts", "containers", "files", "samples" )[1],
+   rel = c("artifacts", "containers", "files", "samples")[1],
    resource = file.path(rel, "batch", "retrieve"), 
    asList = TRUE,
    rm_dups = TRUE, ...){
@@ -1199,7 +1164,6 @@ batch_retrieve <- function(uri, lims,
       nmspc <- unclass(XML::xmlNamespaces(x, simplify = TRUE))
       xx <- x[singleName]
       # transfer the the xmlnamespace to each child node
-      # uristub = get_NSMAP()[[nm]]
       xx <- lapply(xx, 
          function(x, nm=NULL) {
                   for (n in names(nm)) dummy <- XML::newXMLNamespace(x,nm[n])
@@ -1218,6 +1182,89 @@ batch_retrieve <- function(uri, lims,
 } # batch_retrieve
 
 
+#' Update one or more XML::xmlNodes using batch resources
+#'
+#' @export
+#' @param x a list of one or more XML::xmlNode objects
+#' @param lims LimsRefClass object
+#' @param asNode logical, if TRUE return a named list of NodeRefClass objects
+#' @param rel the relative namespace into the "batch/retrieve"
+#' @return list of XML::xmlNode or NodeRefClass
+batch_update <- function(x, lims, asNode = TRUE,
+    rel = c("artifacts", "containers", "samples" )[1]){
+    
+    stopifnot(all(sapply(x, function(x) inherits(x,'XMLAbstractNode')))) 
+        
+    detail <- switch(rel,
+         'artifacts' = create_artifacts_details(x),
+         'containers' = create_containers_details(x),
+         'samples' = create_samples_details(x),
+         NULL)
+      
+    if (is.null(detail)) stop("batch_update: only artifact, sample and container types have batch update")
+    
+    URI <- lims$uri(paste0(rel, "/batch/update"))
+    r <- httr::POST(URI, body = xmlString(detail), 
+         httr::add_headers(c("Content-Type"="application/xml")),
+         handle = lims$handle,
+         lims$auth)
+    x <- lims$check(r)
+    if (!is_exception(x)) {
+       uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
+       r <- batch_retrieve(uri, lims , rel = rel)
+       if (asNode) {
+          r <- lapply(r, parse_node, lims)
+          # since we have sample, artifact or container we know we can have 
+          # a name
+          names(r) <- sapply(r, function(x) x$name)
+       }
+    } else {
+       r <- NULL
+    }
+    
+    invisible(r)
+}
+
+
+#' Create one or more nodes (Sample and Container only)
+#' 
+#' @export
+#' @param x a list of one or more XML::xmlNode
+#' @param lims a LimsRefClass node 
+#' @param asNode logical, if TRUE return a named list of NodeRefClass objects
+#' @param rel the relative namespace into the "batch/create"
+#' @return list of XML::xmlNode or NodeRefClass
+batch_create <- function(x, lims, asNode = asNode, 
+    rel = c("samples", "containers")[1]){
+    
+    rel <- plural(rel)
+    detail <- switch(rel,
+         'containers' = create_containers_details(x),
+         "samples" = create_samples_details(x),
+         'samplecreation' = create_samples_details(x),
+         NULL)
+         
+      if (is.null(detail)) stop("batch_create: only sample and container types have batch create")
+      
+      URI <- lims$uri(file.path(rel, "batch", "create"))
+      r <- httr::POST(url=URI, body = xmlString(detail), 
+         httr::content_type_xml(),
+         lims$auth)
+      
+      x <- lims$check(r)
+      if (!is_exception(x)) {
+         uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
+         r <- batch_retrieve(uri, lims, , rel = rel)
+         if (asNode) r <- lapply(r, parse_node, lims)
+      } else {
+         x$show()
+         r <- NULL
+      }
+      
+      invisible(r)    
+}
+
+    
 #' Get a uri with option to depaginate
 #'
 #' @export
@@ -1228,7 +1275,6 @@ batch_retrieve <- function(uri, lims,
 #' @param verbose logical if TRUE be verbose
 #' @return XML::xmlNode
 get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
-
 
       if (verbose) cat("get_uri:", uri, "\n")
 
@@ -1306,7 +1352,8 @@ parse_node <- function(node, lims){
 #' @export
 #' @param configfile character, the fully qualified path to the config file
 #' @return a LimsRefClass instance or NULL
-Lims <- function(configfile = build_config_path()){
+Lims <- function(configfile = build_config_path(),
+    max_requests = 200){
    if (!file.exists(configfile[1])) stop("configfile not found:", configfile[1])
    x <- try(read_config(configfile[1]))
    if (inherits(x, "try-error")) stop("Error reading config file")
@@ -1326,6 +1373,7 @@ Lims <- function(configfile = build_config_path()){
       httr::authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
                    get_config(x, "glsfilestore", "PASSWORD", default = "") 
       ) )   
+   X$field('max_requests', max_requests[1])
    if (!X$validate_session()) {
       warning("API session failed validation")
    } 
