@@ -1079,15 +1079,16 @@ LimsRefClass$methods(
       nm <- unique(sapply(x, xml_name))
       if (length(nm) > 1) 
          stop("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
-      if (!(plural(nm[1]) %in% c("samples", "containers")))
-         stop("LimsRefClass$batchcreate: only sample, container types have batch create")
+      if (!(plural(nm[1]) %in% c("samples", "samplecreation", "containers")))
+         stop("LimsRefClass$batchcreate: only sample, samplecreation and container types have batch create")
       
       
       rel <- switch(plural(nm[1]),
-        'samples' = "samples",
-        "containers" = "containers",
-        "")
-        
+        'samples' = 'samples',
+        'containers' = 'containers',
+        'samplecreation' = 'samples',
+        NULL)
+    
       rr <- lapply(split_vector(x, MAX = .self$max_requests),
           function(x, lims = NULL, asNode = TRUE, rel = ""){
               batch_create(x, lims, asNode = asNode, rel = rel)
@@ -1234,17 +1235,22 @@ batch_update <- function(x, lims, asNode = TRUE,
 #' @param rel the relative namespace into the "batch/create"
 #' @return list of XML::xmlNode or NodeRefClass
 batch_create <- function(x, lims, asNode = asNode, 
-    rel = c("samples", "containers")[1]){
+     rel = c("samples", "containers")[1]){
     
-    rel <- plural(rel)
-    detail <- switch(rel,
+     rel <- plural(rel)
+     detail <- switch(rel,
          'containers' = create_containers_details(x),
          "samples" = create_samples_details(x),
+         "samplecreation" = create_samples_details(x),
          NULL)
-         
       if (is.null(detail)) stop("batch_create: only sample and container types have batch create")
       
-      URI <- lims$uri(file.path(rel, "batch", "create"))
+      real_rel <- switch(rel,
+         "samplecreation" = "samples",
+         rel)
+            
+     
+      URI <- lims$uri(file.path(real_rel, "batch", "create"))
       r <- httr::POST(url=URI, body = xmlString(detail), 
          httr::content_type_xml(),
          lims$auth)
