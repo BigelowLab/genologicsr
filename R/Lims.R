@@ -1079,14 +1079,13 @@ LimsRefClass$methods(
       nm <- unique(sapply(x, xml_name))
       if (length(nm) > 1) 
          stop("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
-      if (!(nm %in% c("samplecreation", "container")))
-         stop("LimsRefClass$batchcreate: only samplecreation and container types have batch create")
+      if (!(plural(nm[1]) %in% c("samples", "containers")))
+         stop("LimsRefClass$batchcreate: only sample, container types have batch create")
       
       
       rel <- switch(plural(nm[1]),
         'samples' = "samples",
         "containers" = "containers",
-        "samplecreations" = "samples",
         "")
         
       rr <- lapply(split_vector(x, MAX = .self$max_requests),
@@ -1241,7 +1240,6 @@ batch_create <- function(x, lims, asNode = asNode,
     detail <- switch(rel,
          'containers' = create_containers_details(x),
          "samples" = create_samples_details(x),
-         'samplecreation' = create_samples_details(x),
          NULL)
          
       if (is.null(detail)) stop("batch_create: only sample and container types have batch create")
