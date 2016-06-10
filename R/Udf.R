@@ -108,6 +108,7 @@ as_ascii <- function(x, sub = ''){
 check_type <- function(typ, value){
       switch(tolower(typ),
         "numeric" =  as.numeric(value),
+        "boolean" = as.character(value),
         as_ascii(value))
 }
       
