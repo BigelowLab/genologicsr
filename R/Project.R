@@ -120,11 +120,31 @@ ProjectRefClass$methods(
 #' @return a list of zero or more ContainerRefClass or NULL
 NULL
 ProjectRefClass$methods(
-   get_containers = function(x, AA = NULL){
+   get_containers = function(AA = NULL){
       if (is.null(AA)) AA <- .self$get_artifacts(what = 'submitted')
       CC <- unique(sapply(unlist(AA), function(x) x$get_container(form = 'uri')))
       .self$lims$batchretrieve(CC, rel = 'containers')
    })
+   
+#' Retrieve the attached file associated with a project
+#' 
+#' @family Project
+#' @name ProjectRefClass_get_attached_files
+#' @return a list of zero or more FileRefClass or NULL
+NULL
+ProjectRefClass$methods(
+   get_attached_files = function(){
+
+    if ("file" %in% names(.self$node)){
+        furi <- sapply(.self$node['file'], function(x) xml_atts(x)[['uri']] )   
+        FF <- lapply(furi, function(uri) .self$lims$GET(uri))
+    } else {
+        FF <- NULL
+    }
+    
+    return(FF)
+   })
+
 
 ###### Methods above
 ###### Functions below

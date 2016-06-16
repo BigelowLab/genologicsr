@@ -335,7 +335,7 @@ LimsRefClass$methods(
    PUSH = function(x, ..., filename = "", 
       use = c("duck", "scp", "cp", "curl")[2]){
       
-      stopifnot(inherits(x, 'ArtifactRefClass'))
+      stopifnot(inherits(x, 'ArtifactRefClass') || inherits(x, 'ProjectRefClass') )
       
       if (!file.exists(filename[1])) stop("LimsRefClass$PUSH file not found:", filename[1])
       
@@ -1261,7 +1261,7 @@ batch_create <- function(x, lims, asNode = asNode,
          r <- batch_retrieve(uri, lims, , rel = rel)
          if (asNode) r <- lapply(r, parse_node, lims)
       } else {
-         x$show()
+         print(x)
          r <- NULL
       }
       
