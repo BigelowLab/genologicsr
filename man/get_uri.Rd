@@ -4,7 +4,7 @@
 \alias{get_uri}
 \title{Get a uri with option to depaginate}
 \usage{
-get_uri(uri, lims, ..., depaginate = TRUE, verbose = FALSE)
+get_uri(uri, lims, ..., depaginate = TRUE, verbose = FALSE, tries = 3)
 }
 \arguments{
 \item{uri}{character, the uri to retrieve}
@@ -16,6 +16,8 @@ get_uri(uri, lims, ..., depaginate = TRUE, verbose = FALSE)
 \item{depaginate}{logical, if TRUE (the default) then depaginate the results}
 
 \item{verbose}{logical if TRUE be verbose}
+
+\item{tries}{numeric, allow up to this number of tries before failing}
 }
 \value{
 XML::xmlNode

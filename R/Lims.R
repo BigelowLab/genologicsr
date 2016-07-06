@@ -680,8 +680,9 @@ LimsRefClass$methods(
       if (!is_exception(x)){
          if (length(XML::xmlChildren(x))==0) return(NULL)
          uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
-         x <- batch_retrieve(uri, .self, rel = 'artifacts')
-         x <- lapply(x, function(x) ArtifactRefClass$new(x, .self))
+         #x <- batch_retrieve(uri, .self, rel = 'artifacts')
+         #x <- lapply(x, function(x) ArtifactRefClass$new(x, .self))
+         x <- .self$batchretrieve(uri, rel = 'artifacts')
          names(x) <- sapply(x, '[[', 'name')
       }
       invisible(x)
@@ -719,8 +720,9 @@ LimsRefClass$methods(
          if (.self$version == "v1"){
             x <- lapply(uri, function(x, lims=NULL) {lims$GET(x)}, lims = .self)
          } else {
-            x <- batch_retrieve(uri, .self, rel = 'samples')
-            x <- lapply(x, function(x) SampleRefClass$new(x, .self))
+            #x <- batch_retrieve(uri, .self, rel = 'samples')
+            #x <- lapply(x, function(x) SampleRefClass$new(x, .self))
+            x <- .self$batchretrieve(uri, rel = 'samples')   
          }
          names(x) <- sapply(x, '[[', 'name')
       }
@@ -1008,7 +1010,11 @@ LimsRefClass$methods(
             function(x){
                 batch_retrieve(x,.self, rel = rel[1], rm_dups = rm_dups)
             }))
-         #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)   
+         #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)
+        # make sure we have the original order
+        names(x) <- trimuri(sapply(x, function(x) xml_atts(x)['uri']))
+        x <- x[trimuri(uri)]
+        names(x) <- basename(names(x))   
       }  
       if (asNode) {
          x <- lapply(x, parse_node, .self)
@@ -1124,7 +1130,7 @@ batch_retrieve <- function(uri, lims,
    rm_dups = TRUE, ...){
    
    if (length(uri) == 0) stop("batch_uri: uri has zero-length")
-   
+   orig_uri <- uri
    # does the user want ALL including duplicates?
    # if so then save the IDs for later
    if (!rm_dups) limsid_all <- basename(uri)
@@ -1175,6 +1181,12 @@ batch_retrieve <- function(uri, lims,
          # rebuild the list with duplicates
          xx <- xx[limsid_all]
       }
+      
+      # make sure we have the original order
+      #names(xx) <- trimuri(sapply(xx, function(x) xml_atts(x)['uri']))
+      #xx <- xx[orig_uri]
+      #names(xx) <- sapply(xx, function(x) xml_atts(x)["limsid"])
+      
    } else {
       xx <- x
    }
@@ -1268,6 +1280,30 @@ batch_create <- function(x, lims, asNode = asNode,
       invisible(r)    
 }
 
+
+#' Get a uri with option to retry up to \code{tries} times.  Useful when doing
+#' vulnerable batch operations but could be used anytime.
+#'
+#' @export
+#' @param uri character, the uri to retrieve
+#' @param lims a LimsRefClass node
+#' @param ... further arguments for httr::GET()
+#' @param tries numeric, allow up to this number of tries before failing
+#' @return result of httr::GET
+try_GET <- function(uri, lims, ..., tries = 3){
+    i <- 1
+    while(i <= tries){
+        x <- httr::GET(uri,  
+            ...,
+            encoding = lims$encoding,
+            handle = lims$handle,
+            lims$auth)
+        if (!is_exception(x)) break;
+        Sys.sleep(1) # just chill
+        i <- i + 1
+    }
+    x
+}
     
 #' Get a uri with option to depaginate
 #'
@@ -1277,8 +1313,9 @@ batch_create <- function(x, lims, asNode = asNode,
 #' @param ... further arguments for httr::GET()
 #' @param depaginate logical, if TRUE (the default) then depaginate the results
 #' @param verbose logical if TRUE be verbose
+#' @param tries numeric, allow up to this number of tries before failing
 #' @return XML::xmlNode
-get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
+get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE, tries = 3){
 
       if (verbose) cat("get_uri:", uri, "\n")
 
@@ -1291,20 +1328,21 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE){
       
       uri <- no_plus_uri(uri)
       # first pass
-      x <- httr::GET(uri,  
-         ...,
-         encoding = lims$encoding,
-         handle = lims$handle,
-         lims$auth)
-
+      #x <- httr::GET(uri,  
+      #   ...,
+      #   encoding = lims$encoding,
+      #   handle = lims$handle,
+      #   lims$auth)
+      x <- try_GET(uri, lims, ...)
 
       x <- lims$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
          yuri <- no_plus_uri(xml_atts(x[['next-page']])[['uri']])
          doNext <- TRUE
          while(doNext){
-            y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
-               handle = lims$handle, lims$auth))
+            #y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
+            #   handle = lims$handle, lims$auth))
+            y <- lims$check(try_GET(yuri,lims))
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)
