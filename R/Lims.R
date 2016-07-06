@@ -122,6 +122,17 @@ LimsRefClass$methods(
       # see https://cran.r-project.org/web/packages/httr/news.html
       # so now we switch to httr::http_error()
       #w <- httr::warn_for_status(rsp) 
+      
+      stat_code <- httr::status_code(rsp)
+      ok <- stat_code %in% c(OK = 200, Created = 201, Accepted = 202)
+      if (!ok){
+          stat_info <- httr::http_status(stat_code)
+          print(rsp)
+          print(httr::content(rsp, as = "text", encoding = .self$encoding))
+          x <- .self$create_exception(message = stat_info[['message']])
+          return(invisible(x))
+      }
+
       w <- httr::http_error(rsp)
       if (!is.logical(w)) {
          print(rsp)
