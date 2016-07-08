@@ -19,6 +19,6 @@ batch_create(x, lims, asNode = asNode, rel = c("samples", "containers")[1])
 list of XML::xmlNode or NodeRefClass
 }
 \description{
-Create one or more nodes (Sample and Container only)
+Return order is *not* enforced to be the same as the input order
 }
 

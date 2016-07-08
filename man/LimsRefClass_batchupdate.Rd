@@ -14,7 +14,7 @@
 a list of NodeRefClass or NULL
 }
 \description{
-Update one or more Nodes (artifacts, samples, containers only)
+Return order is enforced to be the same as the input order
 }
 \seealso{
 Other Lims Node: \code{\link{LimsRefClass_batchcreate}};

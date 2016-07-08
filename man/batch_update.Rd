@@ -20,6 +20,6 @@ batch_update(x, lims, asNode = TRUE, rel = c("artifacts", "containers",
 list of XML::xmlNode or NodeRefClass
 }
 \description{
-Update one or more XML::xmlNodes using batch resources
+Return order is *not* enforced to be the same as the input order
 }
 

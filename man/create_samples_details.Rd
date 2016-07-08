@@ -8,7 +8,7 @@ See \url{http://genologics.com/files/permanent/API/latest/data_smp.html#element_
 create_samples_details(x)
 }
 \arguments{
-\item{x}{one or more XML::xmlNode for sample or SampelRefClass objects}
+\item{x}{one or more XML::xmlNode for sample or SampleRefClass objects}
 
 \item{a}{sample details XML:xmlNode node}
 }

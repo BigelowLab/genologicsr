@@ -175,7 +175,7 @@ SampleRefClass$methods(
 #' See \url{http://genologics.com/files/permanent/API/latest/data_smp.html#element_details}
 #' 
 #' @export
-#' @param x one or more XML::xmlNode for sample or SampelRefClass objects
+#' @param x one or more XML::xmlNode for sample or SampleRefClass objects
 #' @param a sample details XML:xmlNode node
 create_samples_details <- function(x){
    

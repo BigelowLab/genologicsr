@@ -987,6 +987,8 @@ LimsRefClass$methods(
 
 #' Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
 #' 
+#' Return order is enforced to be the same as the input order
+#'
 #' @family Lims Node
 #' @name LimsRefClass_batchretrieve
 #' @param uri a vector of one or more uri for atomic entities in the GLS API
@@ -1010,11 +1012,9 @@ LimsRefClass$methods(
             function(x){
                 batch_retrieve(x,.self, rel = rel[1], rm_dups = rm_dups)
             }))
-         #x <- batch_retrieve(uri, .self, rel = rel[1], rm_dups = rm_dups, ...)
-        # make sure we have the original order
-        names(x) <- trimuri(sapply(x, function(x) xml_atts(x)['uri']))
-        x <- x[trimuri(uri)]
-        names(x) <- basename(names(x))   
+         new_uri <- trimuri(sapply(x, function(x) xml_atts(x)[['uri']]))
+         ix <- match(uri, new_uri)
+         x <- x[ix]        
       }  
       if (asNode) {
          x <- lapply(x, parse_node, .self)
@@ -1029,6 +1029,8 @@ LimsRefClass$methods(
 
 #' Update one or more Nodes (artifacts, samples, containers only)
 #'
+#' Return order is enforced to be the same as the input order
+#'
 #' @family Lims Node
 #' @name LimsRefClass_batchupdate
 #' @param x a list of one or mode XML::xmlNode of NodeRefClass
@@ -1040,8 +1042,11 @@ LimsRefClass$methods(
    batchupdate = function(x, asNode = TRUE, ...){
       if (!is.list(x)) x <- list(x)
       if (inherits(x[[1]], "NodeRefClass") ) {
-         origx <- x  
+         #origx <- x
+         orig_uri <- sapply(x, "[[", "uri")
          x <- lapply(x, function(x) x$node)
+      } else {
+         orig_uri <- sapply(x, function(x) xml_atts(x)[['uri']])
       }
       ok <- sapply(x, is_xmlNode)
       if (!all(ok)) 
@@ -1059,11 +1064,30 @@ LimsRefClass$methods(
         function(x, lims = NULL, asNode = TRUE, rel = "") { 
                 batch_update(x, lims, asNode = asNode, rel = rel)
             }, lims = .self, asNode = asNode, rel = plural(nm[1]))
+            
+      rr <- unlist(rr)
       
-      invisible(unlist(rr))
+      if (asNode){
+          new_uri <- sapply(rr, "[[", "uri")
+      } else {
+          new_uri <- trimuri(sapply(rr, function(x) xml_atts(x)[['uri']]))
+      }
+      
+      ok <- new_uri %in% orig_uri
+      
+      if (!all(ok)){
+          stop(sprintf("batch/update failed to retrieve %i inputs", length(sum(!ok))))
+      } 
+      
+      ix <- match(orig_uri, new_uri)
+      rr <- rr[ix]
+      
+      invisible(rr)
    })
 
 #' Create one or more Nodes (samples, containers only)
+#'
+#' Return order is *not* enforced to be the same as the input order
 #'
 #' @family Lims Node
 #' @name LimsRefClass_batchcreate
@@ -1076,7 +1100,7 @@ LimsRefClass$methods(
    batchcreate = function(x, asNode = TRUE, ...){
       if (!is.list(x)) x <- list(x)
       if (inherits(x[[1]], "NodeRefClass") ) {
-         origx <- x  
+          
          x <- lapply(x, "[[", node)
       }
       ok <- sapply(x, is_xmlNode)
@@ -1086,7 +1110,7 @@ LimsRefClass$methods(
       if (length(nm) > 1) 
          stop("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
       if (!(plural(nm[1]) %in% c("samples", "samplecreation", "containers")))
-         stop("LimsRefClass$batchcreate: only sample, samplecreation and container types have batch create")
+         stop("LimsRefClass$batchcreate: only sample, and container types have batch create")
       
       
       rel <- switch(plural(nm[1]),
@@ -1094,12 +1118,12 @@ LimsRefClass$methods(
         'containers' = 'containers',
         'samplecreation' = 'samples',
         NULL)
-    
+
       rr <- lapply(split_vector(x, MAX = .self$max_requests),
           function(x, lims = NULL, asNode = TRUE, rel = ""){
               batch_create(x, lims, asNode = asNode, rel = rel)
           }, lims = .self, asNode = asNode, rel = rel)
-      
+        
       invisible(unlist(rr))
 
    })
@@ -1112,6 +1136,8 @@ LimsRefClass$methods(
 
 
 #' Retrieve a batch resource
+#'
+#' Return order is *not* enforced to be the same as the input order
 #'
 #' @export
 #' @param uri character vector of one or more uri
@@ -1196,6 +1222,8 @@ batch_retrieve <- function(uri, lims,
 
 #' Update one or more XML::xmlNodes using batch resources
 #'
+#' Return order is *not* enforced to be the same as the input order
+#'
 #' @export
 #' @param x a list of one or more XML::xmlNode objects
 #' @param lims LimsRefClass object
@@ -1215,6 +1243,8 @@ batch_update <- function(x, lims, asNode = TRUE,
       
     if (is.null(detail)) stop("batch_update: only artifact, sample and container types have batch update")
     
+    orig_uri <- sapply(x, function(x) xml_atts(x)[['uri']])
+    
     URI <- lims$uri(paste0(rel, "/batch/update"))
     r <- httr::POST(URI, body = xmlString(detail), 
          httr::add_headers(c("Content-Type"="application/xml")),
@@ -1222,8 +1252,8 @@ batch_update <- function(x, lims, asNode = TRUE,
          lims$auth)
     x <- lims$check(r)
     if (!is_exception(x)) {
-       uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
-       r <- batch_retrieve(uri, lims , rel = rel)
+       #uri <- sapply(x['link'], function(x) xml_atts(x)[['uri']])
+       r <- batch_retrieve(orig_uri, lims ,rel = rel)
        if (asNode) {
           r <- lapply(r, parse_node, lims)
           # since we have sample, artifact or container we know we can have 
@@ -1240,6 +1270,8 @@ batch_update <- function(x, lims, asNode = TRUE,
 
 #' Create one or more nodes (Sample and Container only)
 #' 
+#' Return order is *not* enforced to be the same as the input order
+#'
 #' @export
 #' @param x a list of one or more XML::xmlNode
 #' @param lims a LimsRefClass node 
@@ -1328,21 +1360,21 @@ get_uri <- function(uri, lims, ..., depaginate = TRUE, verbose = FALSE, tries = 
       
       uri <- no_plus_uri(uri)
       # first pass
-      #x <- httr::GET(uri,  
-      #   ...,
-      #   encoding = lims$encoding,
-      #   handle = lims$handle,
-      #   lims$auth)
-      x <- try_GET(uri, lims, ...)
+      x <- httr::GET(uri,  
+         ...,
+         encoding = lims$encoding,
+         handle = lims$handle,
+         lims$auth)
+      #x <- try_GET(uri, lims, ...)
 
       x <- lims$check(x) 
       if ( !is_exception(x) && ("next-page" %in% names(x))  && depaginate ){
          yuri <- no_plus_uri(xml_atts(x[['next-page']])[['uri']])
          doNext <- TRUE
          while(doNext){
-            #y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
-            #   handle = lims$handle, lims$auth))
-            y <- lims$check(try_GET(yuri,lims))
+            y <- lims$check(httr::GET(yuri, encoding = lims$encoding,
+               handle = lims$handle, lims$auth))
+            #y <- lims$check(try_GET(yuri,lims))
             children <- !(names(y) %in% c("previous-page", "next-page"))
             if (any(children)) x <- XML::addChildren(x, kids = y[children])
             doNext <- "next-page" %in% names(y)

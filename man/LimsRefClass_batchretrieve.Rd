@@ -18,7 +18,7 @@
 a list of XML::xmlNode or NodeRefClass objects
 }
 \description{
-Get one or more nodes by uri by batch (artifacts, files, samples, containers only)
+Return order is enforced to be the same as the input order
 }
 \seealso{
 Other Lims Node: \code{\link{LimsRefClass_batchcreate}};

@@ -28,6 +28,6 @@ retrieve all, ignored if \code{asList = FALSE}}
 a list of NodeRefClass
 }
 \description{
-Retrieve a batch resource
+Return order is *not* enforced to be the same as the input order
 }
 

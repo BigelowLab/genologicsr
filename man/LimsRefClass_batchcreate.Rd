@@ -14,7 +14,7 @@
 a list of NodeRefClass or NULL
 }
 \description{
-Create one or more Nodes (samples, containers only)
+Return order is *not* enforced to be the same as the input order
 }
 \seealso{
 Other Lims Node: \code{\link{LimsRefClass_batchretrieve}};
