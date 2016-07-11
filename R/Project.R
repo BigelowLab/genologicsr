@@ -126,24 +126,6 @@ ProjectRefClass$methods(
       .self$lims$batchretrieve(CC, rel = 'containers')
    })
    
-#' Retrieve the attached file associated with a project
-#' 
-#' @family Project
-#' @name ProjectRefClass_get_attached_files
-#' @return a list of zero or more FileRefClass or NULL
-NULL
-ProjectRefClass$methods(
-   get_attached_files = function(){
-
-    if ("file" %in% names(.self$node)){
-        furi <- sapply(.self$node['file'], function(x) xml_atts(x)[['uri']] )   
-        FF <- lapply(furi, function(uri) .self$lims$GET(uri))
-    } else {
-        FF <- NULL
-    }
-    
-    return(FF)
-   })
 
 
 ###### Methods above

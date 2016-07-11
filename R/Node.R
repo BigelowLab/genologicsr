@@ -430,6 +430,26 @@ NodeRefClass$methods(
       genologicsr::extract_udfs(.self$node)
    })
 
+#' Retrieve the attached file associated with an entity
+#' 
+#' @family Node
+#' @name NodeRefClass_get_attached_files
+#' @return a named list of zero or more FileRefClass or NULL
+NULL
+NodeRefClass$methods(
+   get_attached_files = function(){
+
+    if ("file" %in% names(.self$node)){
+        furi <- sapply(.self$node['file'], function(x) xml_atts(x)[['uri']] )   
+        FF <- lapply(furi, function(uri) .self$lims$GET(uri))
+        names(FF) <- basename(sapply(FF, '[[', 'original_location'))
+    } else {
+        FF <- NULL
+    }
+    
+    return(FF)
+   })
+
 
 ############## methods above
 ############## functions below
