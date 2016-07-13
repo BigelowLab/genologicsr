@@ -128,6 +128,21 @@ ContainerRefClass$methods(
    })
 
 
+#' Test if one or more wells are occupied
+#' 
+#' @family Container
+#' @name ContainerRefClass_well_occupied
+#' @param placement character vector of well names
+#' @return logical named vector
+NULL
+ContainerRefClass$methods(
+    well_occupied = function(placement){
+        pp <- self$get_placements()
+        p <- A01(placement, form = 'A:1')
+        ix <- p %in% names(pp)
+        names(ix) <- placement
+        ix
+    })  
 
 #' Retrieve a named vector of placements uri
 #' 
