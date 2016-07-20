@@ -513,7 +513,7 @@ LimsRefClass$methods(
          MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
          ok <- system(MKDIR)
          cmd <- paste("cp", shQuote(filename[1]),
-            paste0("/", dirname(puri[['path']])) )
+            paste0("/", puri[['path']]) )
          ok <- system(cmd)
       } else if (use == "curl"){
          cmd <- paste("curl --ftp-create-dirs",
