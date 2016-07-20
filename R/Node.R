@@ -39,7 +39,7 @@ NodeRefClass$methods(
       }
          
       callSuper(...)
-      .self$verbs <- c("PUT", "GET", "POST", "DELETE", "BROWSE")
+      .self$verbs <- c("PUT", "GET", "POST", "DELETE", "BROWSE", "ATTACH")
       
       if (!inherits(lims, "LimsRefClass") && !is.null(lims) ) 
          stop("NodeRefClass$initialize lims is must be of class LimsRefClass or NULL")
@@ -244,6 +244,23 @@ NodeRefClass$methods(
  
    }) #POST
 
+#' ATTACH a file to this node 
+#'
+#' @family Node
+#' @name NodeRefClass_ATTACH
+#' @param fileame character the full name of the file to attach
+#' @return FileRefClass, ExceptionRefClass or NULL
+NULL
+NodeRefClass$methods(
+   ATTACH = function(filename, ...){
+      if (!("ATTACH" %in% .self$verbs)) {
+         stop(methods::classLabel(class(.self)), " ATTACH is not allowed")
+      }
+
+      if (!.self$has_lims()) stop("NodeRefClass lims not available for ATTACH")
+     .self$lims$ATTACH(.self, ..., filename = filename)
+   }) # ATTACH
+   
 #' BROWSE this node in a browser if in interactive session
 #'
 #' @family Node

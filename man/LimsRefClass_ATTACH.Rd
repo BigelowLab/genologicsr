@@ -4,7 +4,7 @@
 \alias{LimsRefClass_ATTACH}
 \title{ATTACH a file - not really a RESTful action but a combination of steps}
 \arguments{
-\item{x}{ProcessRefClass or ProjectRefClass to attach to}
+\item{x}{ArtifactRefClass, ProcessRefClass or ProjectRefClass to attach to}
 
 \item{filename}{character, the fully qualified name of the file we are pushing
 Note that the caller must specify filename = 'some/file/name' explicitly.}
@@ -21,7 +21,7 @@ and Project.  Thus there is no DELETE involved like there might be with
 a PUSH.
 }
 \details{
-given an [Project,Process] node and a filename
+given an [Project,Artifact,Process] node and a filename
 create an unresolved file resource
 POST the unresolved file resource to 'glsstore' to get a resolved file resource
 Upload the file (scp, cp, or curl)

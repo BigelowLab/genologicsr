@@ -137,7 +137,7 @@ ContainerRefClass$methods(
 NULL
 ContainerRefClass$methods(
     well_occupied = function(placement){
-        pp <- self$get_placements()
+        pp <- .self$get_placements()
         p <- A01(placement, form = 'A:1')
         ix <- p %in% names(pp)
         names(ix) <- placement

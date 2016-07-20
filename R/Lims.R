@@ -447,7 +447,7 @@ LimsRefClass$methods(
 #' and Project.  Thus there is no DELETE involved like there might be with
 #' a PUSH.
 #' 
-#' given an [Project,Process] node and a filename
+#' given an [Project,Artifact,Process] node and a filename
 #' create an unresolved file resource
 #' POST the unresolved file resource to 'glsstore' to get a resolved file resource
 #' Upload the file (scp, cp, or curl)
@@ -456,17 +456,21 @@ LimsRefClass$methods(
 #      
 #' @family Lims
 #' @name LimsRefClass_ATTACH
-#' @param x ProcessRefClass or ProjectRefClass to attach to 
+#' @param x ArtifactRefClass, ProcessRefClass or ProjectRefClass to attach to 
 #' @param filename character, the fully qualified name of the file we are pushing
 #'  Note that the caller must specify filename = 'some/file/name' explicitly.
 #' @param use character the type of file transfer to use: duck, scp, cp or curl
 #' @return FileRefClass, NULL or ExceptionRefClass
 NULL
 LimsRefClass$methods(
-   ATTACH = function(x,filename = "", 
+   ATTACH = function(x, filename = "", 
       use = c("duck", "scp", "cp", "curl")[2]){
       
-      stopifnot(!any(c(inherits(x, 'ArtifactRefClass'), inherits(x, 'ProjectRefClass'))))
+      if (inherits(x, 'NodeRefClass')){
+         if(!('ATTACH' %in% x$verbs)) stop("ATTACH is not a verb of this class", class(x))
+      } else {
+         stop("input must inherit from NodeRefClass")
+      }
       
       if (!file.exists(filename[1])) stop("LimsRefClass$ATTACH file not found:", filename[1])
       
@@ -500,27 +504,26 @@ LimsRefClass$methods(
             paste0(up[1],'@',puri[['hostname']]), 
             shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
          ok <- system(MKDIR)
-
          # https://kb.iu.edu/d/agye
          # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
-         cmd <- paste('scp -q', filename[1], 
+         cmd <- paste('scp -q', shQuote(filename[1]), 
             paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
          ok <- system(cmd)
       } else if (use == "cp"){
          MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
          ok <- system(MKDIR)
-         cmd <- paste("cp", filename[1],
-            paste0("/", puri[['path']]) )
+         cmd <- paste("cp", shQuote(filename[1]),
+            paste0("/", dirname(puri[['path']])) )
          ok <- system(cmd)
       } else if (use == "curl"){
          cmd <- paste("curl --ftp-create-dirs",
             "-u", .self$fileauth[['options']][['userpwd']],
-            "-T", filename[1],
+            "-T", shQuote(filename[1]),
             resolved_node[['content_location']])
          ok <- system(cmd)   
       } else if (use == 'duck'){
          up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
-         ok <- duck_upload(filename[1], resolved_node[['content_location']],
+         ok <- duck_upload(shQuote(filename[1]), resolved_node[['content_location']],
             username = up[[1]], password = up[[2]])
       }
       if (ok != 0) {

@@ -80,7 +80,9 @@ FileRefClass$methods(
             username = up[1], password = up[2],...),
          'cp' = cp_download(.self$content_location[1], dest[1], ...),
          function(){ cat("Download tool not known", use[1], "\n") ; return(1) })
-      sapply(dest[1], file.exists)
+      ok2 <- file.exists(dest[1])
+      names(ok2) <- dest[1]
+      return(ok2)
    })
 
    

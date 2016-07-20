@@ -10,7 +10,7 @@ ProcessRefClass <- setRefClass("ProcessRefClass",
    methods = list(
       initialize = function(...){
          callSuper(...)
-         .self$verbs <- c("GET", "PUT", "BROWSE")
+         .self$verbs <- c("GET", "PUT", "BROWSE", "ATTACH")
       })
    )
    
