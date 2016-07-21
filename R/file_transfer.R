@@ -173,7 +173,7 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
    CMD <- paste("scp",
       extra,
       paste0(username, '@', p$hostname, ':/', p$path),
-      dest[1])
+      shQuote(dest[1]))
       
    if (verbose) cat(CMD, "\n")  
     
@@ -252,7 +252,7 @@ duck_upload <- function(filename, url, username = "foo", password = "bar"){
    CMD <- paste("duck",
       "--username", username[1],
       "--password", password[1],
-      "--upload", url[1], filename[1])
+      "--upload", url[1], shQuote(filename[1]))
       
    if (verbose) cat(CMD, "\n")   
    
@@ -282,7 +282,7 @@ duck_download <- function(url, dest, username = "foo", password = "bar",
    CMD <- paste("duck",
       "--username", username[1],
       "--password", password[1],
-      "--download", url[1], dest[1])
+      "--download", url[1], shQuote(dest[1]))
    if (!is.null(extra)) CMD <- paste(CMD, extra)
       
    system(CMD)
