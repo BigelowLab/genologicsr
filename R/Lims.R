@@ -922,6 +922,8 @@ LimsRefClass$methods(
          }, 
          lims = .self)
       
+      if (!any(sapply(x, is.null))) names(x) <- nm
+      
       invisible(x)
    }) # get_projects
 
