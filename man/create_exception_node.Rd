@@ -4,10 +4,13 @@
 \alias{create_exception_node}
 \title{Create an exception node}
 \usage{
-create_exception_node(message = "Unspecified exception")
+create_exception_node(message = "Unspecified exception", status = -1,
+  category = "unknown")
 }
 \arguments{
 \item{message}{character vector message}
+
+\item{status}{numeric status code if known, set to -1 otherwise}
 }
 \value{
 XML::xmlNode

@@ -6,6 +6,8 @@
 \arguments{
 \item{message}{chracter, some error message}
 
+\item{status}{numeric, status code}
+
 \item{asNode}{logical if TRUE return ExceptionRefClass}
 }
 \value{

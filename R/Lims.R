@@ -127,9 +127,9 @@ LimsRefClass$methods(
       ok <- stat_code %in% c(OK = 200, Created = 201, Accepted = 202)
       if (!ok){
           stat_info <- httr::http_status(stat_code)
-          print(rsp)
-          print(httr::content(rsp, as = "text", encoding = .self$encoding))
-          x <- .self$create_exception(message = stat_info[['message']])
+          #if (stat_code < 500) print(rsp)
+          #print(httr::content(rsp, as = "text", encoding = .self$encoding))
+          x <- .self$create_exception(message = stat_info[['message']], status = stat_code)
           return(invisible(x))
       }
 
@@ -189,16 +189,18 @@ LimsRefClass$methods(
 #'
 #' @name LimsRefClass_create_exception
 #' @param message chracter, some error message
+#' @param status numeric, status code
 #' @param asNode logical if TRUE return ExceptionRefClass
 #' @return XML::xmlNode of ExceptionRefClass
 LimsRefClass$methods(
    create_exception = function(message = 'Unspecified exception',
+        status = -1,
         asNode = FALSE){
       #x <- XML::newXMLNode("exception", 
       #   namespaceDefinitions = get_NSMAP()[['exc']], 
       #   namespace = 'exc')
       #x <- XML::addChildren(x, kids = list(XML::newXMLNode("message", message)) )
-      x <- create_exception_node(message = message)
+      x <- create_exception_node(message = message, status = status)
       if (asNode) x <- parse_node(x, .self)
       x
    }) #create_exception
@@ -922,7 +924,7 @@ LimsRefClass$methods(
          }, 
          lims = .self)
       
-      if (!any(sapply(x, is.null))) names(x) <- nm
+      if (!any(sapply(x, is.null))) names(x) <- sapply(x, "[[", "name")
       
       invisible(x)
    }) # get_projects

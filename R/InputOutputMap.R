@@ -26,20 +26,37 @@ InputOutputMapRefClass <- setRefClass("InputOutputMapRefClass",
    methods = list(
       initialize = function(...){
          callSuper(...)
+         
          .self$verbs <- c("FOO")
-         x <- xml_atts(.self$node[['input']])
-         if (!is.null(x)){
-            .self$input_uri <- trimuri(x[['uri']])
-            .self$input_limsid <- x[['limsid']]
-            .self$post_process_uri <- trimuri(x[['post-process-uri']])
+         .self$input_uri <- ''
+         .self$input_limsid <- ''
+         .self$post_process_uri <- ''
+         .self$output_uri <- ''
+         .self$output_limsid <- ''
+         .self$output_generation_type <- ''
+         .self$output_type <- '' 
+                      
+         ind <- .self$node[['input']]
+         if (!is.null(ind)){
+             x <- xml_atts(ind)
+             if (!is.null(x)){
+                .self$input_uri <- trimuri(x[['uri']])
+                .self$input_limsid <- x[['limsid']]
+                .self$post_process_uri <- trimuri(x[['post-process-uri']])
+             }
          }
-         x <- xml_atts(.self$node[['output']])
-         if (!is.null(x)){
-            .self$output_uri <- trimuri(x[['uri']])
-            .self$output_limsid <- x[['limsid']]
-            .self$output_generation_type <- x[['output-generation-type']]
-            .self$output_type <- x[['output-type']]
-        }
+                  
+         ond <- .self$node[['output']]
+         if (!is.null(ond)){
+            x <- xml_atts(ond)
+            if (!is.null(x)){
+               .self$output_uri <- trimuri(x[['uri']])
+               .self$output_limsid <- x[['limsid']]
+               .self$output_generation_type <- x[['output-generation-type']]
+               .self$output_type <- x[['output-type']]
+            }
+         }
+            
       })
    )
    

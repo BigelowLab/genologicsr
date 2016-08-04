@@ -23,7 +23,7 @@ ExceptionRefClass <- setRefClass("ExceptionRefClass",
             .self$verbs <- "NONE"
             atts <- xml_atts(.self$node)
             if ('category' %in% names(atts)) .self$category = atts[['category']]
-            if ('code' %in% names(atts)) .self$category = atts[['code']]
+            if ('code' %in% names(atts)) .self$code = atts[['code']]
             if ('message' %in% names(.self$node))   
                .self$message = get_childvalue(.self$node, 'message')
             if ('suggested-actions' %in% names(.self$node))
@@ -40,12 +40,15 @@ ExceptionRefClass <- setRefClass("ExceptionRefClass",
    )
 
 #' Create an exception node
-#' @export 
+#' @export
+#' @param status numeric status code if known, set to -1 otherwise
 #' @param message character vector message
 #' @return XML::xmlNode 
-create_exception_node = function(message = 'Unspecified exception'){
+create_exception_node = function(message = 'Unspecified exception',
+    status = -1, category = 'unknown'){
     x <- XML::newXMLNode("exception", 
-      namespaceDefinitions = get_NSMAP()[['exc']], 
-      namespace = 'exc')
+      namespaceDefinitions = list(exc = get_NSMAP()[['exc']]), 
+      #namespace = 'exc',
+      attrs = list(code = as.character(status[1]), category = category[1]) )
     XML::addChildren(x, kids = list(XML::newXMLNode("message", message)) )
 }
