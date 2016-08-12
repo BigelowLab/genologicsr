@@ -1,5 +1,15 @@
 # misc.R
 
+#' Sanitize a character vector to be UTF-8 ASCII
+#'
+#' @export
+#' @param x character vector
+#' @param sub the character used to replace non-ASCII
+#' @return character vector
+as_ascii <- function(x, sub = ''){
+    iconv(enc2utf8(x), from = 'UTF-8', to = 'ASCII', sub = sub)   
+}
+
 
 #' Prepares a contribution to a query list - see \code{modify_url}
 #'

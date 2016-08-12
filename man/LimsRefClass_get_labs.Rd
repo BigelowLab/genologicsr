@@ -10,7 +10,7 @@ but provides similar behavior.}
 \item{last_modified}{optional character vector in YYYY-MM-DDThh:mm:ssTZD format}
 }
 \value{
-a list of NodeRefClass or NULL
+a list of LabRefClass or NULL
 }
 \description{
 Get one or more Labs - does not leverage /batch/retrieve resources

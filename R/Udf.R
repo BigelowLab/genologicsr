@@ -20,11 +20,13 @@ create_udf_node <- function(x, namespace = 'udf', parent = NULL, ...) {
    
    #ns <- genologicsr::get_NSMAP()[namespace[1]]
    atts <- x[ names(x) %in% c("name", "type", "unit") ]
-   
+   if (!is.null(parent))
+      ok <- XML::newXMLNamespace(parent,c(udf="http://genologics.com/ri/userdefined"))
+
    newNode <- XML::newXMLNode("field", 
       attrs = atts, 
       namespace = namespace, 
-      namespaceDefinitions = c(udf="http://genologics.com/ri/userdefined"),
+      #namespaceDefinitions = c(udf="http://genologics.com/ri/userdefined"),
       parent = parent, ...) 
    
    if ("value" %in% names(x)) XML::xmlValue(newNode) <- check_type(x[['type']], x[['value']])
@@ -85,17 +87,6 @@ set_udfs <- function(x, v){
       
    } #  either 1 or 2
    return(x)
-}
-
-
-#' Sanitize a character vector to be UTF-8 ASCII
-#'
-#' @export
-#' @param x character vector
-#' @param sub the character used to replace non-ASCII
-#' @return character vector
-as_ascii <- function(x, sub = ''){
-    iconv(enc2utf8(x), from = 'UTF-8', to = 'ASCII', sub = sub)   
 }
 
 

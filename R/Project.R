@@ -25,8 +25,18 @@ ProjectRefClass <- setRefClass("ProjectRefClass",
          }
       },
    show = function(prefix = ""){
-      callSuper(prefix = prefix)
-      cat(prefix, "  Project name:", .self$name, "\n", sep = "")
+        callSuper(prefix = prefix)
+        cat(prefix, "  Project name:", .self$name, "\n", sep = "")
+        open_date <- .self$get_date("open")
+        close_date <- .self$get_date("close")
+        invoice_date <- .self$get_date("close")
+        if (!is.null(open_date)) 
+            cat(prefix, "  open-date:", open_date, "\n", sep = "")
+        if (!is.null(close_date)) 
+            cat(prefix, "  close-date:", close_date, "\n", sep = "")
+        if (!is.null(invoice_date)) 
+            cat(prefix, "   invoice-date:", invoice_date, "\n", sep = "")
+
       })
    )
 
@@ -51,18 +61,35 @@ ProjectRefClass$methods(
    })
    
 
+#' Retrieve a date "open", "close" or "invoice"
+#' 
+#' @family project
+#' @name ProjectRefClass_get_date
+#' @param what character either 'open', 'close' or 'invoice'
+#' @return a character date %Y-%m-%d or NULL
+NULL
+ProjectRefClass$methods(
+    get_date = function(what = c("open", "close", "invoice")[1]){
+    
+        what = tolower(what[1])
+        nd <- .self$node[[paste0(what, "-date")]]
+        x <- if(!is.null(nd)) xml_value(nd) else NULL
+        x
+    })
 
 #' Retrieve the Researcher assigned to the project
 #' @family Project
 #' @name ProjectRefClass_get_researcher
+#' @param form character, either 'uri' or 'Node'
 #' @return ResearcherRefClass node or NULL
 NULL
 ProjectRefClass$methods(
-   get_researcher = function(){
-      x <- NULL
+   get_researcher = function(form = c("uri", "Node")[2]){
+      form <- tolower(form[1])
+      x <- if(form == 'uri') "" else NULL
       if ("researcher" %in% names(XML::xmlChildren(.self$node))){
-         URI <- xml_atts(.self$node[['researcher']])
-         x <- .self$lims$GET(URI)
+         x <- xml_atts(.self$node[['researcher']])
+         if(form == 'node') x <- .self$lims$GET(x)
       }
       invisible(x)
    })
@@ -136,9 +163,9 @@ ProjectRefClass$methods(
 #' @export
 #' @family Lims Project
 #' @param name character project name (required)
-#' @param open_date character, by default the current date
-#' @param close_date character, the close date
-#' @param invoice_date character
+#' @param open_date character, open date or NULL
+#' @param close_date character, the close date or NULL
+#' @param invoice_date character, invoice date or NULL
 #' @param researcher character URI (required)
 #' @return XML::xmlNode
 create_project_node <- function(name = NULL, 
@@ -152,12 +179,13 @@ create_project_node <- function(name = NULL,
       
       kids <- list(
          XML::newXMLNode("name", name[1]),
-         XML::newXMLNode("researcher", researcher[1]),
-         XML::newXMLNode("open-date", open_date[1]) )
+         XML::newXMLNode("researcher", researcher[1]))
       
-      if (!is.null(close_date)) 
+      if (!is.null(open_date))
+         kids <- append(kids, XML::newXMLNode("open-date", open_date[1]) )
+      if (!is.null(close_date) && !is.null(open_date)) 
          kids <- append(kids, XML::newXMLNode("close-date", close_date[1]) )
-      if (!is.null(invoice_date))
+      if (!is.null(invoice_date) )
          kids <- append(kids, XML::newXMLNode("invoice-date", invoice_date[1]) )
       
       XML::newXMLNode('project',

@@ -127,9 +127,8 @@ LimsRefClass$methods(
       ok <- stat_code %in% c(OK = 200, Created = 201, Accepted = 202)
       if (!ok){
           stat_info <- httr::http_status(stat_code)
-          #if (stat_code < 500) print(rsp)
-          #print(httr::content(rsp, as = "text", encoding = .self$encoding))
-          x <- .self$create_exception(message = stat_info[['message']], status = stat_code)
+          msg <- xml2::xml_text(content(rsp, encoding = .self$encoding))
+          x <- .self$create_exception(message = c(stat_info[['message']], msg), status = stat_code)
           return(invisible(x))
       }
 
@@ -800,6 +799,7 @@ LimsRefClass$methods(
       x <- lapply(uri, function(x, lims = NULL) {
             lims$GET(x, asNode = TRUE)
          }, lims = .self)
+      names(x) <- sapply(x, "[[", "name")
       if (tolower(form[1]) == 'data.frame'){
          x <- data.frame (limsid = basename(uri),
             name = sapply(x, function(x) x$name),
@@ -866,7 +866,7 @@ LimsRefClass$methods(
 #' @name LimsRefClass_get_labs
 #' @param name optional lab name
 #' @param last_modified optional character vector in YYYY-MM-DDThh:mm:ssTZD format
-#' @return a list of NodeRefClass or NULL
+#' @return a list of LabRefClass or NULL
 LimsRefClass$methods(
    get_labs = function(name = NULL, last_modified = NULL){
       
@@ -887,7 +887,7 @@ LimsRefClass$methods(
             lims$GET(x, asNode = TRUE)
          }, 
          lims = .self)
-      names(x) <- sapply(x, function(x) xml_value(x$node[['name']]) )
+      names(x) <- sapply(x, '[[', 'name' )
       invisible(x)
    }) # get_labs
 
@@ -1434,6 +1434,7 @@ parse_node <- function(node, lims){
        'process-type' = ProcessTypeRefClass$new(node, lims),
        'exception' = ExceptionRefClass$new(node, lims),
        'artifactgroup' = ArtifactGroupRefClass$new(node, lims),
+       'lab' = LabRefClass(node, lims),
        NodeRefClass$new(node, lims))
 
 }

@@ -11,11 +11,11 @@ create_project_node(name = NULL, open_date = format(as.POSIXct(Sys.time()),
 \arguments{
 \item{name}{character project name (required)}
 
-\item{open_date}{character, by default the current date}
+\item{open_date}{character, open date or NULL}
 
-\item{close_date}{character, the close date}
+\item{close_date}{character, the close date or NULL}
 
-\item{invoice_date}{character}
+\item{invoice_date}{character, invoice date or NULL}
 
 \item{researcher}{character URI (required)}
 }

@@ -3,6 +3,9 @@
 \name{ProjectRefClass_get_researcher}
 \alias{ProjectRefClass_get_researcher}
 \title{Retrieve the Researcher assigned to the project}
+\arguments{
+\item{form}{character, either 'uri' or 'Node'}
+}
 \value{
 ResearcherRefClass node or NULL
 }

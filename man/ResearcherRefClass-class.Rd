@@ -4,16 +4,16 @@
 \name{ResearcherRefClass-class}
 \alias{ResearcherRefClass}
 \alias{ResearcherRefClass-class}
-\title{An Researcher representation that sublcasses from NodeRefClass}
+\title{A Researcher representation that sublcasses from NodeRefClass}
 \description{
-An Researcher representation that sublcasses from NodeRefClass
+A Researcher representation that sublcasses from NodeRefClass
 }
 \section{Fields}{
 
 \describe{
-\item{\code{character,}}{username the user name}
+\item{\code{username}}{character, username the user name}
 
-\item{\code{character,}}{name the user's full name in 'First Last' form}
+\item{\code{name}}{character, name the user's full name in 'First Last' form}
 
 \item{\code{email}}{character, user's email}
 

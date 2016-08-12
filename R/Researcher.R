@@ -1,10 +1,10 @@
 # Researcher.R
 
-#' An Researcher representation that sublcasses from NodeRefClass
+#' A Researcher representation that sublcasses from NodeRefClass
 #' 
 #' @family Node
-#' @field character, username the user name
-#' @field character, name the user's full name in 'First Last' form
+#' @field username character, username the user name
+#' @field name character, name the user's full name in 'First Last' form
 #' @field email character, user's email
 #' @field initials character, user's initials
 #' @include Node.R
@@ -14,16 +14,29 @@ ResearcherRefClass <- setRefClass("ResearcherRefClass",
       fields = list(
          username = 'character',
          name = 'character',
+         first_name = 'character',
+         last_name = 'character',
+         phone = 'character',
+         fax = 'character',
          email = 'character',
-         initials = 'character'),
+         initials = 'character',
+         lab = 'character',
+         credentials = 'ANY'
+         ),
       methods = list(
          initialize = function(...){
             callSuper(...)
             .self$verbs <- c('GET', 'PUT', 'DELETE', 'BROWSE')
-            .self$username = .self$get_username()
-            .self$name = .self$get_name()
-            .self$email = get_childvalue(.self$node, 'email')
-            .self$initials = get_childvalue(.self$node, 'initials')
+            # .self$username = .self$get_username()
+            # .self$name = .self$get_name()
+            # .self$first_name = get_childvalue(.self$node, "first-name")
+            # .self$last_name = get_childvalue(.self$node, "last-name")
+            # .self$email = get_childvalue(.self$node, 'email')
+            # .self$phone = get_childvalue(.self$node, 'phone')
+            # .self$fax = get_childvalue(.self$node, 'fax')
+            # .self$initials = get_childvalue(.self$node, 'initials')
+            # .self$lab = .self$get_lab()
+            # .self$credentials = .self$get_credentials()
          })
       )
       
@@ -41,8 +54,15 @@ ResearcherRefClass$methods(
       callSuper(...)
       .self$username = .self$get_username()
       .self$name = .self$get_name()
+      .self$first_name = get_childvalue(.self$node, "first-name")
+      .self$last_name = get_childvalue(.self$node, "last-name")
       .self$email = get_childvalue(.self$node, 'email')
+      .self$phone = get_childvalue(.self$node, 'phone')
+      .self$fax = get_childvalue(.self$node, 'fax')
       .self$initials = get_childvalue(.self$node, 'initials')
+      .self$lab = .self$get_lab()
+      .self$credentials = .self$get_credentials()
+
    })
 
 #' Show
@@ -84,7 +104,6 @@ ResearcherRefClass$methods(
 NULL
 ResearcherRefClass$methods(
    get_credentials = function(sep = ' '){
-      
       nd <- .self$node[['credentials']]
       if (is_xmlNode(nd)){
          role <- sapply(nd['role'], function(x) xml_atts(x)[['roleName']])
@@ -112,6 +131,24 @@ ResearcherRefClass$methods(
       x
    }) #get_name
    
+#' Get the lab uri or LabRefClass
+#' 
+#' @family Researcher
+#' @name ResearcherRefClass_get_lab
+#' @param form charcater either 'uri' or 'Node'
+#' @return charcater uri or LabRefClass
+NULL
+ResearcherRefClass$methods(
+   get_lab = function(form = c("uri", "Node")[1]){
+      nd <- .self$node[['lab']]
+      if (is_xmlNode(nd)){
+         x <- xml_atts(nd)[['uri']]
+         if (tolower(form[1]) == 'node') x <- .self$lims$GET(x)
+      } else {
+         x <- ""
+      }
+      x
+   }) #get_lab
 
 #' Override the DELETE method to push user to use the GUI
 #' 
@@ -164,8 +201,8 @@ create_researcher_node <- function(firstname = NULL, lastname = NULL,
       nmsp <- c('udf','ri','res')
             
       kids <- list(
-         XML::newXMLNode("firstname", firstname[1]),
-         XML::newXMLNode("lastname", lastname[1]),
+         XML::newXMLNode("first-name", firstname[1]),
+         XML::newXMLNode("last-name", lastname[1]),
          XML::newXMLNode("email", email[1]))
       
       if (!is.null(initials)) kids <- base::append(kids, XML::newXMLNode("initials", initials[1]))
@@ -177,13 +214,13 @@ create_researcher_node <- function(firstname = NULL, lastname = NULL,
       
       creds <- XML::newXMLNode("credentials")
       if (!is.null(role)){
-         allowed <- c("systemadministrator","administrator","labtech", "webclient")
-         if (!all(role %in% allowed)){
-           stop(paste("Allowed rolls are only:", paste(allowed, collapse = " ")))
-         }
+         # allowed <- c("systemadministrator","administrator","labtech", "webclient")
+         # if (!all(role %in% allowed)){
+         #   stop(paste("Allowed roles are only:", paste(allowed, collapse = " ")))
+         # }
          creds <- XML::newXMLNode("credentials")
          k <- list()
-         for (r in role) k <- append(k, XML::newXMLNode("role", name = r))
+         for (r in role) k <- append(k, XML::newXMLNode("role",attrs=list(name= r)) )
          if (!is.null(username)) k <- base::append(k, XML::newXMLNode("username", username[1]))
          if (!is.null(password)) k <- base::append(k, XML::newXMLNode("password", password[1]))
          if (!is.null(account_locked)) k <- base::append(k, 
@@ -195,7 +232,7 @@ create_researcher_node <- function(firstname = NULL, lastname = NULL,
       
       
       XML::newXMLNode('researcher',
-         namespace = nmsp,
+         namespace = 'res',
          namespaceDefinitions = get_NSMAP()[nmsp],
          .children = kids)
       
