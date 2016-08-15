@@ -206,11 +206,9 @@ create_researcher_node <- function(firstname = NULL, lastname = NULL,
          XML::newXMLNode("email", email[1]))
       
       if (!is.null(initials)) kids <- base::append(kids, XML::newXMLNode("initials", initials[1]))
-      if (!is.null(lab)) {
-         labnode <- XML::newXMLNode("initials")
-         XML::xmlAttrs(labnode) <- c("uri" = lab[1])
-         kids <- base::append(kids, labnode)
-      }
+      if (!is.null(lab))
+         kids <- base::append(kids, XML::newXMLNode("lab", attrs = c("uri" = lab[1]) ))
+
       
       creds <- XML::newXMLNode("credentials")
       if (!is.null(role)){

@@ -28,6 +28,10 @@ ProcessTypeRefClass <- setRefClass("ProcessTypeRefClass",
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c("GET", "BROWSE")
+         .self$update()
+         },
+      update = function(...){
+         callSuper(...)
          .self$name <- xml_atts(.self$node)[['name']]
          .self$fields <- .self$get_field_names()
       })

@@ -23,12 +23,17 @@ SampleRefClass <- setRefClass("SampleRefClass",
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c('GET', 'PUT', 'BROWSE')
-         .self$name = .self$get_name()
-         .self$type = .self$get_type()
-         .self$date_received =  get_childvalue(.self$node, 'date-received') 
-         .self$date_completed = get_childvalue(.self$node, 'date-completed')
-         .self$biosource = .self$get_biosource()
-      })
+      },
+      
+    update = function(...){
+        callSuper(...)
+        .self$name = .self$get_name()
+        .self$type = .self$get_type()
+        .self$date_received =  get_childvalue(.self$node, 'date-received') 
+        .self$date_completed = get_childvalue(.self$node, 'date-completed')
+        .self$biosource = .self$get_biosource()  
+    }
+      )
    )
 
 Sample <- getRefClass("SampleRefClass")

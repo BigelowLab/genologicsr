@@ -179,7 +179,7 @@ create_project_node <- function(name = NULL,
       
       kids <- list(
          XML::newXMLNode("name", name[1]),
-         XML::newXMLNode("researcher", researcher[1]))
+         XML::newXMLNode("researcher", attrs = list(uri=researcher[1])))
       
       if (!is.null(open_date))
          kids <- append(kids, XML::newXMLNode("open-date", open_date[1]) )

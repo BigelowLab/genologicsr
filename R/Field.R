@@ -21,30 +21,34 @@ FieldRefClass <- setRefClass("FieldRefClass",
       first_preset_is_default_value = 'logical',
       preset = 'character'),
    methods = list(
-      initialize = function(...){
-         callSuper(...)
-         if (is_xmlNode(.self$node)){
+        initialize = function(...){
+           callSuper(...)
             .self$verbs <- c("GET", "PUT", 'BROWSE')
-            .self$name <- .self$get_name()
-            .self$type <- .self$get_type()
-            .self$attach_to_name <- .self$get_childv('attach-to-name')
-            .self$is_required <- .self$get_childv('is-required') == "true"
-            .self$attach_to_category <- .self$get_childv('attach-to-category')
-            .self$first_preset_is_default_value <- .self$get_childv('first-preset-is-default') == 'true'
-            
-            # presets are a little different since they might appear multiple times
-            nm <- names(.self$node)
-            ix <- nm %in% 'preset'
-            if (any(ix)){
-               p <- sapply(.self$node['preset'], function(x) xml_value(x))
-            } else {
-               p <- ""
-            }
-            .self$preset <- p
-         
-         } # has a node
-      })
-   )
+           .self$update()      
+          }, #initialize
+        update = function(...){
+            callSuper(...)
+            if (is_xmlNode(.self$node)){
+                .self$name <- .self$get_name()
+                .self$type <- .self$get_type()
+                .self$attach_to_name <- .self$get_childv('attach-to-name')
+                .self$is_required <- .self$get_childv('is-required') == "true"
+                .self$attach_to_category <- .self$get_childv('attach-to-category')
+                .self$first_preset_is_default_value <- .self$get_childv('first-preset-is-default') == 'true'
+                
+                # presets are a little different since they might appear multiple times
+                nm <- names(.self$node)
+                ix <- nm %in% 'preset'
+                if (any(ix)){
+                   p <- sapply(.self$node['preset'], function(x) xml_value(x))
+                } else {
+                   p <- ""
+                }
+                .self$preset <- p
+           
+           } # has a node
+        })
+)
    
 
 #' Show the contents

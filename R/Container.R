@@ -15,20 +15,16 @@ ContainerRefClass <- setRefClass("ContainerRefClass",
       state = "character",
       type = "character"),
    methods = list( 
-      initialize = function(...){
-         callSuper(...)
-         .self$verbs <- c("GET", "PUT", 'DELETE', 'BROWSE')
-         .self$name = xml_value(.self$node[['name']]) 
-         .self$type = xml_atts(.self$node[['type']])[['name']]
-         .self$state = xml_value(.self$node[['state']])    
-      },
-   update = function(x){
-      if (missing(x)) x <- .self$node
-      callSuper(x)
-      .self$name = xml_value(.self$node[['name']]) 
-      .self$type = xml_atts(.self$node[['type']])[['name']]
-      .self$state = xml_value(.self$node[['state']])    
-   })
+        initialize = function(...){
+            callSuper(...)
+            .self$verbs <- c("GET", "PUT", 'DELETE', 'BROWSE')   
+            },
+        update = function(...){
+           callSuper(...)
+           .self$name = xml_value(.self$node[['name']]) 
+           .self$type = xml_atts(.self$node[['type']])[['name']]
+           .self$state = xml_value(.self$node[['state']])    
+            })
    )
    
 Container <- getRefClass("ContainerRefClass")

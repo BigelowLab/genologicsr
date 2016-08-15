@@ -17,12 +17,9 @@ LabRefClass <- setRefClass("LabRefClass",
        billing_address = 'character'),
     methods = list(
         initialize = function(...){
-              callSuper(...)
-              .self$verbs <- c('GET', 'PUT', 'POST', 'BROWSE')
-              .self$name = .self$get_name()
-              .self$website = get_childvalue(.self$node, 'website')
-              .self$shipping_address = .self$get_address("shipping")
-              .self$billing_address = .self$get_address("billing")
+            callSuper(...)
+            .self$verbs <- c('GET', 'PUT', 'POST', 'BROWSE')
+            .self$update()
             },
         update = function(...){
             callSuper(...)

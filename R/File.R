@@ -17,22 +17,27 @@ FileRefClass <- setRefClass("FileRefClass",
       original_location = 'character',
       is_published = 'character'),
    methods = list(
-      initialize = function(...){
-         callSuper(...)
-         .self$verbs <- c("DELETE", "GET", "PUT", "BROWSE")
-         if (is_xmlNode(.self$node)){
-            nm <- names(.self$node)
-            if ('attached-to' %in% nm)
-               .self$attached_to <- xml_value(.self$node[['attached-to']])
-            if ('content-location' %in% nm)
-               .self$content_location <- xml_value(.self$node[['content-location']]) 
-            if ('original-location' %in% nm)
-               .self$original_location <- xml_value(.self$node[['original-location']]) 
-            if ('is-published' %in% nm)
-               .self$is_published <- xml_value(.self$node[['is-published']]) 
-         }
-      })
-   )
+        initialize = function(...){
+            callSuper(...)
+            .self$verbs <- c("DELETE", "GET", "PUT", "BROWSE")
+            .self$update()
+        }, #initialize
+        update = function(...){
+            callSuper(...)
+            if (is_xmlNode(.self$node)){
+               nm <- names(.self$node)
+               if ('attached-to' %in% nm)
+                  .self$attached_to <- xml_value(.self$node[['attached-to']])
+               if ('content-location' %in% nm)
+                  .self$content_location <- xml_value(.self$node[['content-location']]) 
+               if ('original-location' %in% nm)
+                  .self$original_location <- xml_value(.self$node[['original-location']]) 
+               if ('is-published' %in% nm)
+                  .self$is_published <- xml_value(.self$node[['is-published']]) 
+            }
+        } # update
+    ) #methods
+)
 
 #' Show
 #' 

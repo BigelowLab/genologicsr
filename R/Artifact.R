@@ -16,9 +16,13 @@ ArtifactRefClass <- setRefClass("ArtifactRefClass",
       initialize = function(...){
          callSuper(...)
          .self$verbs <- c('GET', 'PUT', 'BROWSE', "ATTACH")
+         },
+      update = function(...){
+         callSuper(...)
          .self$name = .self$get_name()
          .self$type = .self$get_type()
-      })
+         }
+         )
    )
 
 #' Show

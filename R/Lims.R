@@ -169,7 +169,10 @@ NULL
 LimsRefClass$methods(
    BROWSE = function(x, ...){
    
-      stopifnot(interactive())
+      if(!interactive()){
+          cat("not an interactive session - BROWSE is disabled\n")
+          return(invisible(NULL))
+      }
       
       if (is_xmlNode(x)){
          uri <- trimuri(xml_atts(x)[['uri']])
@@ -233,7 +236,10 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    PUT = function(x, ...){
-      if (missing(x)) stop("LimsRefClass$PUT: node is required")
+      if (missing(x)) {
+        cat("LimsRefClass$PUT: node is required\n")
+        return(invisible(NULL))
+      }
       
       if (inherits(x, "NodeRefClass")){
          uri <- x$uri
@@ -398,7 +404,7 @@ LimsRefClass$methods(
                 paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
             ok <- system(cmd)
          } else {
-            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destintion path", asNode = TRUE)
+            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
             return(e)
          }
       } else if (use == "cp"){
@@ -409,7 +415,7 @@ LimsRefClass$methods(
                 paste0("/", puri[['path']]) )
              ok <- system(cmd)
          } else {
-            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destintion path", asNode = TRUE)
+            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
             return(e)
          }
       } else if (use == "curl"){
