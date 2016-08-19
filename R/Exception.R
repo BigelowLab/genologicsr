@@ -50,7 +50,8 @@ is_exception <- function(x, space = 'exc'){
    if (inherits(x, "ExceptionRefClass")) return(TRUE)
 
    if (inherits(x, 'NodeRefClass')) x <- x$node
-   is_xmlNode(x) && ("exc" %in% names(XML::xmlNamespace(x)) )
+   is_xmlNode(x) && ( ("exc" %in% names(XML::xmlNamespace(x)) ) ||
+     ("exception" %in% XML::xmlName(x)) )
 }
 
 

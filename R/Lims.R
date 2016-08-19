@@ -852,6 +852,10 @@ LimsRefClass$methods(
       }
    
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
+      if (is_exception(x)){
+          print(x)
+          return(NULL)
+      }
       if (length(XML::xmlChildren(x)) == 0) return(NULL)
       
       uri <- sapply(XML::xmlChildren(x), function(x) xml_atts(x)[['uri']])
