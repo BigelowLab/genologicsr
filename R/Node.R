@@ -65,7 +65,15 @@ NodeRefClass$methods(
       
       .self$update()
       
-   }) # new
+   },
+   #from ?setRefClass
+   #Two optional method names are interpreted specially, initialize and 
+   #finalize. If an initialize method is defined, it will be invoked when an 
+   #object is generated from the class. See the discussion of method $new(...) 
+   #in the section “Reference Object Generators”.
+   #If a finalize method is defined, a function will be registered to invoke it #before the environment in the object is discarded by the garbage collector; #finalizers are registered with atexit=TRUE, and so are also run at the end #of R sessions. See the matrix viewer example for both initialize and #finalize methods.
+   finalize = function(){.self$node <- NULL}
+)
 
 
 #' Show the contents
