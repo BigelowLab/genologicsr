@@ -248,7 +248,8 @@ LimsRefClass$methods(
          uri <- trimuri(xml_atts(x)[['uri']])
          body <- xml_string(x)
       } else {
-         stop("LimsRefClass$PUT: x must be xmlNode or NodeRefClass")
+         cat("LimsRefClass$PUT: x must be xmlNode or NodeRefClass\n")
+         return(NULL)
       }
       r <- httr::PUT(uri,  
          ..., 
@@ -273,9 +274,10 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    POST = function(x, uri = NULL, asNode = FALSE, ...){
-      if (missing(x)) 
-         stop("LimsRefClass$POST x as XML::xmlNode or NodeRefClass is required")
-         
+      if (missing(x)) {
+         cat("LimsRefClass$POST x as XML::xmlNode or NodeRefClass is required\n")
+         return(NULL)
+      }
       if (inherits(x, 'NodeRefClass')){
          if (is.null(uri)) uri <- x$uri
          body <- x$toString()
@@ -306,7 +308,10 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    DELETE = function(x, ...){
-      if (missing(x)) stop("LimsRefClass$DELETE node is required")
+      if (missing(x)) {
+        cat("LimsRefClass$DELETE node is required\n")
+        return(NULL)
+      }
       
       if (inherits(x, "NodeRefClass")){
          uri <- x$uri
@@ -315,7 +320,8 @@ LimsRefClass$methods(
       } else if (inherits(x, 'character')) {
          uri <- trimuri(x)
       } else {
-         stop("LimsRefClass$DELETE: x must be xmlNode, character, or NodeRefClass")
+         cat("LimsRefClass$DELETE: x must be xmlNode, character, or NodeRefClass\n")
+         return(NULL)
       }
       r <- httr::DELETE(uri, 
          ...,
@@ -355,7 +361,10 @@ LimsRefClass$methods(
       
       stopifnot(inherits(x, 'ArtifactRefClass') || inherits(x, 'ProjectRefClass') )
       
-      if (!file.exists(filename[1])) stop("LimsRefClass$PUSH file not found:", filename[1])
+      if (!file.exists(filename[1])){
+          cat("LimsRefClass$PUSH file not found:", filename[1], "\n")
+          return(NULL)
+      }
       
       attached_to_uri <- trimuri(x[["uri"]])
       
@@ -474,13 +483,19 @@ LimsRefClass$methods(
       use = c("duck", "scp", "cp", "curl")[2]){
       
       if (inherits(x, 'NodeRefClass')){
-         if(!('ATTACH' %in% x$verbs)) stop("ATTACH is not a verb of this class", class(x))
+         if(!('ATTACH' %in% x$verbs)) {
+            cat("Lims$ATTACH is not a verb of this class", class(x), "\n")
+            return(invisible(NULL))
+         }
       } else {
-         stop("input must inherit from NodeRefClass")
+         cat("Lims$ATTACH input must inherit from NodeRefClass\n")
+         return(invisible(NULL))
       }
       
-      if (!file.exists(filename[1])) stop("LimsRefClass$ATTACH file not found:", filename[1])
-      
+      if (!file.exists(filename[1])) {
+         cat("LimsRefClass$ATTACH file not found:", filename[1], "\n")
+         return(NULL)
+      }
       attached_to_uri <- trimuri(x[["uri"]])
       
       # create an unresolved file resource
@@ -587,8 +602,10 @@ LimsRefClass$methods(
       if (!is.null(type)) queryl[['type']] <- type
       if (!is.null(state)) queryl[['state']] <- state
       if (!is.null(last_modified)) queryl[['last-modified']] <- last_modified
-      if(length(queryl) == 0) 
-         stop("LimsRefClass$get_containers please specify at least one or more of name, type, state or last_modified")
+      if(length(queryl) == 0) {
+         cat("LimsRefClass$get_containers please specify at least one or more of name, type, state or last_modified\n")
+         return(NULL)
+      }
       query <- build_query(queryl)
       x <- .self$GET(file.path(.self$baseuri, resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
@@ -693,8 +710,10 @@ LimsRefClass$methods(
       if (!is.null(container_name)) query[['container-name']] <- container_name
       if (!is.null(containerlimsid)) query[['containerlimsid']] <- containerlimsid
       if (!is.null(reagent_label)) query[['reagent-label']] <- reagent_label
-      if(length(query) == 0) 
-         stop("LimsRefClass$get_artifacts please specify at least one or more of search parameters")
+      if(length(query) == 0) {
+         cat("LimsRefClass$get_artifacts please specify at least one or more of search parameters\n")
+         return(NULL)
+      }
       query <- build_query(query)
       
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE) 
@@ -730,8 +749,10 @@ LimsRefClass$methods(
       if (!is.null(name)) query[['name']] <- name
       if (!is.null(projectlimsid)) query[['projectlimsid']] <- projectlimsid
       if (!is.null(projectname)) query[['projectname']] <- projectname
-      if(length(query) == 0) 
-         stop("LimsRefClass$get_samples please specify at least one or more of name, projectlimsid or projectname")
+      if(length(query) == 0) {
+         cat("LimsRefClass$get_samples please specify at least one or more of name, projectlimsid or projectname\n")
+         return(NULL)
+      }
       query <- build_query(query)
       x <- .self$GET(.self$uri(resource), query = query, asNode = FALSE)
       if (!is_exception(x)){
@@ -1030,8 +1051,10 @@ LimsRefClass$methods(
    batchretrieve = function(uri, 
       rel = c("artifacts", "samples", "containers", "files")[1], 
       rm_dups = TRUE, asNode = TRUE, ...){
-      if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) 
-         stop("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers")
+      if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) {
+         cat("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers\n")
+         return(NULL)
+      }
       if ((.self$version == "v1") && (rel %in% c('samples', 'files')) ){
          x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
       } else {
@@ -1077,14 +1100,19 @@ LimsRefClass$methods(
          orig_uri <- sapply(x, function(x) xml_atts(x)[['uri']])
       }
       ok <- sapply(x, is_xmlNode)
-      if (!all(ok)) 
-         stop("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass")
+      if (!all(ok)) {
+         cat("LimsRefClass$batchupdate: inputs must inherit xmlNode or NodeRefClass\n")
+         return(NULL)
+      }
       nm <- unique(sapply(x, xml_name))
-      if (length(nm) > 1) 
-         stop("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "))
-      if (!(nm %in% c("artifact", "sample", "container")))
-         stop("LimsRefClass$batchupdate: only artifact, sample and container types have batch update")
-
+      if (length(nm) > 1) {
+         cat("LimsRefClass$batchupdate: all nodes must be of the same type - ", paste(nm, collapse = " "), "\n")
+         return(NULL)
+      }
+      if (!(nm %in% c("artifact", "sample", "container"))){
+         cat("LimsRefClass$batchupdate: only artifact, sample and container types have batch update\n")
+         return(NULL)
+      }
     
       xx <- split_vector(x, MAX = .self$max_requests)
       
@@ -1104,7 +1132,8 @@ LimsRefClass$methods(
       ok <- new_uri %in% orig_uri
       
       if (!all(ok)){
-          stop(sprintf("batch/update failed to retrieve %i inputs", length(sum(!ok))))
+          cat(sprintf("batch/update failed to retrieve %i inputs", length(sum(!ok))), "\n")
+          return(NULL)
       } 
       
       ix <- match(orig_uri, new_uri)
@@ -1132,14 +1161,19 @@ LimsRefClass$methods(
          x <- lapply(x, "[[", node)
       }
       ok <- sapply(x, is_xmlNode)
-      if (!all(ok)) 
-         stop("LimsRefClass$batchcreate: inputs must inherit xmlNode or NodeRefClass")
+      if (!all(ok)) {
+         cat("LimsRefClass$batchcreate: inputs must inherit xmlNode or NodeRefClass\n")
+         return(NULL)
+      }
       nm <- unique(sapply(x, xml_name))
-      if (length(nm) > 1) 
-         stop("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
-      if (!(plural(nm[1]) %in% c("samples", "samplecreation", "containers")))
-         stop("LimsRefClass$batchcreate: only sample, and container types have batch create")
-      
+      if (length(nm) > 1) {
+         cat("LimsRefClass$batchcreate: all nodes must be of the same type - ", paste(nm, collapse = " "))
+         return(NULL)
+      }
+      if (!(plural(nm[1]) %in% c("samples", "samplecreation", "containers"))){
+         cat("LimsRefClass$batchcreate: only sample, and container types have batch create\n")
+         return(NULL)
+      }
       
       rel <- switch(plural(nm[1]),
         'samples' = 'samples',
@@ -1183,7 +1217,10 @@ batch_retrieve <- function(uri, lims,
    asList = TRUE,
    rm_dups = TRUE, ...){
    
-   if (length(uri) == 0) stop("batch_uri: uri has zero-length")
+   if (length(uri) == 0){
+        cat("batch_uri: uri has zero-length\n")
+        return(list())
+   }
    orig_uri <- uri
    # does the user want ALL including duplicates?
    # if so then save the IDs for later
@@ -1269,8 +1306,10 @@ batch_update <- function(x, lims, asNode = TRUE,
          'samples' = create_samples_details(x),
          NULL)
       
-    if (is.null(detail)) stop("batch_update: only artifact, sample and container types have batch update")
-    
+    if (is.null(detail)){ 
+        cat("batch_update: only artifact, sample and container types have batch update\n")
+        return(NULL)
+    }
     orig_uri <- sapply(x, function(x) xml_atts(x)[['uri']])
     
     URI <- lims$uri(paste0(rel, "/batch/update"))
@@ -1315,7 +1354,10 @@ batch_create <- function(x, lims, asNode = asNode,
          "samples" = create_samples_details(x),
          "samplecreation" = create_samples_details(x),
          NULL)
-      if (is.null(detail)) stop("batch_create: only sample and container types have batch create")
+      if (is.null(detail)){
+          cat("batch_create: only sample and container types have batch create\n")
+          return(NULL)
+      }
       
       real_rel <- switch(rel,
          "samplecreation" = "samples",
