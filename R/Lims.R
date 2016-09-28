@@ -389,7 +389,7 @@ LimsRefClass$methods(
          .self$auth)
       rbefore <- .self$check(rbefore)  
       
-      if (is_exception(rbefore)){ return(rbeforer)}
+      if (is_exception(rbefore)){ return(rbefore)}
       resolved_node <- parse_node(rbefore, .self)
       
       
