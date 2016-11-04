@@ -240,15 +240,18 @@ create_containers_details <- function(x, form = c("retrieve", "update", "create"
 #' @family Lims Container
 #' @param name character container name (optional)
 #' @param type_uri character uri of container type (required)
+#' @param state character generally Empty but possibly Populated, Discarded, or Depleted
 #' @return XML::xmlNode
-create_container_node <- function(type_uri, name = NULL){
+create_container_node <- function(type_uri, name = NULL, state = 'Empty'){
    
       if (missing(type_uri)) stop("create_project_node type uri is required")
       
       nmsp <- 'con'
       
       kids <- list(XML::newXMLNode("type", attrs = list('uri' = type_uri[1])))
-      if (!is.null(name)) kids <- append(kids, XML::newXMLNode("name", name[1]))
+      if (!is.null(name)) kids <- append(kids, 
+        XML::newXMLNode("name", name[1]),
+        XML::newXMLNode("state", state[1]) )
       
       XML::newXMLNode('container',
          namespace = nmsp,

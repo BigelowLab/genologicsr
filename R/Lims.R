@@ -1064,7 +1064,7 @@ LimsRefClass$methods(
                 batch_retrieve(x,.self, rel = rel[1], rm_dups = rm_dups)
             }))
          new_uri <- trimuri(sapply(x, function(x) xml_atts(x)[['uri']]))
-         ix <- match(uri, new_uri)
+         ix <- match(basename(uri), basename(new_uri))
          x <- x[ix]        
       }  
       if (asNode) {
@@ -1129,14 +1129,14 @@ LimsRefClass$methods(
           new_uri <- trimuri(sapply(rr, function(x) xml_atts(x)[['uri']]))
       }
       
-      ok <- new_uri %in% orig_uri
+      ok <- basename(new_uri) %in% basename(orig_uri)
       
       if (!all(ok)){
           cat(sprintf("batch/update failed to retrieve %i inputs", length(sum(!ok))), "\n")
           return(NULL)
       } 
       
-      ix <- match(orig_uri, new_uri)
+      ix <- match(basename(orig_uri), basename(new_uri))
       rr <- rr[ix]
       
       invisible(rr)

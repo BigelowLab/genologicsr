@@ -4,12 +4,14 @@
 \alias{create_container_node}
 \title{Create a container XML::xmlNode suitable for POSTing}
 \usage{
-create_container_node(type_uri, name = NULL)
+create_container_node(type_uri, name = NULL, state = "Empty")
 }
 \arguments{
 \item{type_uri}{character uri of container type (required)}
 
 \item{name}{character container name (optional)}
+
+\item{state}{character generally Empty but possibly Populated, Discarded, or Depleted}
 }
 \value{
 XML::xmlNode
