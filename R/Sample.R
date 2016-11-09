@@ -181,7 +181,7 @@ SampleRefClass$methods(
 #' 
 #' @export
 #' @param x one or more XML::xmlNode for sample or SampleRefClass objects
-#' @param a sample details XML:xmlNode node
+#' @return a sample details XML:xmlNode node
 create_samples_details <- function(x){
    
    if (inherits(x, "SampleRefClass")){

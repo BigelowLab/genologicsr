@@ -2,7 +2,6 @@
 % Please edit documentation in R/misc.R
 \name{xmlString}
 \alias{xmlString}
-\alias{xml_string}
 \title{Convert XML::xmlNode or NodeRefClass to character}
 \usage{
 xmlString(x)

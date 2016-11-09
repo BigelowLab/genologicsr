@@ -9,8 +9,9 @@ create_samples_details(x)
 }
 \arguments{
 \item{x}{one or more XML::xmlNode for sample or SampleRefClass objects}
-
-\item{a}{sample details XML:xmlNode node}
+}
+\value{
+a sample details XML:xmlNode node
 }
 \description{
 Create a sample details node assembled from one or more sample XML::xmlNode

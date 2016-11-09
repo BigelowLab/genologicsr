@@ -11,8 +11,9 @@ create_containers_details(x, form = c("retrieve", "update", "create"))
 \item{x}{one or more XML::xmlNode for container or ContainerRefClass objects}
 
 \item{form}{character}
-
-\item{a}{containers details XML:xmlNode node}
+}
+\value{
+a containers details XML:xmlNode node
 }
 \description{
 Create a containers details node assembled from one or more container XML::xmlNode

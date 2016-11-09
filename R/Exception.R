@@ -42,16 +42,18 @@ ExceptionRefClass <- setRefClass("ExceptionRefClass",
 #' Test XML::xmlNode or NodeRefClass is an exception
 #'
 #' @export
-#' @param node object to test
+#' @param x object to test
 #' @param space the namespace to test
+#' @param include_null logical, if TRUE assume that NULL is an exception
 #' @return logical
-is_exception <- function(x, space = 'exc'){
+is_exception <- function(x, space = 'exc', include_null = TRUE){
+
 
    if (inherits(x, "ExceptionRefClass")) return(TRUE)
-
    if (inherits(x, 'NodeRefClass')) x <- x$node
-   is_xmlNode(x) && ( ("exc" %in% names(XML::xmlNamespace(x)) ) ||
-     ("exception" %in% XML::xmlName(x)) )
+   if (include_null && is.null(x)) return(TRUE)
+   is_xmlNode(x) && 
+    ( ("exc" %in% names(XML::xmlNamespace(x)) ) || ("exception" %in% XML::xmlName(x)) )
 }
 
 
@@ -59,6 +61,7 @@ is_exception <- function(x, space = 'exc'){
 #' @export
 #' @param status numeric status code if known, set to -1 otherwise
 #' @param message character vector message
+#' @param category character the exception category if known 
 #' @return XML::xmlNode 
 create_exception_node = function(message = 'Unspecified exception',
     status = -1, category = 'unknown'){

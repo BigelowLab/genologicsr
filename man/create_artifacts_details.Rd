@@ -9,8 +9,9 @@ create_artifacts_details(x)
 }
 \arguments{
 \item{x}{one or more XML::xmlNode for artifacts or ArtifactRefClass objects}
-
-\item{a}{artifacts details XML:xmlNode node}
+}
+\value{
+a artifacts details XML:xmlNode node
 }
 \description{
 Create a artifacts details node assembled from one or more artifacts XML::xmlNode

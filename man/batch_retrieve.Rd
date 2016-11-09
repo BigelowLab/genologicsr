@@ -13,16 +13,16 @@ batch_retrieve(uri, lims, rel = c("artifacts", "containers", "files",
 
 \item{lims}{LimsRefClass object}
 
-\item{resource}{character}
+\item{rel}{charcater resource name}
+
+\item{resource}{character resource path}
 
 \item{asList}{logical, if TRUE return a named list of NodeRefClass objects}
 
-\item{...}{further arguments}
-
-\item{relative}{resource name}
-
-\item{all}{logical, by default we remove duplicates set this to TRUE to 
+\item{rm_dups}{logical, by default we remove duplicates set this to TRUE to 
 retrieve all, ignored if \code{asList = FALSE}}
+
+\item{...}{further arguments}
 }
 \value{
 a list of NodeRefClass

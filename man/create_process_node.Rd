@@ -17,8 +17,6 @@ create_process_node(type = "processTypeName", technician = "researcherURI",
 \item{instrument}{character, optional, the URI of the instrument}
 
 \item{...}{further arguments for \code{\link{newXMLNode}} including child nodes}
-
-\item{xmlns}{named character vector, see \code{\link{newXMLNode}}}
 }
 \value{
 xmlNode of type 'process'

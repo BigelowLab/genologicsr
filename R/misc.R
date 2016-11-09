@@ -56,7 +56,6 @@ is_xmlNode <- function(x, classname = 'XMLAbstractNode'){
 
 #' Convert XML::xmlNode or NodeRefClass to character
 #' 
-#' @aliases xml_string
 #' @export
 #' @param x xmlNode or NodeRefClass
 #' @return character
@@ -71,7 +70,6 @@ xmlString <- function(x){
 
 #' Convert XML::xmlNode or NodeRefClass to character
 #' 
-#' @aliases xmlString
 #' @export
 #' @param x xmlNode or NodeRefClass
 #' @return character
@@ -84,7 +82,7 @@ xml_string <- function(x){
 #' @export
 #' @param x XML::xmlNode with a value
 #' @param ... further arguments for \code{XML::xmlName()}
-#' @param the name of the node
+#' @return the name of the node
 xml_name  <- function(x, ...){
     XML::xmlName(x, ...)
 }
@@ -94,7 +92,7 @@ xml_name  <- function(x, ...){
 #' @export
 #' @param x XML::xmlNode with a value
 #' @param ... further arguments for \code{XML::xmlValue()}
-#' @param the value of the node
+#' @return the value of the node
 xml_value  <- function(x, ...){
     XML::xmlValue(x, ...)
 }
@@ -104,7 +102,7 @@ xml_value  <- function(x, ...){
 #' @export
 #' @param x XML::xmlNode with attributes
 #' @param ... further arguments for \code{XML::xmlAttrs()}
-#' @param character vector of the attributes
+#' @return character vector of the attributes
 xml_atts  <- function(x, ...){
     XML::xmlAttrs(x, ...)
 }
@@ -136,13 +134,13 @@ build_config_path <- function(
 }
 
 #' Read a configuration file
+#'
 #' @param filename the name of the file
-#' @return a name list with one element per section
-#'  each section, in turn is a named list
+#' @return a name list with one element per section each section, in turn is a named list
 read_config = function(filename){
-   #' Parse lines of text
-   #' @param x the line(s) of text in the form of tag value pairs
-   #' @return named character vector of tag1 = value1, tag2 = value2, ...
+   # Parse lines of text
+   # @param x the line(s) of text in the form of tag value pairs
+   # @return named character vector of tag1 = value1, tag2 = value2, ...
    parse_config_line <- function(x){
     pat <- '[=:]'
     ix <- regexpr(pat, x)

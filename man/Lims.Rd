@@ -8,6 +8,8 @@ Lims(configfile = build_config_path(), max_requests = 200)
 }
 \arguments{
 \item{configfile}{character, the fully qualified path to the config file}
+
+\item{max_requests}{numeric the maximum number of requests to bundle}
 }
 \value{
 a LimsRefClass instance or NULL

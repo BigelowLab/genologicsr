@@ -11,6 +11,8 @@ create_exception_node(message = "Unspecified exception", status = -1,
 \item{message}{character vector message}
 
 \item{status}{numeric status code if known, set to -1 otherwise}
+
+\item{category}{character the exception category if known}
 }
 \value{
 XML::xmlNode

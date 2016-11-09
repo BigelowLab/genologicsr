@@ -4,7 +4,8 @@
 \alias{scp_upload}
 \title{Upload a file using scp.}
 \usage{
-scp_upload(filename, url, username = "foo", password = "bar")
+scp_upload(filename, url, username = "foo", password = "bar",
+  verbose = FALSE)
 }
 \arguments{
 \item{filename}{the fully qualified filename of file to upload}
@@ -14,6 +15,8 @@ scp_upload(filename, url, username = "foo", password = "bar")
 \item{username}{the username (required)}
 
 \item{password}{the password (required)}
+
+\item{verbose}{logical, if TRUE then echo the command string}
 }
 \value{
 integer 0 for success

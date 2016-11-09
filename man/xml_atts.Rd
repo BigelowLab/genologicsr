@@ -10,8 +10,9 @@ xml_atts(x, ...)
 \item{x}{XML::xmlNode with attributes}
 
 \item{...}{further arguments for \code{XML::xmlAttrs()}}
-
-\item{character}{vector of the attributes}
+}
+\value{
+character vector of the attributes
 }
 \description{
 Extract the attributes from a simple XML::xmlNode object

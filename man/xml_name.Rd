@@ -10,8 +10,9 @@ xml_name(x, ...)
 \item{x}{XML::xmlNode with a value}
 
 \item{...}{further arguments for \code{XML::xmlName()}}
-
-\item{the}{name of the node}
+}
+\value{
+the name of the node
 }
 \description{
 Extract the name from a simple XML::xmlNode object

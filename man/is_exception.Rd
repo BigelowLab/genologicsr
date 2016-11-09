@@ -4,12 +4,14 @@
 \alias{is_exception}
 \title{Test XML::xmlNode or NodeRefClass is an exception}
 \usage{
-is_exception(x, space = "exc")
+is_exception(x, space = "exc", include_null = TRUE)
 }
 \arguments{
+\item{x}{object to test}
+
 \item{space}{the namespace to test}
 
-\item{node}{object to test}
+\item{include_null}{logical, if TRUE assume that NULL is an exception}
 }
 \value{
 logical

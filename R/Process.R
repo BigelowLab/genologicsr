@@ -283,7 +283,6 @@ ProcessRefClass$methods(
 #' @param technician character,the uri of the technician
 #' @param dateRun character, the date of the run
 #' @param instrument character, optional, the URI of the instrument
-#' @param xmlns named character vector, see \code{\link{newXMLNode}}
 #' @param ... further arguments for \code{\link{newXMLNode}} including child nodes
 #' @return xmlNode of type 'process'
 create_process_node <- function(type = "processTypeName",

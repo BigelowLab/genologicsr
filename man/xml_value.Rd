@@ -10,8 +10,9 @@ xml_value(x, ...)
 \item{x}{XML::xmlNode with a value}
 
 \item{...}{further arguments for \code{XML::xmlValue()}}
-
-\item{the}{value of the node}
+}
+\value{
+the value of the node
 }
 \description{
 Extract the value from a simple XML::xmlNode object

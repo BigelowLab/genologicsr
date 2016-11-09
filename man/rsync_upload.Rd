@@ -5,7 +5,7 @@
 \title{Upload a local file using rsync.}
 \usage{
 rsync_upload(filename, url, username = "foo", password = "bar",
-  extra = "-q")
+  extra = "-q", verbose = FALSE)
 }
 \arguments{
 \item{filename}{the fully qualified filename of file to upload}
@@ -17,6 +17,8 @@ rsync_upload(filename, url, username = "foo", password = "bar",
 \item{password}{the password (required)}
 
 \item{extra}{character extra params for scp, currently "-q"}
+
+\item{verbose}{logical, if TRUE then echo the command string}
 }
 \value{
 integer 0 for success

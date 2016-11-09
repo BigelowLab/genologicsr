@@ -92,8 +92,10 @@ rsync_download <- function(url, dest,
 #' @param username the username (required)
 #' @param password the password (required)
 #' @param extra character extra params for scp, currently "-q"
+#' @param verbose logical, if TRUE then echo the command string
 #' @return integer 0 for success
-rsync_upload <- function(filename, url, username = "foo", password = "bar", extra = '-q'){
+rsync_upload <- function(filename, url, username = "foo", password = "bar", extra = '-q',
+    verbose = FALSE){
 
    stopifnot(has_rsync())
    stopifnot(!missing(filename))
@@ -191,8 +193,10 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
 #' @param url the destination url
 #' @param username the username (required)
 #' @param password the password (required)
+#' @param verbose logical, if TRUE then echo the command string
 #' @return integer 0 for success
-scp_upload <- function(filename, url, username = "foo", password = "bar"){
+scp_upload <- function(filename, url, username = "foo", password = "bar",
+    verbose = FALSE){
 
    stopifnot(has_scp())
    stopifnot(!missing(filename) && !missing(url))
@@ -240,8 +244,10 @@ has_duck <- function() {
 #' @param url the destination url
 #' @param username the username (required)
 #' @param password the password (required)
+#' @param verbose logical if TRUE echo the command
 #' @return integer 0 for success
-duck_upload <- function(filename, url, username = "foo", password = "bar"){
+duck_upload <- function(filename, url, username = "foo", password = "bar", 
+    verbose = FALSE){
 
    stopifnot(has_duck())
    stopifnot(!missing(filename) && !missing(url))

@@ -8,15 +8,9 @@ read_config(filename)
 }
 \arguments{
 \item{filename}{the name of the file}
-
-\item{x}{the line(s) of text in the form of tag value pairs}
 }
 \value{
-a name list with one element per section
- each section, in turn is a named list
-Parse lines of text
-
-named character vector of tag1 = value1, tag2 = value2, ...
+a name list with one element per section each section, in turn is a named list
 }
 \description{
 Read a configuration file

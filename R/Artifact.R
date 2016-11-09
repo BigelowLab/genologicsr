@@ -266,7 +266,7 @@ create_artifacts_links <- function(x){
 #' 
 #' @export
 #' @param x one or more XML::xmlNode for artifacts or ArtifactRefClass objects
-#' @param a artifacts details XML:xmlNode node
+#' @return a artifacts details XML:xmlNode node
 create_artifacts_details <- function(x){
    
    if (!is.list(x)) x <- list(x)

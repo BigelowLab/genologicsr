@@ -215,7 +215,7 @@ ContainerRefClass$methods(
 #' @export
 #' @param x one or more XML::xmlNode for container or ContainerRefClass objects
 #' @param form character
-#' @param a containers details XML:xmlNode node
+#' @return a containers details XML:xmlNode node
 create_containers_details <- function(x, form = c("retrieve", "update", "create") ){
    
    if (!is.list(x)) x <- list(x)

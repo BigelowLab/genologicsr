@@ -1,5 +1,5 @@
 Package: genologicsr
-Title: A simplified interface between XML nodes and the Genologics RESTful API.
+Title: A simplified interface between XML nodes and the Genologics RESTful API
 Description: Provides a uniform interface for negotiating the Genologics
     API model after SciLifLabs Python interface https://github.com/SciLifeLab/
     genologics.
@@ -9,7 +9,8 @@ Depends:
 Imports:
     methods,
     XML,
-    httr
+    httr,
+    curl
 Maintainer: Ben Tupper <btupper@bigelow.org>
 Author: Ben Tupper <btupper@bigelow.org>
 License: GPL (>= 2)

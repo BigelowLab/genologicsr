@@ -4,7 +4,8 @@
 \alias{duck_upload}
 \title{Upload a file using duck}
 \usage{
-duck_upload(filename, url, username = "foo", password = "bar")
+duck_upload(filename, url, username = "foo", password = "bar",
+  verbose = FALSE)
 }
 \arguments{
 \item{filename}{the fully qualified filename of file to upload}
@@ -14,6 +15,8 @@ duck_upload(filename, url, username = "foo", password = "bar")
 \item{username}{the username (required)}
 
 \item{password}{the password (required)}
+
+\item{verbose}{logical if TRUE echo the command}
 }
 \value{
 integer 0 for success

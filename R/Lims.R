@@ -127,7 +127,7 @@ LimsRefClass$methods(
       ok <- stat_code %in% c(OK = 200, Created = 201, Accepted = 202)
       if (!ok){
           stat_info <- httr::http_status(stat_code)
-          msg <- xml2::xml_text(content(rsp, encoding = .self$encoding))
+          msg <- xml2::xml_text(httr::content(rsp, encoding = .self$encoding))
           x <- .self$create_exception(message = c(stat_info[['message']], msg), status = stat_code)
           return(invisible(x))
       }
@@ -1204,10 +1204,10 @@ LimsRefClass$methods(
 #' @export
 #' @param uri character vector of one or more uri
 #' @param lims LimsRefClass object
-#' @param relative resource name
-#' @param resource character
+#' @param rel charcater resource name
+#' @param resource character resource path
 #' @param asList logical, if TRUE return a named list of NodeRefClass objects
-#' @param all logical, by default we remove duplicates set this to TRUE to 
+#' @param rm_dups logical, by default we remove duplicates set this to TRUE to 
 #'  retrieve all, ignored if \code{asList = FALSE}
 #' @param ... further arguments
 #' @return a list of NodeRefClass
@@ -1496,6 +1496,7 @@ parse_node <- function(node, lims){
 #'
 #' @export
 #' @param configfile character, the fully qualified path to the config file
+#' @param max_requests numeric the maximum number of requests to bundle
 #' @return a LimsRefClass instance or NULL
 Lims <- function(configfile = build_config_path(),
     max_requests = 200){
