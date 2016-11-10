@@ -4,12 +4,21 @@
 \alias{Lims}
 \title{Instantiate a LimsRefClass object}
 \usage{
-Lims(configfile = build_config_path(), max_requests = 200)
+Lims(configfile = build_config_path(), max_requests = c(artifacts = 200,
+  containers = 50, samples = 400, files = 100))
 }
 \arguments{
 \item{configfile}{character, the fully qualified path to the config file}
 
-\item{max_requests}{numeric the maximum number of requests to bundle}
+\item{max_requests}{numeric named vector of the maximum number of requests to 
+ per batch request bundle. Defaults are below.  Set values to 1 to disable
+ batch operations for that namespace.
+\itemize{
+     \item{artifacts = 200}
+     \item{containers = 50}
+     \item{samples = 400}
+     \item{files = 100}
+ }}
 }
 \value{
 a LimsRefClass instance or NULL

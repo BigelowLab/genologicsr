@@ -8,6 +8,15 @@
 #' @field fileauth httr::authenticate object for filestore
 #' @field handle httr::handle object - accessor function provides a fresh handle
 #'   for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/64194_2282137119ca48e1893054091456fe43.html#on-re-using-handles}
+#' @field max_requests 4 element named numeric vector specifying the maximum
+#'  number of requests per batch operation.  Defaults are below.  Set values to 
+#'  1 to disable batch operations for that namespace.
+#' \itemize{
+#'      \item{artifacts = 200}
+#'      \item{containers = 50}
+#'      \item{samples = 400}
+#'      \item{files = 100}
+#'  }
 #' @include Node.R
 #' @export
 LimsRefClass <- setRefClass('LimsRefClass',
@@ -1055,10 +1064,10 @@ LimsRefClass$methods(
          cat("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers\n")
          return(NULL)
       }
-      if ((.self$version == "v1") && (rel %in% c('samples', 'files')) ){
+      if ((.self$get_max_requests(rel) <= 1 ) || ((.self$version == "v1") && (rel %in% c('samples', 'files'))) ){
          x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
       } else {
-         uri2 <- split_vector(uri, MAX = .self$max_requests)
+         uri2 <- split_vector(uri, MAX = .self$get_max_requests(rel))
          x <- unlist(lapply(uri2,
             function(x){
                 batch_retrieve(x,.self, rel = rel[1], rm_dups = rm_dups)
@@ -1113,8 +1122,8 @@ LimsRefClass$methods(
          cat("LimsRefClass$batchupdate: only artifact, sample and container types have batch update\n")
          return(NULL)
       }
-    
-      xx <- split_vector(x, MAX = .self$max_requests)
+      
+      xx <- split_vector(x, MAX = .self$get_max_requests(nm))
       
       rr <- lapply(xx, 
         function(x, lims = NULL, asNode = TRUE, rel = "") { 
@@ -1181,7 +1190,7 @@ LimsRefClass$methods(
         'samplecreation' = 'samples',
         NULL)
 
-      rr <- lapply(split_vector(x, MAX = .self$max_requests),
+      rr <- lapply(split_vector(x, MAX = .self$get_max_requests(rel)),
           function(x, lims = NULL, asNode = TRUE, rel = ""){
               batch_create(x, lims, asNode = asNode, rel = rel)
           }, lims = .self, asNode = asNode, rel = rel)
@@ -1191,7 +1200,19 @@ LimsRefClass$methods(
    })
 
 
-
+#' Retrieve the max requests vakue by name
+#' 
+#' @name LimsRefClass_get_max_requests
+#' @param name character the namespace to retrieve singualr or plural forms
+#'  of artifacts, samples, containers or files
+#' @return numeric, the max requests per batch call
+NULL
+LimsRefClass$methods(
+    get_max_requests = function(name = 'artifacts'){
+        pname <- plural(name[1])
+        .self$max_requests[pname]
+    })
+    
 #### methods above
 #### functions below
 
@@ -1491,15 +1512,22 @@ parse_node <- function(node, lims){
 
 }
 
-
 #' Instantiate a LimsRefClass object
 #'
 #' @export
 #' @param configfile character, the fully qualified path to the config file
-#' @param max_requests numeric the maximum number of requests to bundle
+#' @param max_requests numeric named vector of the maximum number of requests to 
+#'  per batch request bundle. Defaults are below.  Set values to 1 to disable
+#'  batch operations for that namespace.
+#' \itemize{
+#'      \item{artifacts = 200}
+#'      \item{containers = 50}
+#'      \item{samples = 400}
+#'      \item{files = 100}
+#'  }
 #' @return a LimsRefClass instance or NULL
 Lims <- function(configfile = build_config_path(),
-    max_requests = 200){
+    max_requests = c(artifacts = 200, containers = 50, samples = 400, files = 100)){
    if (!file.exists(configfile[1])) stop("configfile not found:", configfile[1])
    x <- try(read_config(configfile[1]))
    if (inherits(x, "try-error")) stop("Error reading config file")
@@ -1519,7 +1547,7 @@ Lims <- function(configfile = build_config_path(),
       httr::authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
                    get_config(x, "glsfilestore", "PASSWORD", default = "") 
       ) )   
-   X$field('max_requests', max_requests[1])
+   X$field('max_requests', max_requests)
    if (!X$validate_session()) {
       warning("API session failed validation")
    } 

@@ -21,6 +21,16 @@ Reference class for Lims instance
 
 \item{\code{handle}}{httr::handle object - accessor function provides a fresh handle
 for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/64194_2282137119ca48e1893054091456fe43.html#on-re-using-handles}}
+
+\item{\code{max_requests}}{4 element named numeric vector specifying the maximum
+ number of requests per batch operation.  Defaults are below.  Set values to 
+ 1 to disable batch operations for that namespace.
+\itemize{
+     \item{artifacts = 200}
+     \item{containers = 50}
+     \item{samples = 400}
+     \item{files = 100}
+ }}
 }}
 \seealso{
 Other Lims: \code{\link{LimsRefClass_ATTACH}},
