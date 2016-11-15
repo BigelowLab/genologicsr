@@ -28,7 +28,12 @@ LimsRefClass <- setRefClass('LimsRefClass',
       fileauth = 'ANY',
       handle = 'ANY',
       max_requests = 'numeric',
-      timeout = 'integer')
+      timeout = 'integer'),
+   methods = list(
+     initialize = function(){
+        .self$field("max_requests", c(artifacts = 200, containers = 50, samples = 400, files = 100))
+    })
+    
 )  
 
 
@@ -1212,7 +1217,34 @@ LimsRefClass$methods(
         pname <- plural(name[1])
         .self$max_requests[pname]
     })
-    
+  
+#' Set the max requests value by name
+#' 
+#' @name LimsRefClass_set_max_requests
+#' @param value numeric named vector of values to set.  Here are the defaults
+#'  \itemize{
+#'      \item{artifacts = 200}
+#'      \item{containers = 50}
+#'      \item{samples = 400}
+#'      \item{files = 100}
+#'  }
+#' @return numeric, the max requests per batch call
+NULL
+LimsRefClass$methods(
+    set_max_requests = function(
+        values = .self$get_max_requests()
+        ){
+        
+        allowed <- c('artifacts','containers', 'samples', 'files')
+        if (!all(names(values) %in% allowed)) {
+            cat("names of values must be one or more of 'artifacts','containers', 'samples' and/or 'files'\n")
+            return(max_requests)
+        }
+        
+        for (n in names(values)) .self$max_requests[n] <- values[[n]]
+        invisible(.self$max_requests)
+    })
+      
 #### methods above
 #### functions below
 
@@ -1547,7 +1579,7 @@ Lims <- function(configfile = build_config_path(),
       httr::authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
                    get_config(x, "glsfilestore", "PASSWORD", default = "") 
       ) )   
-   X$field('max_requests', max_requests)
+   X$set_max_requests(max_requests)
    if (!X$validate_session()) {
       warning("API session failed validation")
    } 
