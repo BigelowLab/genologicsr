@@ -248,10 +248,10 @@ create_container_node <- function(type_uri, name = NULL, state = 'Empty'){
       
       nmsp <- 'con'
       
-      kids <- list(XML::newXMLNode("type", attrs = list('uri' = type_uri[1])))
-      if (!is.null(name)) kids <- append(kids, 
-        XML::newXMLNode("name", name[1]),
-        XML::newXMLNode("state", state[1]) )
+      kids <- list(
+        XML::newXMLNode("type", attrs = list('uri' = type_uri[1])),
+        XML::newXMLNode("state", state[1]))
+      if (!is.null(name)) kids <- append(kids, XML::newXMLNode("name", name[1]))
       
       XML::newXMLNode('container',
          namespace = nmsp,
