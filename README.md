@@ -24,7 +24,7 @@ As with [genologics](https://github.com/SciLifeLab/genologics) a  configuration 
 Create a file, such as `~/.clarityrc` with the contents below and edit appropriately for your platform.
 
 ```
-# edit as needed [genologics] section is required anyhting else is optional
+# edit as needed [genologics] section is required anything else is optional
 [genologics]
 BASEURI=http://my-server.my.host.org:8080
 USERNAME=user
@@ -33,6 +33,11 @@ VERSION=v2
 [glsfilestore]
 USERNAME=anotheruser
 PASSWORD=anotherpassword
+[max_requests]
+samples=300
+artifacts=300
+files=100
+containers=2
 ```
 
 It's easy to install using Hadley Wickham's [devtools](http://cran.r-project.org/web/packages/devtools/index.html).

@@ -26,9 +26,9 @@ for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/6
  number of requests per batch operation.  Defaults are below.  Set values to 
  1 to disable batch operations for that namespace.
 \itemize{
-     \item{artifacts = 200}
+     \item{artifacts = 300}
      \item{containers = 50}
-     \item{samples = 400}
+     \item{samples = 300}
      \item{files = 100}
  }}
 }}

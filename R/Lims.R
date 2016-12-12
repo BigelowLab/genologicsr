@@ -12,9 +12,9 @@
 #'  number of requests per batch operation.  Defaults are below.  Set values to 
 #'  1 to disable batch operations for that namespace.
 #' \itemize{
-#'      \item{artifacts = 200}
+#'      \item{artifacts = 300}
 #'      \item{containers = 50}
-#'      \item{samples = 400}
+#'      \item{samples = 300}
 #'      \item{files = 100}
 #'  }
 #' @include Node.R
@@ -31,7 +31,11 @@ LimsRefClass <- setRefClass('LimsRefClass',
       timeout = 'integer'),
    methods = list(
      initialize = function(){
-        .self$field("max_requests", c(artifacts = 200, containers = 50, samples = 400, files = 100))
+        .self$field("max_requests", 
+            c(artifacts = 300, 
+            containers = 50, 
+            samples = 300,
+            files = 100))
     })
     
 )  
@@ -1069,7 +1073,9 @@ LimsRefClass$methods(
          cat("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers\n")
          return(NULL)
       }
-      if ((.self$get_max_requests(rel) <= 1 ) || ((.self$version == "v1") && (rel %in% c('samples', 'files'))) ){
+      if ((.self$get_max_requests(rel) <= 1 ) || 
+         ((.self$version == "v1") && 
+         (rel %in% c('samples', 'files'))) ){
          x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
       } else {
          uri2 <- split_vector(uri, MAX = .self$get_max_requests(rel))
@@ -1548,18 +1554,8 @@ parse_node <- function(node, lims){
 #'
 #' @export
 #' @param configfile character, the fully qualified path to the config file
-#' @param max_requests numeric named vector of the maximum number of requests to 
-#'  per batch request bundle. Defaults are below.  Set values to 1 to disable
-#'  batch operations for that namespace.
-#' \itemize{
-#'      \item{artifacts = 200}
-#'      \item{containers = 50}
-#'      \item{samples = 400}
-#'      \item{files = 100}
-#'  }
 #' @return a LimsRefClass instance or NULL
-Lims <- function(configfile = build_config_path(),
-    max_requests = c(artifacts = 200, containers = 50, samples = 400, files = 100)){
+Lims <- function(configfile = build_config_path()){
    if (!file.exists(configfile[1])) stop("configfile not found:", configfile[1])
    x <- try(read_config(configfile[1]))
    if (inherits(x, "try-error")) stop("Error reading config file")
@@ -1579,7 +1575,11 @@ Lims <- function(configfile = build_config_path(),
       httr::authenticate(get_config(x, "glsfilestore", "USERNAME", default = ""),
                    get_config(x, "glsfilestore", "PASSWORD", default = "") 
       ) )   
-   X$set_max_requests(max_requests)
+   if (!is.null(x[['max_requests']])){
+      b <- X$max_requests
+      for (n in names(b)) b[n] <- as.numeric(get_config(x, n, default = b[n]))
+      X$set_max_requests(b)
+   }
    if (!X$validate_session()) {
       warning("API session failed validation")
    } 

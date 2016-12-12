@@ -128,7 +128,6 @@ xml_atts  <- function(x, ...){
 build_config_path <- function(
     hostname = system('hostname', intern = TRUE),
     path = "~"){
-    
     x <- strsplit(hostname, ".", fixed = TRUE)[[1]][1]
     file.path(path, paste0(".", x, "-rc"))
 }
