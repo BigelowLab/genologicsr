@@ -51,6 +51,9 @@ LimsRefClass$methods(
       cat(prefix, "  Lims version: ", .self$version, "\n", sep = "")
       cat(prefix, "  Lims baseuri: ", .self$baseuri, "\n", sep = "")
       cat(prefix, "  Lims valid session: ", .self$validate_session(), "\n", sep = "")
+      nm <- names(.self$max_requests)
+      s <- paste(paste0(nm, " = ", .self$max_requests), collapse = ", ")
+      cat(prefix, "  Lims max_requests: ", s, "\n", sep = "")
    }) # show
 
 
@@ -1577,7 +1580,7 @@ Lims <- function(configfile = build_config_path()){
       ) )   
    if (!is.null(x[['max_requests']])){
       b <- X$max_requests
-      for (n in names(b)) b[n] <- as.numeric(get_config(x, n, default = b[n]))
+      for (n in names(b)) b[n] <- as.numeric(get_config(x, "max_requests", n, default = b[n]))
       X$set_max_requests(b)
    }
    if (!X$validate_session()) {
