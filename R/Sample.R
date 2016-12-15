@@ -8,6 +8,7 @@
 #' @field date_received character, "YYYY-mm-dd"
 #' @field date_completed character, "YYYY-mm-dd"
 #' @field biosource character, ummmm...
+#' @field artifact ArtifactRefClass - populated upon invocation of get_artifact
 #' @include Node.R
 #' @export
 SampleRefClass <- setRefClass("SampleRefClass",
@@ -17,7 +18,8 @@ SampleRefClass <- setRefClass("SampleRefClass",
       type = 'character',
       date_received = 'character',
       date_completed = 'character',
-      biosource = 'character'
+      biosource = 'character',
+      artifact = 'ANY'
       ),
    methods = list(
       initialize = function(...){
@@ -106,7 +108,11 @@ SampleRefClass$methods(
       .self$lims$get_artifacts(samplelimsid = .self$limsid)
    }) 
      
-#' Get artifact as uri or Node
+#' Get artifact as uri or Node.  It is possible that ArtifactRefClass
+#'  already exists in the artifact field - this allows for repeated low cost
+#'  requests for artifact.
+#'
+#' According to \url{http://www.genologics.com/files/permanent/API/latest/data_smp.html#sample} A Sample retrieved by GET will have an Artifact.
 #' 
 #' @family Sample
 #' @name SampleRefClass_get_artifact
@@ -115,21 +121,46 @@ SampleRefClass$methods(
 NULL
 SampleRefClass$methods(
    get_artifact = function(form = c("Node", "uri")[2]){
-      if (!.self$has_child("artifact")){
-         if(tolower(form) == "uri") {
-            x <- ""
+      #if (!.self$has_child("artifact")){
+      #   if(tolower(form) == "uri") {
+      #      x <- ""
+      #   } else {
+      #      x <- NULL
+      #   }
+      #} else {
+         as_node <- tolower(form[1]) == 'node'
+         if (inherits(.self$artifact, "ArtifactReClass")){
+            x <- if(as_node) .self$artifact else .self$artifact$uri
          } else {
-            x <- NULL
+            x <- try(xml_atts(.self$node[['artifact']]))
+            if (!inherits(x, 'try-error')){
+                x <- trimuri(x[['uri']])
+                if (as_node) 
+                    .self$artifact <- x <- .self$lims$GET(x, asNode = TRUE)
+            } else {
+                x <- if(as_node) NULL else ""
+            }
          }
-      } else {
-         x <- trimuri(xml_atts(.self$node[['artifact']])[['uri']])
-         if (tolower(form) == "node") x <- .self$lims$GET(x, asNode = TRUE)
-         
-      }
+      #}
       invisible(x)
    })  
 
 
+#' Get location as 'containerName_placement'
+#'
+#' @family Sample
+#' @name SampleRefClass_get_location
+#' @param ... further arguments for ArtifactRefClass_get_location
+#' @param character string, possibly empty
+NULL
+SampleRefClass$methods(
+    get_location = function (...){
+        A = .self$get_artifact(form = 'Node')
+        loc = ""
+        if (!is.null(A)) loc = A$get_lcoation(...)
+        loc
+    })
+    
 #' Get the sample container as uri or NodeRefClass
 #' 
 #' @family Sample

@@ -2,7 +2,9 @@
 % Please edit documentation in R/Sample.R
 \name{SampleRefClass_get_artifact}
 \alias{SampleRefClass_get_artifact}
-\title{Get artifact as uri or Node}
+\title{Get artifact as uri or Node.  It is possible that ArtifactRefClass
+ already exists in the artifact field - this allows for repeated low cost
+ requests for artifact.}
 \arguments{
 \item{form}{character either "Node" or "uri"}
 }
@@ -10,12 +12,13 @@
 character of NodeRefClass, possibly "" or NULL
 }
 \description{
-Get artifact as uri or Node
+According to \url{http://www.genologics.com/files/permanent/API/latest/data_smp.html#sample} A Sample retrieved by GET will have an Artifact.
 }
 \seealso{
 Other Sample: \code{\link{SampleRefClass_get_all_artifacts}},
   \code{\link{SampleRefClass_get_biosource}},
   \code{\link{SampleRefClass_get_container}},
+  \code{\link{SampleRefClass_get_location}},
   \code{\link{SampleRefClass_get_project}},
   \code{\link{SampleRefNode_DELETE}},
   \code{\link{SampleRefNode_POST}}

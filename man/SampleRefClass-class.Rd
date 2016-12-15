@@ -20,6 +20,8 @@ A Sample representation that subclasses from NodeRefClass
 \item{\code{date_completed}}{character, "YYYY-mm-dd"}
 
 \item{\code{biosource}}{character, ummmm...}
+
+\item{\code{artifact}}{ArtifactRefClass - populated upon invocation of get_artifact}
 }}
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},

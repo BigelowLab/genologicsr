@@ -16,6 +16,7 @@ Get the sample container as uri or NodeRefClass
 Other Sample: \code{\link{SampleRefClass_get_all_artifacts}},
   \code{\link{SampleRefClass_get_artifact}},
   \code{\link{SampleRefClass_get_biosource}},
+  \code{\link{SampleRefClass_get_location}},
   \code{\link{SampleRefClass_get_project}},
   \code{\link{SampleRefNode_DELETE}},
   \code{\link{SampleRefNode_POST}}
