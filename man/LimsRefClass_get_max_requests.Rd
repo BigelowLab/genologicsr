@@ -2,7 +2,7 @@
 % Please edit documentation in R/Lims.R
 \name{LimsRefClass_get_max_requests}
 \alias{LimsRefClass_get_max_requests}
-\title{Retrieve the max requests vakue by name}
+\title{Retrieve the max requests value by name}
 \arguments{
 \item{name}{character the namespace to retrieve singualr or plural forms
 of artifacts, samples, containers or files}
@@ -11,6 +11,6 @@ of artifacts, samples, containers or files}
 numeric, the max requests per batch call
 }
 \description{
-Retrieve the max requests vakue by name
+Retrieve the max requests value by name
 }
 

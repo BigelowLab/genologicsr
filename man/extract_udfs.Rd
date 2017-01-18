@@ -7,7 +7,7 @@
 extract_udfs(x)
 }
 \arguments{
-\item{x}{XML::xmlNode possibly bearing udf fields}
+\item{x}{XML::xmlNode or NodeRefClass possibly bearing udf fields}
 }
 \value{
 a named list of lists where each sublist is comprised of 

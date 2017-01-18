@@ -107,7 +107,7 @@ check_type <- function(typ, value){
 #' 
 #' @export
 #' @family Node Udf
-#' @param x XML::xmlNode possibly bearing udf fields
+#' @param x XML::xmlNode or NodeRefClass possibly bearing udf fields
 #' @return a named list of lists where each sublist is comprised of 
 #'    \itemize{
 #'       \item name character
@@ -116,6 +116,7 @@ check_type <- function(typ, value){
 #'    }
 #'  Or empty list if the xmlNode has no fields
 extract_udfs <- function(x){
+   if(inherits(x, 'NodeRefClass')) x <- x$node
    stopifnot(is_xmlNode(x))
    ff <- x['field']
    if (is.null(ff)){

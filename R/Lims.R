@@ -636,6 +636,7 @@ LimsRefClass$methods(
          x <- lapply(x, function(x) ContainerRefClass$new(x, .self))
          names(x) <- sapply(x, '[[', 'name')
       }
+      if (inherits(x, "list")) class(x) <- append(class(x), "ContainerSet")
       invisible(x)
    })
 
@@ -662,7 +663,7 @@ LimsRefClass$methods(
       } else {
          x <- NULL
       }
-
+      if (inherits(x, "list")) class(x) <- append(class(x), "ContainerTypeSet")
       invisible(x)
    })
 
@@ -690,7 +691,7 @@ LimsRefClass$methods(
       } else {
          x <- NULL
       }
-
+      if (inherits(x, "list")) class(x) <- append(class(x), "ArtifactGroupSet")
       invisible(x)
    })
 
@@ -746,6 +747,7 @@ LimsRefClass$methods(
          x <- .self$batchretrieve(uri, rel = 'artifacts')
          names(x) <- sapply(x, '[[', 'name')
       }
+      if (inherits(x, "list")) class(x) <- append(class(x), "ArtifactSet")
       invisible(x)
 
    }) # get_artifacts
@@ -789,6 +791,7 @@ LimsRefClass$methods(
          }
          names(x) <- sapply(x, '[[', 'name')
       }
+      if (inherits(x, "list")) class(x) <- append(class(x), "SampleSet")
       invisible(x)
    })
 
@@ -821,6 +824,8 @@ LimsRefClass$methods(
             type = sapply(x, function(x) x$type),
             stringsAsFactors = FALSE)
       }
+      if (inherits(x, "list")) class(x) <- append(class(x), "InstrumentSet")
+
       invisible(x)
    }) # get_instruments
 
@@ -906,6 +911,7 @@ LimsRefClass$methods(
             lims$GET(x, asNode = TRUE)
          }, 
          lims = .self)
+      if (inherits(x, "list")) class(x) <- append(class(x), "ProcessSet")
       
       invisible(x)
    }) # get_processes
@@ -940,6 +946,8 @@ LimsRefClass$methods(
          }, 
          lims = .self)
       names(x) <- sapply(x, '[[', 'name' )
+      if (inherits(x, "list")) class(x) <- append(class(x), "LabSet")
+
       invisible(x)
    }) # get_labs
 
@@ -977,6 +985,7 @@ LimsRefClass$methods(
          lims = .self)
       
       if (!any(sapply(x, is.null))) names(x) <- sapply(x, "[[", "name")
+      if (inherits(x, "list")) class(x) <- append(class(x), "ProjectSet")
       
       invisible(x)
    }) # get_projects
@@ -1010,6 +1019,8 @@ LimsRefClass$methods(
          }, 
          lims = .self)
       names(x) <- sapply(x, '[[','name' )
+      if (inherits(x, "list")) class(x) <- append(class(x), "ProcessTypeSet")
+
       invisible(x)
    }) # get_processtypes
 
@@ -1050,6 +1061,8 @@ LimsRefClass$methods(
            }, 
            lims = .self)
         names(x) <- sapply(x, '[[','name')
+        if (inherits(x, "list")) class(x) <- append(class(x), "FieldSet")
+
         invisible(x)
     }) # get_fields
     
@@ -1077,8 +1090,7 @@ LimsRefClass$methods(
          return(NULL)
       }
       if ((.self$get_max_requests(rel) <= 1 ) || 
-         ((.self$version == "v1") && 
-         (rel %in% c('samples', 'files'))) ){
+        ((.self$version == "v1") && (rel %in% c('samples', 'files'))) ){
          x <- lapply(uri, function(x, lims=NULL) {lims$GET(x, asNode = FALSE)}, lims = .self)
       } else {
          uri2 <- split_vector(uri, MAX = .self$get_max_requests(rel))
@@ -1096,6 +1108,10 @@ LimsRefClass$methods(
             'files' = names(x),
             sapply(x, function(x) xml_value(x$node[['name']]))  )
       }
+      
+      cl <- unname(c("artifacts" = 'ArtifactSet', "samples" = 'SampleSet', 
+      "containers" = 'ContainerSet', "files"= 'FileSet')[rel])
+      if (inherits(x, 'list')) class(x) <- append(class(x), cl)
       invisible(x)
    })
 
@@ -1162,6 +1178,10 @@ LimsRefClass$methods(
       ix <- match(basename(orig_uri), basename(new_uri))
       rr <- rr[ix]
       
+      cl <- unname( c('ContainerRefClass' = 'ContainerSet',
+        'SampleRefClass' = "SampleSet",
+        "ArtifactRefClass" = 'ArtifactSet')[class(rr[[1]])])
+      if (inherits(rr, 'list')) class(rr) <- append(class(rr), cl)
       invisible(rr)
    })
 
@@ -1209,12 +1229,14 @@ LimsRefClass$methods(
               batch_create(x, lims, asNode = asNode, rel = rel)
           }, lims = .self, asNode = asNode, rel = rel)
         
-      invisible(unlist(rr))
-
+      x <- invisible(unlist(rr))
+      setname <- unname(c(samples = 'SampleSet', containers = 'ContainerSet')[rel])
+      if (inherits(x, 'list')) class(x) <- append(class(x), setname)
+      x
    })
 
 
-#' Retrieve the max requests vakue by name
+#' Retrieve the max requests value by name
 #' 
 #' @name LimsRefClass_get_max_requests
 #' @param name character the namespace to retrieve singualr or plural forms
