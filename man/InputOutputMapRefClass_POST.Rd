@@ -11,4 +11,3 @@ Other InputOutputMap: \code{\link{InputOutputMapRefClass_DELETE}},
   \code{\link{InputOutputMapRefClass_GET}},
   \code{\link{InputOutputMapRefClass_PUT}}
 }
-

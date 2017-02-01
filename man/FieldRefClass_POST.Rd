@@ -10,4 +10,3 @@ POST is disallowed for field configuration
 Other Field: \code{\link{FieldRefClass_DELETE}},
   \code{\link{FieldRefClass_get_type}}
 }
-

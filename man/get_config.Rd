@@ -21,4 +21,3 @@ the tagged value or section requested or the 'default' value if not found
 \description{
 Retrieve a configuration value
 }
-

@@ -12,4 +12,3 @@ list of ArtifactGroupRefClass (or NULL) or vector of names or uris (or "")
 \description{
 Get the artifact groups associated with this artifact if any
 }
-

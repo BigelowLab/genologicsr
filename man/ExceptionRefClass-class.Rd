@@ -2,8 +2,8 @@
 % Please edit documentation in R/Exception.R
 \docType{class}
 \name{ExceptionRefClass-class}
-\alias{ExceptionRefClass}
 \alias{ExceptionRefClass-class}
+\alias{ExceptionRefClass}
 \title{An Exception representation that sublcasses from NodeRefClass}
 \description{
 An Exception representation that sublcasses from NodeRefClass
@@ -19,6 +19,8 @@ An Exception representation that sublcasses from NodeRefClass
 
 \item{\code{suggested_actions}}{character, (if any)}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -58,4 +60,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

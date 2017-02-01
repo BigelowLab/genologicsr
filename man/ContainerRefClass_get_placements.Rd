@@ -23,4 +23,3 @@ Other Container: \code{\link{ContainerRefClass_POST}},
   \code{\link{ContainerRefClass_required_namespaces}},
   \code{\link{ContainerRefClass_well_occupied}}
 }
-

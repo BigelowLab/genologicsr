@@ -25,4 +25,3 @@ Other Lims Node: \code{\link{LimsRefClass_batchcreate}},
   \code{\link{LimsRefClass_batchupdate}},
   \code{\link{parse_node}}
 }
-

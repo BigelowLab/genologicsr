@@ -27,4 +27,3 @@ Other Lims: \code{\link{LimsRefClass-class}},
   \code{\link{LimsRefClass_validate_session}},
   \code{\link{get_NSMAP}}
 }
-

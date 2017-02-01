@@ -2,8 +2,8 @@
 % Please edit documentation in R/Lab.R
 \docType{class}
 \name{LabRefClass-class}
-\alias{LabRefClass}
 \alias{LabRefClass-class}
+\alias{LabRefClass}
 \title{A Lab/Account representation that subclasses from NodeRefClass}
 \description{
 A Lab/Account representation that subclasses from NodeRefClass
@@ -19,4 +19,5 @@ A Lab/Account representation that subclasses from NodeRefClass
 
 \item{\code{billing_address}}{character vector}
 }}
+
 

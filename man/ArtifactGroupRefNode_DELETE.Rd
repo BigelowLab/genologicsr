@@ -11,4 +11,3 @@ Other ArtifactGroup: \code{\link{ArtifactGroupRefClass_get_artifacts}},
   \code{\link{ArtifactGroupRefNode_POST}},
   \code{\link{ArtifactGroupRefNode_PUT}}
 }
-

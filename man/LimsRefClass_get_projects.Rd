@@ -16,4 +16,3 @@ a list of ProjectRefClass or NULL
 Get one or more Projects - does not leverage /batch/retrieve resources
 but provides similar behavior.
 }
-

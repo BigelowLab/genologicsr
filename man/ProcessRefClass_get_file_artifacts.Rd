@@ -36,4 +36,3 @@ Other Process: \code{\link{ProcessRefClass_date_run}},
   \code{\link{ProcessRefClass_technician}},
   \code{\link{create_process_node}}
 }
-

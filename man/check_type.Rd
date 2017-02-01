@@ -17,4 +17,3 @@ the value cast to the specified type
 \description{
 Given a LIMS type code and value, cast the value to be LIMS friendly
 }
-

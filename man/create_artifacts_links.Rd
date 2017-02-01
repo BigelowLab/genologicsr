@@ -17,4 +17,3 @@ a links node
 Create an artifacts links node from uris suitable for batch operations
 See \url{http://genologics.com/files/permanent/API/latest/rest.version.artifacts.batch.retrieve.html}
 }
-

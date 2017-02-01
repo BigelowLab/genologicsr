@@ -17,4 +17,3 @@ character vector
 \description{
 Sanitize a character vector to be UTF-8 ASCII
 }
-

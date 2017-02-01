@@ -15,4 +15,3 @@ a LimsRefClass instance or NULL
 \description{
 Instantiate a LimsRefClass object
 }
-

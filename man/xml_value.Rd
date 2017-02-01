@@ -17,4 +17,3 @@ the value of the node
 \description{
 Extract the value from a simple XML::xmlNode object
 }
-

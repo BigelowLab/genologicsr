@@ -19,4 +19,3 @@ the updated xmlNode
 Non-Ascii non-UTF8 characters
  are scrubbed from the input values.
 }
-

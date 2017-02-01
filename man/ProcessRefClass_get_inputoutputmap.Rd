@@ -12,4 +12,3 @@ a list of InputOutputMapRefClass or a data.frame or NULL if not available
 \description{
 Get the input-output-maps as InputOutputMapRefClass or a data.frame
 }
-

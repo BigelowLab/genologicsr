@@ -2,8 +2,8 @@
 % Please edit documentation in R/Artifact.R
 \docType{class}
 \name{ArtifactRefClass-class}
-\alias{ArtifactRefClass}
 \alias{ArtifactRefClass-class}
+\alias{ArtifactRefClass}
 \title{An Artifact representation that sublcasses from NodeRefClass}
 \description{
 An Artifact representation that sublcasses from NodeRefClass
@@ -15,6 +15,8 @@ An Artifact representation that sublcasses from NodeRefClass
 
 \item{\code{type}}{character, type if any}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ContainerRefClass-class}},
@@ -54,4 +56,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

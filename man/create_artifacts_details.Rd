@@ -17,4 +17,3 @@ a artifacts details XML:xmlNode node
 Create a artifacts details node assembled from one or more artifacts XML::xmlNode
 See \url{http://genologics.com/files/permanent/API/latest/data_art.html#element_details}
 }
-

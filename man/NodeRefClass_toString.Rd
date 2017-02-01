@@ -2,6 +2,7 @@
 % Please edit documentation in R/Node.R
 \name{NodeRefClass_toString}
 \alias{NodeRefClass_toString}
+\alias{NodeRefClass_toString}
 \title{Convert the XML node to string}
 \value{
 text reprepresentation of the node's xml data
@@ -90,4 +91,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

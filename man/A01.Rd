@@ -17,4 +17,3 @@ a character vector of well names formatted as specified
 \description{
 Check one or more a well names to make sure they follow the A01 or A:1 format
 }
-

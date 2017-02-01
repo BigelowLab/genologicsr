@@ -20,4 +20,3 @@ XML::xmlNode
 \description{
 Create an exception node
 }
-

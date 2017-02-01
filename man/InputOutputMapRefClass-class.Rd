@@ -2,8 +2,8 @@
 % Please edit documentation in R/InputOutputMap.R
 \docType{class}
 \name{InputOutputMapRefClass-class}
-\alias{InputOutputMapRefClass}
 \alias{InputOutputMapRefClass-class}
+\alias{InputOutputMapRefClass}
 \title{An Input-Output-Map representation that subclasses from NodeRefClass}
 \description{
 An Input-Output-Map representation that subclasses from NodeRefClass
@@ -25,6 +25,8 @@ An Input-Output-Map representation that subclasses from NodeRefClass
 
 \item{\code{output_type}}{character}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -64,4 +66,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

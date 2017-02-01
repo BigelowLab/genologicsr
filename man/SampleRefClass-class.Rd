@@ -2,8 +2,8 @@
 % Please edit documentation in R/Sample.R
 \docType{class}
 \name{SampleRefClass-class}
-\alias{SampleRefClass}
 \alias{SampleRefClass-class}
+\alias{SampleRefClass}
 \title{A Sample representation that subclasses from NodeRefClass}
 \description{
 A Sample representation that subclasses from NodeRefClass
@@ -23,6 +23,8 @@ A Sample representation that subclasses from NodeRefClass
 
 \item{\code{artifact}}{ArtifactRefClass - populated upon invocation of get_artifact}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -62,4 +64,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ResearcherRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

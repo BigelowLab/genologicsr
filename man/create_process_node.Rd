@@ -33,4 +33,3 @@ Other Process: \code{\link{ProcessRefClass_date_run}},
   \code{\link{ProcessRefClass_instrument}},
   \code{\link{ProcessRefClass_technician}}
 }
-

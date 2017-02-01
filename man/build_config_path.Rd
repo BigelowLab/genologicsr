@@ -29,4 +29,3 @@ Create a configuration file name in the form of \code{/path/to/.hostname-rc}
  [1] "/stairway/to/heaven/.foo-rc"
  }
 }
-

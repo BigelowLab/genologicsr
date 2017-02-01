@@ -20,4 +20,3 @@ Other Sample: \code{\link{SampleRefClass_get_artifact}},
   \code{\link{SampleRefNode_DELETE}},
   \code{\link{SampleRefNode_POST}}
 }
-

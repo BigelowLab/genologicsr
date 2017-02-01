@@ -24,4 +24,3 @@ Other Lims: \code{\link{LimsRefClass-class}},
   \code{\link{LimsRefClass_userpwd}},
   \code{\link{get_NSMAP}}
 }
-

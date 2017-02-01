@@ -25,4 +25,3 @@ XML::xmlNode
 \description{
 Get a uri with option to depaginate
 }
-

@@ -17,4 +17,3 @@ Other Researcher: \code{\link{ResearcherRefClass_DELETE}},
   \code{\link{ResearcherRefClass_get_name}},
   \code{\link{ResearcherRefClass_update}}
 }
-

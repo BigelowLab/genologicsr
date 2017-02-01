@@ -145,7 +145,7 @@ ContainerRefClass$methods(
 #' @family Container
 #' @name ContainerRefClass_get_placements
 #' @param placement character vector of well names (A:1 etc.) or NULL to get all
-#' @return a named vector of placements, possibly an empty character vector
+#' @return a named vector of placements NAs where placements not found
 NULL
 ContainerRefClass$methods(
    get_placements = function(placement = NULL){
@@ -155,11 +155,13 @@ ContainerRefClass$methods(
       if (!is.null(placement)) {
          placement <- A01(placement, form = "A:1")
          ix <- placement %in% names(puri)
-         if (!all(ix)){
-            cat("ContainerRefClass$get_placements name(s) not found:", paste(placement, collapse = " "), "\n")
-            return(character())
-         }
+         if (!all(ix))
+            cat("ContainerRefClass$get_placements name(s) not found:", 
+                paste(placement[!ix], collapse = " "), "\n")
+         
          puri <- puri[placement]
+         if (!all(ix)) names(puri) <- placement
+        
       }
       invisible(puri)
    })

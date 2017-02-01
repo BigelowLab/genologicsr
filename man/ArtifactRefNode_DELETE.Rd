@@ -17,4 +17,3 @@ Other Artifact: \code{\link{ArtifactRefClass_get_container}},
   \code{\link{ArtifactRefClass_working_flag}},
   \code{\link{ArtifactRefNode_POST}}
 }
-

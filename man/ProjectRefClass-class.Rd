@@ -2,8 +2,8 @@
 % Please edit documentation in R/Project.R
 \docType{class}
 \name{ProjectRefClass-class}
-\alias{ProjectRefClass}
 \alias{ProjectRefClass-class}
+\alias{ProjectRefClass}
 \title{A Project representation that subclasses from NodeRefClass}
 \description{
 A Project representation that subclasses from NodeRefClass
@@ -13,6 +13,8 @@ A Project representation that subclasses from NodeRefClass
 \describe{
 \item{\code{name}}{character, name if any}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -52,4 +54,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

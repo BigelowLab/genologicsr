@@ -16,4 +16,3 @@ Get the container type(s) in the system
 Other Lims Container: \code{\link{LimsRefClass_get_containers}},
   \code{\link{create_container_node}}
 }
-

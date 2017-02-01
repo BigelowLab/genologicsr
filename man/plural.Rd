@@ -15,4 +15,3 @@ character vector
 \description{
 Convert to plural from singular
 }
-

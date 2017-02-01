@@ -34,4 +34,3 @@ a list of ArtifactRefClass objects or NULL
 Get one or more artifacts using queries on name, type, process-type, working-flag
 qc-flag, sample-name, samplelimsid, containername, containerlimsid, reagent-label
 }
-

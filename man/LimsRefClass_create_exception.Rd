@@ -16,4 +16,3 @@ XML::xmlNode of ExceptionRefClass
 \description{
 Create an exception node
 }
-

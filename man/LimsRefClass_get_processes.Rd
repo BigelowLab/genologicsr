@@ -27,4 +27,3 @@ but provides similar behavior.
 \seealso{
 Other Lims Process: \code{\link{LimsRefClass_get_processtypes}}
 }
-

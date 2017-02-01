@@ -23,4 +23,3 @@ result of httr::GET
 Get a uri with option to retry up to \code{tries} times.  Useful when doing
 vulnerable batch operations but could be used anytime.
 }
-

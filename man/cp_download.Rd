@@ -28,4 +28,3 @@ Other file_transfer: \code{\link{duck_download}},
   \code{\link{rsync_download}}, \code{\link{rsync_upload}},
   \code{\link{scp_download}}, \code{\link{scp_upload}}
 }
-

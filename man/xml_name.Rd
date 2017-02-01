@@ -17,4 +17,3 @@ the name of the node
 \description{
 Extract the name from a simple XML::xmlNode object
 }
-

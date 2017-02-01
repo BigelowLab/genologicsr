@@ -30,4 +30,3 @@ a list of NodeRefClass
 \description{
 Return order is *not* enforced to be the same as the input order
 }
-

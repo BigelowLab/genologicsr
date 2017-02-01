@@ -25,4 +25,3 @@ Extract a named list of udf vectors from an xmlNode
 Other Node Udf: \code{\link{NodeRefClass_get_udfs}},
   \code{\link{get_udfs}}
 }
-

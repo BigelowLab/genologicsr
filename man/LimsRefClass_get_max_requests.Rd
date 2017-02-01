@@ -13,4 +13,3 @@ numeric, the max requests per batch call
 \description{
 Retrieve the max requests value by name
 }
-

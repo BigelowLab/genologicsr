@@ -9,4 +9,3 @@ Show
 \seealso{
 Other Node Process: \code{\link{ProcessRefClass_show}}
 }
-

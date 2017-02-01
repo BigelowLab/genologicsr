@@ -19,4 +19,3 @@ Other Projects: \code{\link{ProjectsRefClass_DELETE}},
   \code{\link{ProjectsRefClass_PUT}},
   \code{\link{ProjectsRefClass_get_projects_uri}}
 }
-

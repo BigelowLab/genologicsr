@@ -15,4 +15,3 @@ Other Sample: \code{\link{SampleRefClass_get_all_artifacts}},
   \code{\link{SampleRefClass_get_project}},
   \code{\link{SampleRefNode_DELETE}}
 }
-

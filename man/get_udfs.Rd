@@ -22,4 +22,3 @@ Retrieve the values of one or more udfs
 Other Node Udf: \code{\link{NodeRefClass_get_udfs}},
   \code{\link{extract_udfs}}
 }
-

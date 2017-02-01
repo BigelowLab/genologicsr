@@ -2,8 +2,8 @@
 % Please edit documentation in R/File.R
 \docType{class}
 \name{FileRefClass-class}
-\alias{FileRefClass}
 \alias{FileRefClass-class}
+\alias{FileRefClass}
 \title{File.R
 A File representation that subclasses from NodeRefClass}
 \description{
@@ -21,6 +21,8 @@ A File representation that subclasses from NodeRefClass
 
 \item{\code{is_published}}{character, indicates if the file has been published}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -60,4 +62,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

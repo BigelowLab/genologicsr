@@ -2,8 +2,8 @@
 % Please edit documentation in R/Lims.R
 \docType{class}
 \name{LimsRefClass-class}
-\alias{LimsRefClass}
 \alias{LimsRefClass-class}
+\alias{LimsRefClass}
 \title{Reference class for Lims instance}
 \description{
 Reference class for Lims instance
@@ -32,6 +32,8 @@ for each transaction, but see \url{http://rstudio-pubs-static.s3.amazonaws.com/6
      \item{files = 100}
  }}
 }}
+
+
 \seealso{
 Other Lims: \code{\link{LimsRefClass_ATTACH}},
   \code{\link{LimsRefClass_BROWSE}},
@@ -47,4 +49,3 @@ Other Lims: \code{\link{LimsRefClass_ATTACH}},
   \code{\link{LimsRefClass_validate_session}},
   \code{\link{get_NSMAP}}
 }
-

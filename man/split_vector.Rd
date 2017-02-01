@@ -17,4 +17,3 @@ a list of the vector split into groups
 \description{
 Split a vector into groups of MAX (or possibly fewer)
 }
-

@@ -23,4 +23,3 @@ Create a container XML::xmlNode suitable for POSTing
 Other Lims Container: \code{\link{LimsRefClass_get_containers}},
   \code{\link{LimsRefClass_get_containertypes}}
 }
-

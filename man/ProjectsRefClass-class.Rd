@@ -2,14 +2,15 @@
 % Please edit documentation in R/Projects.R
 \docType{class}
 \name{ProjectsRefClass-class}
-\alias{ProjectsRefClass}
 \alias{ProjectsRefClass-class}
+\alias{ProjectsRefClass}
 \title{A Projects representation that subclasses from NodeRefClass  It is a container
 for other projects.}
 \description{
 A Projects representation that subclasses from NodeRefClass  It is a container
 for other projects.
 }
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -49,4 +50,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

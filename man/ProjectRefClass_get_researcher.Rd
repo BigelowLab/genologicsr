@@ -19,4 +19,3 @@ Other Project: \code{\link{ProjectRefClass_get_artifacts}},
   \code{\link{ProjectRefNode_DELETE}},
   \code{\link{ProjectRefNode_POST}}
 }
-

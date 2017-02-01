@@ -17,4 +17,3 @@ a vector of unqiue names or NULL
 Return a vector of unique names from a objeect.  The object must have the
 methods for \code{names}
 }
-

@@ -15,4 +15,3 @@ a name list with one element per section each section, in turn is a named list
 \description{
 Read a configuration file
 }
-

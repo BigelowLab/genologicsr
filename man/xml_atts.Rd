@@ -17,4 +17,3 @@ character vector of the attributes
 \description{
 Extract the attributes from a simple XML::xmlNode object
 }
-

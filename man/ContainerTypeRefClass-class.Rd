@@ -2,8 +2,8 @@
 % Please edit documentation in R/Containertype.R
 \docType{class}
 \name{ContainerTypeRefClass-class}
-\alias{ContainerTypeRefClass}
 \alias{ContainerTypeRefClass-class}
+\alias{ContainerTypeRefClass}
 \title{A Containertype representation that subclasses from NodeRefClass}
 \description{
 A Containertype representation that subclasses from NodeRefClass
@@ -19,6 +19,8 @@ A Containertype representation that subclasses from NodeRefClass
 
 \item{\code{ydim,}}{list [is_alpha = TRUE/FALSE, offset = 0/1, size = n]}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -58,4 +60,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/ArtifactGroup.R
 \docType{class}
 \name{ArtifactGroupRefClass-class}
-\alias{ArtifactGroupRefClass}
 \alias{ArtifactGroupRefClass-class}
+\alias{ArtifactGroupRefClass}
 \title{An ArtifactGroup representation that subclasses from NodeRefClass}
 \description{
 An ArtifactGroup representation that subclasses from NodeRefClass
@@ -13,6 +13,8 @@ An ArtifactGroup representation that subclasses from NodeRefClass
 \describe{
 \item{\code{name}}{character, name if any}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactRefClass-class}},
   \code{\link{ContainerRefClass-class}},
@@ -52,4 +54,3 @@ Other Node: \code{\link{ArtifactRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

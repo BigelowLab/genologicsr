@@ -17,4 +17,3 @@ logical
 \description{
 Test if an object inherits from XML::XMLAbstractNode
 }
-

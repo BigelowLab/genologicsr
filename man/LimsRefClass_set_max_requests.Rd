@@ -18,4 +18,3 @@ numeric, the max requests per batch call
 \description{
 Set the max requests value by name
 }
-

@@ -21,4 +21,3 @@ Other Process: \code{\link{ProcessRefClass_get_artifacts}},
   \code{\link{ProcessRefClass_technician}},
   \code{\link{create_process_node}}
 }
-

@@ -26,4 +26,3 @@ x <- c(unit = "uL", type = "Numeric", name = "facs.Padding volume", value = 0.6)
 Below is the expected appearance of the output ...
 <udf:field unit="uL" type="Numeric" name="facs.Padding volume">0.6</udf:field>
 }
-

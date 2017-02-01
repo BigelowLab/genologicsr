@@ -17,4 +17,3 @@ a sample details XML:xmlNode node
 Create a sample details node assembled from one or more sample XML::xmlNode
 See \url{http://genologics.com/files/permanent/API/latest/data_smp.html#element_details}
 }
-

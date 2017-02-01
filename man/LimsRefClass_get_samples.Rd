@@ -21,4 +21,3 @@ It is possible to also filter the query on UDF values but it may be easier to
 \seealso{
 Other Lims Sample: \code{\link{create_sample_node}}
 }
-

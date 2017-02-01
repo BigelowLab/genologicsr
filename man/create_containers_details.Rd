@@ -19,4 +19,3 @@ a containers details XML:xmlNode node
 Create a containers details node assembled from one or more container XML::xmlNode
 See \url{http://genologics.com/files/permanent/API/latest/data_con.html#element_details}
 }
-

@@ -9,4 +9,3 @@
 genologics provides a simplified interface between XML nodes and the 
 Genologics RESTful API.
 }
-

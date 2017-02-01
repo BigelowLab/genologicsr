@@ -16,4 +16,3 @@ a list of LabRefClass or NULL
 Get one or more Labs - does not leverage /batch/retrieve resources
 but provides similar behavior.
 }
-

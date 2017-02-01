@@ -18,4 +18,3 @@ XML::xmlNode - possibly an error node
 \description{
 GET a resource, a wrapper around get_uri
 }
-

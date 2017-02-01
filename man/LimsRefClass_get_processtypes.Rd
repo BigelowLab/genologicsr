@@ -15,4 +15,3 @@ Get one or more process-types as Nodes
 \seealso{
 Other Lims Process: \code{\link{LimsRefClass_get_processes}}
 }
-

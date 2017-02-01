@@ -14,4 +14,3 @@ a list of  InstrumentRefClass, a data frame or NULL
 \description{
 Retrieve a list of InstrumentRefClass or data.frame of the good stuff
 }
-

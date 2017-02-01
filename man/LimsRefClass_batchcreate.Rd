@@ -21,4 +21,3 @@ Other Lims Node: \code{\link{LimsRefClass_batchretrieve}},
   \code{\link{LimsRefClass_batchupdate}},
   \code{\link{parse_node}}
 }
-

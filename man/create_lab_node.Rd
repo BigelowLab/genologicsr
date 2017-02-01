@@ -23,4 +23,3 @@ XML::xmlNode
 \description{
 Create a lab/account XML::xmlNode suitable for POSTing
 }
-

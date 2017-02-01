@@ -16,4 +16,3 @@ character like "name=boo&name=foo$type=shoe" or NULL
 \description{
 Prepares a contribution to a query list - see \code{modify_url}
 }
-

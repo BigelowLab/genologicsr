@@ -23,4 +23,3 @@ Other Artifact: \code{\link{ArtifactRefClass_get_file_artifact}},
   \code{\link{ArtifactRefNode_DELETE}},
   \code{\link{ArtifactRefNode_POST}}
 }
-

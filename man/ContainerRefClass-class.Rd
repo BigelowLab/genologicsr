@@ -2,8 +2,8 @@
 % Please edit documentation in R/Container.R
 \docType{class}
 \name{ContainerRefClass-class}
-\alias{ContainerRefClass}
 \alias{ContainerRefClass-class}
+\alias{ContainerRefClass}
 \title{A Container representation that subclasses from NodeRefClass}
 \description{
 A Container representation that subclasses from NodeRefClass
@@ -17,6 +17,8 @@ A Container representation that subclasses from NodeRefClass
 
 \item{\code{type}}{character, type if any}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -56,4 +58,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

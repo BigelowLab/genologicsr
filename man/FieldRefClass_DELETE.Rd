@@ -10,4 +10,3 @@ DELETE is disallowed for field configuration
 Other Field: \code{\link{FieldRefClass_POST}},
   \code{\link{FieldRefClass_get_type}}
 }
-

@@ -2,6 +2,7 @@
 % Please edit documentation in R/Node.R
 \name{NodeRefClass_get_type}
 \alias{NodeRefClass_get_type}
+\alias{NodeRefClass_get_type}
 \title{Get the value of the type field or ""}
 \value{
 character the type name or "" if none
@@ -90,4 +91,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

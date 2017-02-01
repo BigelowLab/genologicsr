@@ -24,4 +24,3 @@ character of the input preceding the 'around' character
 Split a uri around the "?" or other character.  For example, 
 \code{trimuri(http://www.uri.org?where=foo)} returns \code{http://www.uri.org}.
 }
-

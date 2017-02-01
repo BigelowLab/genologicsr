@@ -14,4 +14,3 @@ Other ArtifactGroup: \code{\link{ArtifactGroupRefNode_DELETE}},
   \code{\link{ArtifactGroupRefNode_POST}},
   \code{\link{ArtifactGroupRefNode_PUT}}
 }
-

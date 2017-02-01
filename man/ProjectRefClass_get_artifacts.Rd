@@ -24,4 +24,3 @@ Other Project: \code{\link{ProjectRefClass_get_containers}},
   \code{\link{ProjectRefNode_DELETE}},
   \code{\link{ProjectRefNode_POST}}
 }
-

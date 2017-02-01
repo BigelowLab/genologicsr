@@ -12,4 +12,3 @@ a character date %Y-%m-%d or NULL
 \description{
 Retrieve a date "open", "close" or "invoice"
 }
-

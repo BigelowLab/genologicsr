@@ -22,4 +22,3 @@ Other Lims Node: \code{\link{LimsRefClass_batchcreate}},
   \code{\link{LimsRefClass_batchretrieve}},
   \code{\link{LimsRefClass_batchupdate}}
 }
-

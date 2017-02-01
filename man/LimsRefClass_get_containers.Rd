@@ -22,4 +22,3 @@ Get one or more containers by name, state, etc
 Other Lims Container: \code{\link{LimsRefClass_get_containertypes}},
   \code{\link{create_container_node}}
 }
-

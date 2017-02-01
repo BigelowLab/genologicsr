@@ -2,8 +2,8 @@
 % Please edit documentation in R/Researcher.R
 \docType{class}
 \name{ResearcherRefClass-class}
-\alias{ResearcherRefClass}
 \alias{ResearcherRefClass-class}
+\alias{ResearcherRefClass}
 \title{A Researcher representation that sublcasses from NodeRefClass}
 \description{
 A Researcher representation that sublcasses from NodeRefClass
@@ -19,6 +19,8 @@ A Researcher representation that sublcasses from NodeRefClass
 
 \item{\code{initials}}{character, user's initials}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -58,4 +60,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

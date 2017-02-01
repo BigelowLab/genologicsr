@@ -19,4 +19,3 @@ logical
 \description{
 Test XML::xmlNode or NodeRefClass is an exception
 }
-

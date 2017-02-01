@@ -13,4 +13,3 @@ Get the value of the Udf type
 Other Field: \code{\link{FieldRefClass_DELETE}},
   \code{\link{FieldRefClass_POST}}
 }
-

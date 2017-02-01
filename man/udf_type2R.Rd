@@ -54,4 +54,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ResearcherRefClass-class}},
   \code{\link{SampleRefClass-class}}
 }
-

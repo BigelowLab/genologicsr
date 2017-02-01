@@ -31,4 +31,3 @@ Other file_transfer: \code{\link{cp_download}},
   \code{\link{has_scp}}, \code{\link{rsync_download}},
   \code{\link{rsync_upload}}, \code{\link{scp_download}}
 }
-

@@ -29,4 +29,3 @@ Create a sample XML::xmlNode suitable for POSTing
 \seealso{
 Other Lims Sample: \code{\link{LimsRefClass_get_samples}}
 }
-

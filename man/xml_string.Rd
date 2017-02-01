@@ -15,4 +15,3 @@ character
 \description{
 Convert XML::xmlNode or NodeRefClass to character
 }
-

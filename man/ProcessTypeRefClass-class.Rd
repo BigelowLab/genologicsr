@@ -2,8 +2,8 @@
 % Please edit documentation in R/Processtype.R
 \docType{class}
 \name{ProcessTypeRefClass-class}
-\alias{ProcessTypeRefClass}
 \alias{ProcessTypeRefClass-class}
+\alias{ProcessTypeRefClass}
 \title{A Processtype representation that subclasses from NodeRefClass}
 \description{
 A Processtype representation that subclasses from NodeRefClass
@@ -13,6 +13,8 @@ A Processtype representation that subclasses from NodeRefClass
 \describe{
 \item{\code{name}}{character, name if any}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -52,4 +54,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

@@ -9,4 +9,3 @@ POST is disallowed for instruments
 \seealso{
 Other Instrument: \code{\link{InstrumentRefClass_PUT}}
 }
-

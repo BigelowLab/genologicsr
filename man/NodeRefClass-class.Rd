@@ -2,8 +2,8 @@
 % Please edit documentation in R/Node.R
 \docType{class}
 \name{NodeRefClass-class}
-\alias{NodeRefClass}
 \alias{NodeRefClass-class}
+\alias{NodeRefClass}
 \title{The root class that wraps XML::xmlNode}
 \description{
 The root class that wraps XML::xmlNode
@@ -23,6 +23,8 @@ The root class that wraps XML::xmlNode
 
 \item{\code{verbs}}{character vector of 'GET', 'PUT', 'POST', 'BROWSE', and 'DELETE'}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -62,4 +64,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

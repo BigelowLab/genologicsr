@@ -17,4 +17,3 @@ named character vector of child values, possibly ""
 \description{
 Retrieve the value of a child node(s)
 }
-

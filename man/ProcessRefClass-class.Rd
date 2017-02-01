@@ -2,12 +2,13 @@
 % Please edit documentation in R/Process.R
 \docType{class}
 \name{ProcessRefClass-class}
-\alias{ProcessRefClass}
 \alias{ProcessRefClass-class}
+\alias{ProcessRefClass}
 \title{An Process representation that sublcasses from NodeRefClass}
 \description{
 An Process representation that sublcasses from NodeRefClass
 }
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -47,4 +48,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-

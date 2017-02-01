@@ -19,4 +19,3 @@ a list of FieldRefClass or NULL
 \description{
 Get one or more fields (UDF) as Nodes
 }
-

@@ -13,4 +13,3 @@ Retrieve a named list of process-inputs
 Other Processtype: \code{\link{ProcessTypeRefClass_get_fields}},
   \code{\link{ProcessTypeRefClass_get_outputs}}
 }
-

@@ -36,4 +36,3 @@ Create a researcher XML::xmlNode suitable for POSTing
 \seealso{
 Other Lims Researcher: \code{\link{LimsRefClass_get_researchers}}
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/Field.R
 \docType{class}
 \name{FieldRefClass-class}
-\alias{FieldRefClass}
 \alias{FieldRefClass-class}
+\alias{FieldRefClass}
 \title{A User Defined Field configuration representation that subclasses from NodeRefClass}
 \description{
 A User Defined Field configuration representation that subclasses from NodeRefClass
@@ -25,6 +25,8 @@ A User Defined Field configuration representation that subclasses from NodeRefCl
 
 \item{\code{preset}}{character (vector)}
 }}
+
+
 \seealso{
 Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{ArtifactRefClass-class}},
@@ -64,4 +66,3 @@ Other Node: \code{\link{ArtifactGroupRefClass-class}},
   \code{\link{SampleRefClass-class}},
   \code{\link{udf_type2R}}
 }
-
