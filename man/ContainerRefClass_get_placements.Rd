@@ -7,7 +7,7 @@
 \item{placement}{character vector of well names (A:1 etc.) or NULL to get all}
 }
 \value{
-a named vector of placements, possibly an empty character vector
+a named vector of placements NAs where placements not found
 }
 \description{
 Retrieve a named vector of placements uri

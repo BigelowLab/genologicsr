@@ -1075,7 +1075,8 @@ LimsRefClass$methods(
 #' @family Lims Node
 #' @name LimsRefClass_batchretrieve
 #' @param uri a vector of one or more uri for atomic entities in the GLS API
-#' @param rel the relative name space into the "batch/retrieve" 
+#' @param rel the relative name space into the "batch/retrieve" If not provided
+#'  then it is detected from the first element of the input uri.
 #' @param asNode logical, if TRUE parse to the appropriate node type
 #' @param rm_dups logical, if TRUE then remove duplicates
 #' @param ... further arguments for \code{batch_retrieve}
@@ -1083,8 +1084,9 @@ LimsRefClass$methods(
 NULL
 LimsRefClass$methods(
    batchretrieve = function(uri, 
-      rel = c("artifacts", "samples", "containers", "files")[1], 
+      rel = c(NA, "artifacts", "samples", "containers", "files")[1], 
       rm_dups = TRUE, asNode = TRUE, ...){
+      if (is.na(rel)) rel <- basename(dirname(uri[1]))
       if (!(rel[1] %in% c("artifacts", "samples", "containers", "files"))) {
          cat("LimsRefClass$batchretrieve rel must be one of artifacts, files, samples or containers\n")
          return(NULL)

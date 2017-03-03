@@ -6,7 +6,8 @@
 \arguments{
 \item{uri}{a vector of one or more uri for atomic entities in the GLS API}
 
-\item{rel}{the relative name space into the "batch/retrieve"}
+\item{rel}{the relative name space into the "batch/retrieve" If not provided
+then it is detected from the first element of the input uri.}
 
 \item{asNode}{logical, if TRUE parse to the appropriate node type}
 

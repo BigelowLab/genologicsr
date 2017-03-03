@@ -149,7 +149,12 @@ ContainerRefClass$methods(
 NULL
 ContainerRefClass$methods(
    get_placements = function(placement = NULL){
-      if ( !.self$has_child("placement") ) return(character())
+      if ( !.self$has_child("placement") ) {
+         if(is.null(placement)) return(character())
+         x <- rep(NA_character_, length(placement))
+         names(x) <- placement
+         return(x)
+      }
       puri <- sapply(.self$node['placement'], function(x) xml_atts(x)[['uri']])
       names(puri) <- sapply(.self$node['placement'], xml_value)
       if (!is.null(placement)) {
