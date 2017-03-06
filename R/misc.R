@@ -107,7 +107,6 @@ xml_atts  <- function(x, ...){
     XML::xmlAttrs(x, ...)
 }
 
-
 #' Create a configuration file name in the form of \code{/path/to/.hostname-rc}
 #' 
 #' @export

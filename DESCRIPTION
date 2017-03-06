@@ -14,7 +14,7 @@ Imports:
 Maintainer: Ben Tupper <btupper@bigelow.org>
 Author: Ben Tupper <btupper@bigelow.org>
 License: GPL (>= 2)
-Collate:
+Collate: 
     'Lims.R'
     'Node.R'
     'Artifact.R'
@@ -31,10 +31,15 @@ Collate:
     'Processtype.R'
     'Project.R'
     'Projects.R'
+    'Protocol.R'
     'Researcher.R'
     'Sample.R'
+    'Stage.R'
+    'Step.R'
     'Udf.R'
+    'Workflow.R'
     'file_transfer.R'
     'genologicsr_package.R'
     'misc.R'
+    'route.R'
 RoxygenNote: 6.0.0

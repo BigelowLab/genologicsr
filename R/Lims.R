@@ -796,6 +796,32 @@ LimsRefClass$methods(
    })
 
 
+
+#' Retrieve a list of WorkflowRefClass
+#'
+#' @name LimsRefClass_get_workflows
+#' @param name character vector of one or more workflow names
+#' @param form character of 'uri' or 'Node'
+#' @return character vector or list with zero or more uri/WorkflowRefClass or NULL
+NULL
+LimsRefClass$methods(
+    get_workflows = function(name = NULL, form = c('uri', 'Node')[2]){
+        form <- tolower(form[1])
+        resource = 'configuration/workflows'
+        query <- if(is.null(name)) NULL else build_query(list(name=name))
+        
+        RR <- .self$GET(.self$uri(resource), query = query)
+        rr <- RR$node['workflow']
+        if (length(rr) == 0) return(NULL)
+        aa <- lapply(rr, function(r) xml_atts(r))
+        x <- sapply(aa, '[[', 'uri')
+        names(x) <- sapply(aa, '[[', 'name')
+        
+        if (form == 'node') x <- lapply(x, function(u) .self$GET(u))
+        x
+    })
+
+
 #' Retrieve a list of InstrumentRefClass or data.frame of the good stuff
 #' @family Lims Instrument
 #' @name LimsRefClass_get_instruments
@@ -1573,6 +1599,10 @@ parse_node <- function(node, lims){
        'exception' = ExceptionRefClass$new(node, lims),
        'artifactgroup' = ArtifactGroupRefClass$new(node, lims),
        'lab' = LabRefClass(node, lims),
+       'workflow' = WorkflowRefClass(node, lims),
+       'step' = StepRefClass(node, lims),
+       'stage' = StageRefClass(node, lims),
+       'protocol' = ProtocolRefClass(node, lims),
        NodeRefClass$new(node, lims))
 
 }

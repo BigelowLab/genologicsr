@@ -282,4 +282,3 @@ create_artifacts_details <- function(x){
       namespaceDefinitions = get_NSMAP()[c('art', 'ri', 'udf', 'file', 'con')],
       .children = x)
 } # create_containers_details
- 
