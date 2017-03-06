@@ -4,7 +4,7 @@
 \alias{create_routing_artifacts}
 \title{Create or update an artifact routing map}
 \usage{
-create_routing_artifacts(x, workflow_uri = NULL, stageuri = NULL,
+create_routing_artifacts(x, workflow_uri = NULL, stage_uri = NULL,
   action = c("assign", "unassign")[1], routing = create_routing())
 }
 \arguments{

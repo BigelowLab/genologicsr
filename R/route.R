@@ -26,7 +26,7 @@ create_routing <- function(){
 #' @return xml routing node (new or updated) or NULL
 create_routing_artifacts <- function(x, 
     workflow_uri = NULL, 
-    stageuri = NULL,
+    stage_uri = NULL,
     action = c("assign", "unassign")[1],
     routing = create_routing()){
  
