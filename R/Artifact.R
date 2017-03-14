@@ -282,3 +282,33 @@ create_artifacts_details <- function(x){
       namespaceDefinitions = get_NSMAP()[c('art', 'ri', 'udf', 'file', 'con')],
       .children = x)
 } # create_containers_details
+
+
+#' Given an ArtifactRefClass find it's root artifact (submitted sample) by 
+#' searching parent-processes until there are none to search.
+#' 
+#' @export
+#' @param x ArtifactRefClass object
+#' @return ArtifactRefClass or NULL
+artifact_get_root <- function(x){
+    
+    if (!inherits(x, 'ArtifactRefClass')) stop("input must be ArtifactRefClass")
+    
+    pp <- x$get_parent_process(form = 'Node')
+    while(!is.null(pp) && !is_exception(pp)){
+        iom <- pp$get_inputoutputmap()
+        ix <- iom[['output_limsid']] == x$limsid
+        if (!any(ix)){
+            pp <- NULL
+        } else {
+            input_limsid <- iom[['input_limsid']][ix][1]
+            x <- x$lims$GET(x$lims$uri("artifacts", input_limsid))
+            if (!is_exception(x)){
+                pp <- x$get_parent_process(form = 'Node')
+            } else {
+                pp <- NULL
+            }
+        }
+    }
+    return(x)
+}

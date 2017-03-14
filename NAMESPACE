@@ -2,6 +2,7 @@
 
 export(A01)
 export(Lims)
+export(artifact_get_root)
 export(as_ascii)
 export(batch_create)
 export(batch_retrieve)
