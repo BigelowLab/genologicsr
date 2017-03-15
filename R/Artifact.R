@@ -193,7 +193,7 @@ ArtifactRefClass$methods(
       invisible(x)
    })
       
-#' Get the sample  associated with this artifact
+#' Get the sample associated with this artifact
 #'
 #' @family Artifact
 #' @name ArtifactRefClass_get_sample
@@ -216,6 +216,34 @@ ArtifactRefClass$methods(
       invisible(x)
    }) 
 
+
+#' Get the samples associated with this artifact - useful for pooled samples
+#'
+#' @family Artifact
+#' @name ArtifactRefClass_get_samples
+#' @param form character flag of type to return "Node" or "uri"
+#' @return list of SampleRefClass (or NULL) or the uri (or "")
+ArtifactRefClass$methods(
+   get_samples = function(form = c("Node", "uri")[2]){
+      if (!.self$has_child("sample")){
+         x <- switch(tolower(form[1]),
+            "uri" = "",
+            NULL)
+         return(x)
+      }
+      
+      theseuri <- trimuri(sapply(.self$node["sample"],
+        function(x) xml_atts(x)[['uri']]))
+    
+      if (tolower(form == "uri")){
+         x <- theseuri
+      } else {
+         x <- .self$lims$batchretrieve(theseuri)      
+      }
+      invisible(x)
+   }) 
+   
+   
 #' Retrieve the artifact's file artifact (if any)
 #' 
 #'
@@ -282,33 +310,3 @@ create_artifacts_details <- function(x){
       namespaceDefinitions = get_NSMAP()[c('art', 'ri', 'udf', 'file', 'con')],
       .children = x)
 } # create_containers_details
-
-
-#' Given an ArtifactRefClass find it's root artifact (submitted sample) by 
-#' searching parent-processes until there are none to search.
-#' 
-#' @export
-#' @param x ArtifactRefClass object
-#' @return ArtifactRefClass or NULL
-artifact_get_root <- function(x){
-    
-    if (!inherits(x, 'ArtifactRefClass')) stop("input must be ArtifactRefClass")
-    
-    pp <- x$get_parent_process(form = 'Node')
-    while(!is.null(pp) && !is_exception(pp)){
-        iom <- pp$get_inputoutputmap()
-        ix <- iom[['output_limsid']] == x$limsid
-        if (!any(ix)){
-            pp <- NULL
-        } else {
-            input_limsid <- iom[['input_limsid']][ix][1]
-            x <- x$lims$GET(x$lims$uri("artifacts", input_limsid))
-            if (!is_exception(x)){
-                pp <- x$get_parent_process(form = 'Node')
-            } else {
-                pp <- NULL
-            }
-        }
-    }
-    return(x)
-}
