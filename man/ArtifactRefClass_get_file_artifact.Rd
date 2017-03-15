@@ -15,6 +15,7 @@ Retrieve the artifact's file artifact (if any)
 \seealso{
 Other Artifact: \code{\link{ArtifactRefClass_get_container}},
   \code{\link{ArtifactRefClass_get_parent_process}},
+  \code{\link{ArtifactRefClass_get_samples}},
   \code{\link{ArtifactRefClass_get_sample}},
   \code{\link{ArtifactRefClass_get_wellname}},
   \code{\link{ArtifactRefClass_location}},

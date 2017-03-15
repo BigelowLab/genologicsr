@@ -2,7 +2,7 @@
 % Please edit documentation in R/Artifact.R
 \name{ArtifactRefClass_get_sample}
 \alias{ArtifactRefClass_get_sample}
-\title{Get the sample  associated with this artifact}
+\title{Get the sample associated with this artifact}
 \arguments{
 \item{form}{character flag of type to return "Node" or "uri"}
 }
@@ -10,12 +10,13 @@
 SampleRefClass (or NULL) or the uri (or "")
 }
 \description{
-Get the sample  associated with this artifact
+Get the sample associated with this artifact
 }
 \seealso{
 Other Artifact: \code{\link{ArtifactRefClass_get_container}},
   \code{\link{ArtifactRefClass_get_file_artifact}},
   \code{\link{ArtifactRefClass_get_parent_process}},
+  \code{\link{ArtifactRefClass_get_samples}},
   \code{\link{ArtifactRefClass_get_wellname}},
   \code{\link{ArtifactRefClass_location}},
   \code{\link{ArtifactRefClass_qc_flag}},
