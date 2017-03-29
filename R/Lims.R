@@ -641,6 +641,58 @@ LimsRefClass$methods(
    })
 
 
+#' Get or create containers by name and type
+#' 
+#' @name LimsRefClass_get_or_create_containers
+#' @param name character one or more container names
+#' @param ctype character one or more container types - only one type is allowed
+#' @return a list of one or more ContainerRefClass or NULL
+NULL
+LimsRefClass$methods(
+    get_or_create_containers = function(name = NULL, ctype = NULL){
+
+    if (is.null(name)) {
+        cat("name is required\n")
+        return(NULL)
+    }
+    
+    if (is.null(ctype)) {
+        cat("ctype is required\n")
+        return(NULL)
+    }
+    
+    if (length(ctype) > 1){
+        cat("only one ctype is permitted per call\n")
+        return(NULL)
+    }
+    
+    CC <- .self$get_containers(name = name, type = ctype)
+    
+    ix <- name %in% names(CC)
+
+    if (any(!ix)){
+        nm <- name[!ix]
+        CType <- .self$get_containertypes(name = ctype)[[1]]
+        if (is.null(CType)){
+            cat("ctype not found:", ctype, "\n")
+            return(NULL)
+        }
+        cc <- lapply(nm, function(n){
+            create_container_node(CType$uri, name = n)
+            })
+        cc <- .self$batchcreate(cc)
+        if (is.null(cc)){
+            cat("error creating new containers", paste(nm, sep = " "), "\n")
+            return(CC)
+        }
+        names(cc) <- sapply(cc, "[[", "name")
+        CC <- c(CC, cc)[name]
+    }
+        
+    CC
+
+    })
+
 #' Get the container type(s) in the system
 #' 
 #' 
