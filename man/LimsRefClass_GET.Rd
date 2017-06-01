@@ -18,3 +18,11 @@ XML::xmlNode - possibly an error node
 \description{
 GET a resource, a wrapper around get_uri
 }
+\examples{
+\dontrun{
+    # list the samples in a project - returns an XML::xmlNode
+    ss <- lims$GET(lims$uri("samples"), query = list(projectname = 'foobar'), asNode = FALSE)
+    # get the samples in a project parsed into as list of NodeRefClassObjects
+    SS <- lims$GET(lims$uri("samples"), query = list(projectname = 'foobar'), asNode = TRUE)
+}
+}

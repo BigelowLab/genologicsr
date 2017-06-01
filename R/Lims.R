@@ -238,6 +238,13 @@ LimsRefClass$methods(
 #' @param depaginate logical, if TRUE then pool paginated nodes into one
 #' @param asNode logical, if TRUE return a class that inherits NodeRefClass 
 #' @return XML::xmlNode - possibly an error node
+#' @examples
+#' \dontrun{
+#'     # list the samples in a project - returns an XML::xmlNode
+#'     ss <- lims$GET(lims$uri("samples"), query = list(projectname = 'foobar'), asNode = FALSE)
+#'     # get the samples in a project parsed into as list of NodeRefClassObjects
+#'     SS <- lims$GET(lims$uri("samples"), query = list(projectname = 'foobar'), asNode = TRUE)
+#' }
 NULL
 LimsRefClass$methods(
    GET = function(uri=.self$baseuri, ..., depaginate = TRUE, asNode = TRUE){
@@ -245,7 +252,6 @@ LimsRefClass$methods(
       if (asNode) x <- parse_node(x, .self) 
       invisible(x)
    }) #GET
-
 
 #' PUT a resource
 #'
@@ -584,6 +590,9 @@ LimsRefClass$methods(
       if (is_exception(rafter)){ return(rafter)}
       parse_node(rafter, .self)
    }) # ATTACH
+
+
+
 
 
 #' Retrieve a resource by limsid

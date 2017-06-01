@@ -28,7 +28,9 @@ build_query <- function(x){
    s <- vector(mode = 'character', length = length(x))
    for (i in seq_along(x)){
       n <- nm[i]
-      s[i] <- paste(paste(gsub("_","-", n), curl::curl_escape(x[[n]]), sep = "="), collapse = "&")
+      s[i] <- paste(paste(curl::curl_escape(gsub("_","-", n)), 
+        curl::curl_escape(x[[n]]), sep = "="), 
+        collapse = "&")
    }
    paste(s, collapse = "&")
 }
