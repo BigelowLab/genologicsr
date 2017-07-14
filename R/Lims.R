@@ -229,6 +229,23 @@ LimsRefClass$methods(
    }) #create_exception
 
 
+#' LIST the URI's a resource with qualifiers
+#'
+#' @name LimsRefClass_LIST
+#' @param resource character the uri to get
+#' @param n numeric, the maximum number of URI, NA to get all
+#' @param ... further arguments for httr::GET including \code{query} list
+#' @return character vector of zero or more URI
+#' @examples
+#' \dontrun{
+#'     # list the samples in a project
+#'     ss <- lims$LIST('samples', projectname = 'foobar')
+#' }
+NULL
+LimsRefClass$methods(
+   LIST = function(resource, n = NA, ...){   
+      list_resource(.self, resource, n = n, ...)
+   }) #LIST
 
 #' GET a resource, a wrapper around get_uri
 #'
@@ -1580,6 +1597,49 @@ try_GET <- function(uri, lims, ..., tries = 3){
     x
 }
     
+    
+#' List URIs in a resource such as samples or containers.
+#'
+#' @export
+#' @param lims the LimsRefClass object to query
+#' @param resource character the uri to get
+#' @param n numeric, the maximum number of URI, NA to get all
+#' @param ... further arguments for httr::GET including \code{query} list
+#' @return character vector of zero or more URI
+#' @examples
+#' \dontrun{
+#'     # list the samples in a project
+#'     ss <- list_resources(lims,'samples', projectname = 'foobar')
+#' }
+list_resource <- function(lims, resource, n = NA, ...){
+    
+      extract_uri <- function(x) { xml_atts(x)[['uri']] }
+      
+      N <- if(is.na(n)) 10e6 else n[1]
+      
+      presource <- genologicsr::plural(resource)
+      sresource <- genologicsr::singular(resource)
+      
+      qry <- genologicsr::build_query(list(...))
+      x <- lims$GET(lims$uri(presource), depaginate = FALSE, asNode = FALSE, query = qry) 
+      r <- x[sresource]
+      if (is.null(r)) return("")
+      
+      while(length(r) < N) {
+        np <- x[['next-page']]
+        if (is.null(np)) break
+        np_uri <- xml_atts(np)[['uri']]
+        x <- lims$GET(np_uri, depaginate = FALSE, asNode = FALSE)
+        r <- c(r, x[sresource])
+        if (length(r) >= N) break
+      }
+      
+      N <- if(is.na(n)) length(r) else n
+      r <- sapply(r[1:N], extract_uri)
+      names(r) <- basename(r)
+      invisible(r)
+}
+
 #' Get a uri with option to depaginate
 #'
 #' @export
