@@ -74,7 +74,24 @@ LimsRefClass$methods(
       stub = if(is.null(base)) .self$baseuri else base[1]
       file.path(stub, ...)
    })
-   
+
+
+#' Modify the URL provided to point to the named server
+#'
+#' @family LIMS
+#' @name LimsRefClass_name_host
+#' @param x a character URL like "http://localhost:9080/api/v2/processes/24-2792440"
+#' @return an updated URL the explicitly names the host
+NULL
+LimsRefClass$methods(
+    name_host = function(x = "http://localhost:9080/api/v2/processes/24-2792440"){
+        x = httr::parse_url(x)
+        y = httr::parse_url(.self$baseuri)
+        file.path(paste0(y$scheme,":/"), y$hostname, x$path)
+    }
+    )
+
+  
 #' Validate the session by testing the version
 #' 
 #' @family Lims
@@ -1381,6 +1398,9 @@ LimsRefClass$methods(
         for (n in names(values)) .self$max_requests[n] <- values[[n]]
         invisible(.self$max_requests)
     })
+      
+      
+      
       
 #### methods above
 #### functions below
