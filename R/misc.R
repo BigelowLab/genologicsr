@@ -60,12 +60,15 @@ is_xmlNode <- function(x, classname = 'XMLAbstractNode'){
 #' 
 #' @export
 #' @param x xmlNode or NodeRefClass
+#' @param replace_newline logical, if TRUE replace \code{\n} with ""
 #' @return character
 xmlString <- function(x){
    if (inherits(x, 'NodeRefClass')){
       r <- xmlString(x$node)
    } else {
-      r <- gsub("\n","", XML::toString.XMLNode(x))
+      r <- if(replace_newline) 
+          gsub("\n","", XML::toString.XMLNode(x)) else 
+          XML::toString.XMLNode(x)
    }
    return(r)
 }

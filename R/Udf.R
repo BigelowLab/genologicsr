@@ -57,7 +57,7 @@ set_udfs <- function(x, v){
    }
    
    curUdfVals <- extract_udfs(x)
-   newNames <- sapply(v, "[", "name")
+   newNames <- sapply(v, "[[", "name")
    
    if (length(curUdfVals) == 0){              # 1 - all are new udfs to the node
       
@@ -77,6 +77,7 @@ set_udfs <- function(x, v){
             name <- unname(v[[i]][["name"]])
             value <- check_type(typ, v[[i]][["value"]])
             cC <- x['field'][[ix[1]]]
+            if (typ == "Text" && length(value) > 1) value = paste(value, collapse = "; ")
             XML::xmlValue(cC) <- value
          } else{
             # or create a new one

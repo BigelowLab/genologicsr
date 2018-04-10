@@ -8,6 +8,8 @@ xmlString(x)
 }
 \arguments{
 \item{x}{xmlNode or NodeRefClass}
+
+\item{replace_newline}{logical, if TRUE replace \code{\n} with ""}
 }
 \value{
 character
