@@ -4,7 +4,7 @@
 \alias{xmlString}
 \title{Convert XML::xmlNode or NodeRefClass to character}
 \usage{
-xmlString(x)
+xmlString(x, replace_newline = TRUE)
 }
 \arguments{
 \item{x}{xmlNode or NodeRefClass}
