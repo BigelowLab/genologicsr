@@ -137,7 +137,7 @@ build_config_path <- function(
 }
 
 #' Read a configuration file
-#'
+#' @export
 #' @param filename the name of the file
 #' @return a name list with one element per section each section, in turn is a named list
 read_config = function(filename){
@@ -173,6 +173,7 @@ read_config = function(filename){
 } # read_config
 
 #' Retrieve a configuration value
+#' @export
 #' @param x the configuration list
 #' @param section the name of the section
 #' @param name the name of the tagged value, if missing then the section is returned
