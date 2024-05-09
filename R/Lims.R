@@ -413,12 +413,14 @@ LimsRefClass$methods(
 #' @param ... further arguments for httr::GET/DELETE/POST
 #' @param filename character, the fully qualified name of the file we are pushing
 #'  Note that the caller must specify filename = 'some/file/name' explicitly.
-#' @param use character the type of file transfer to use: duck, scp, cp or curl
+#' @param use character the type of file transfer to use:  scp, cp or curl
+#' @param verbose, logical, if TRUE output messages for debugging
 #' @return XML::xmlNode or FileRefClass
 NULL
 LimsRefClass$methods(
    PUSH = function(x, ..., filename = "", 
-      use = c("duck", "scp", "cp", "curl")[2]){
+      use = c("scp", "cp", "curl")[2],
+      verbose = FALSE){
       
       stopifnot(inherits(x, 'ArtifactRefClass') || inherits(x, 'ProjectRefClass') )
       
@@ -460,45 +462,69 @@ LimsRefClass$methods(
       up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
       puri <- httr::parse_url(resolved_node[['content_location']])
 
-      ok <- 1
-      if (use == "scp"){
-          # first make the directory if it doesn't already exist
-         MKDIR <- paste('ssh',
-            paste0(up[1],'@',puri[['hostname']]), 
-            shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
-         ok <- system(MKDIR)
-         if (ok == 0){
-            # https://kb.iu.edu/d/agye
-            # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
-            cmd <- paste('scp -q', filename[1], 
-                paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
-            ok <- system(cmd)
-         } else {
-            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
-            return(e)
-         }
-      } else if (use == "cp"){
-         MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
-         ok <- system(MKDIR)
-         if (ok == 0){
-             cmd <- paste("cp", shQuote(filename[1]),
-                paste0("/", puri[['path']]) )
-             ok <- system(cmd)
-         } else {
-            e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
-            return(e)
-         }
-      } else if (use == "curl"){
-         cmd <- paste("curl --ftp-create-dirs",
-            "-u", .self$fileauth[['options']][['userpwd']],
-            "-T", filename[1],
-            resolved_node[['content_location']])
-         ok <- system(cmd)   
-      } else if (use == 'duck'){
-         up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
-         ok <- duck_upload(filename[1], resolved_node[['content_location']],
-            username = up[[1]], password = up[[2]])
-      }
+      #okdir = make_remote_directory(dirname(resolved_node[['content_location']]),
+      #  username = up[1], password = up[2],
+      #  use = use, verbose = verbose)
+      #if (okdir != 0){
+      #  e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
+      #  return(e)
+      #}
+      
+      ok = switch(tolower(use[1]),
+        "scp" = {
+          scp_upload(filename[1], dst, username = up[1], password = up[2], verbose = verbose)
+        }, 
+        "cp" = {
+          cmd <- paste("cp", shQuote(filename[1]), paste0("/", puri[['path']]) )
+          system(cmd)
+        }, 
+        "curl" = {
+          cmd <- paste("curl --ftp-create-dirs",
+             "-u", .self$fileauth[['options']][['userpwd']],
+             "-T", filename[1],
+             resolved_node[['content_location']])
+          system(cmd)
+        })
+
+      # ok <- 1
+      # if (use == "scp"){
+      #     # first make the directory if it doesn't already exist
+      #    MKDIR <- paste('ssh',
+      #       paste0(up[1],'@',puri[['hostname']]), 
+      #       shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
+      #    ok <- system(MKDIR)
+      #    if (ok == 0){
+      #       # https://kb.iu.edu/d/agye
+      #       # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
+      #       cmd <- paste('scp -q', filename[1], 
+      #           paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
+      #       ok <- system(cmd)
+      #    } else {
+      #       e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
+      #       return(e)
+      #    }
+      # } else if (use == "cp"){
+      #    MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
+      #    ok <- system(MKDIR)
+      #    if (ok == 0){
+      #        cmd <- paste("cp", shQuote(filename[1]),
+      #           paste0("/", puri[['path']]) )
+      #        ok <- system(cmd)
+      #    } else {
+      #       e <- create_exception(message = "LimsRefClass$PUSH: Unable create destination path", asNode = TRUE)
+      #       return(e)
+      #    }
+      # } else if (use == "curl"){
+      #    cmd <- paste("curl --ftp-create-dirs",
+      #       "-u", .self$fileauth[['options']][['userpwd']],
+      #       "-T", filename[1],
+      #       resolved_node[['content_location']])
+      #    ok <- system(cmd)   
+      # } else if (use == 'duck'){
+      #    up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
+      #    ok <- duck_upload(filename[1], resolved_node[['content_location']],
+      #       username = up[[1]], password = up[[2]])
+      # }
       if (ok != 0) {
          e <- create_exception(message = "LimsRefClass$PUSH: unable to upload file", asNode = TRUE)
          return(e)
@@ -536,12 +562,12 @@ LimsRefClass$methods(
 #' @param x ArtifactRefClass, ProcessRefClass or ProjectRefClass to attach to 
 #' @param filename character, the fully qualified name of the file we are pushing
 #'  Note that the caller must specify filename = 'some/file/name' explicitly.
-#' @param use character the type of file transfer to use: duck, scp, cp or curl
+#' @param use character the type of file transfer to use:  scp, cp or curl
 #' @return FileRefClass, NULL or ExceptionRefClass
 NULL
 LimsRefClass$methods(
    ATTACH = function(x, filename = "", 
-      use = c("duck", "scp", "cp", "curl")[2]){
+      use = c( "scp", "cp", "curl")[2]){
       
       if (inherits(x, 'NodeRefClass')){
          if(!('ATTACH' %in% x$verbs)) {
@@ -580,37 +606,64 @@ LimsRefClass$methods(
       up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
       puri <- httr::parse_url(resolved_node[['content_location']])
 
-      ok <- 1
-      if (use == "scp"){
-          # first make the directory if it doesn't already exist
-         MKDIR <- paste('ssh',
-            paste0(up[1],'@',puri[['hostname']]), 
-            shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
-         ok <- system(MKDIR)
-         # https://kb.iu.edu/d/agye
-         # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
-         cmd <- paste('scp -q', shQuote(filename[1]), 
-            paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
-         ok <- system(cmd)
-      } else if (use == "cp"){
-         MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
-         ok <- system(MKDIR)
-         cmd <- paste("cp", shQuote(filename[1]),
-            paste0("/", puri[['path']]) )
-         ok <- system(cmd)
-      } else if (use == "curl"){
-         cmd <- paste("curl --ftp-create-dirs",
-            "-u", .self$fileauth[['options']][['userpwd']],
-            "-T", shQuote(filename[1]),
-            resolved_node[['content_location']])
-         ok <- system(cmd)   
-      } else if (use == 'duck'){
-         up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
-         ok <- duck_upload(shQuote(filename[1]), resolved_node[['content_location']],
-            username = up[[1]], password = up[[2]])
+
+      okdir = make_remote_directory(dirname(resolved_node[['content_location']]),
+        username = up[1], password = up[2],
+        use = use, verbose = verbose)
+      if (okdir != 0){
+        e <- create_exception(message = "LimsRefClass$ATTACH: Unable create destination path", asNode = TRUE)
+        return(e)
       }
-      if (ok != 0) {
-         # now what?
+      
+      ok = switch(tolower(use[1]),
+        "scp" = {
+          scp_upload(filename[1], dst, username = up[1], , password = up[2], verbose = verbose)
+        }, 
+        "cp" = {
+          cmd <- paste("cp", shQuote(filename[1]), paste0("/", puri[['path']]) )
+          system(cmd)
+        }, 
+        "curl" = {
+          cmd <- paste("curl --ftp-create-dirs",
+             "-u", .self$fileauth[['options']][['userpwd']],
+             "-T", filename[1],
+             resolved_node[['content_location']])
+          system(cmd)
+        })
+        
+      # ok <- 1
+      # if (use == "scp"){
+      #     # first make the directory if it doesn't already exist
+      #    MKDIR <- paste('ssh',
+      #       paste0(up[1],'@',puri[['hostname']]), 
+      #       shQuote(paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )) )
+      #    ok <- system(MKDIR)
+      #    # https://kb.iu.edu/d/agye
+      #    # scp /path/to/source/file.txt dvader@deathstar.com:/path/to/dest/file.txt
+      #    cmd <- paste('scp -q', shQuote(filename[1]), 
+      #       paste0(up[[1]], "@", puri[['hostname']], ":/", puri[['path']] ))
+      #    ok <- system(cmd)
+      # } else if (use == "cp"){
+      #    MKDIR <- paste('mkdir -p', paste0("/", dirname(puri[['path']]) ) )
+      #    ok <- system(MKDIR)
+      #    cmd <- paste("cp", shQuote(filename[1]),
+      #       paste0("/", puri[['path']]) )
+      #    ok <- system(cmd)
+      # } else if (use == "curl"){
+      #    cmd <- paste("curl --ftp-create-dirs",
+      #       "-u", .self$fileauth[['options']][['userpwd']],
+      #       "-T", shQuote(filename[1]),
+      #       resolved_node[['content_location']])
+      #    ok <- system(cmd)   
+      # } 
+      # #else if (use == 'duck'){
+      # #   up <- strsplit(.self$fileauth$options[['userpwd']], ":", fixed = TRUE)[[1]]
+      # #   ok <- duck_upload(shQuote(filename[1]), resolved_node[['content_location']],
+      # #      username = up[[1]], password = up[[2]])
+      # #}
+      if (okdir != 0){
+        e <- create_exception(message = "LimsRefClass$ATTACH: Unable create destination path", asNode = TRUE)
+        return(e)
       }
       
       uri <- .self$uri("files")

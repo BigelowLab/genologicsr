@@ -9,7 +9,7 @@
 \item{filename}{character, the fully qualified name of the file we are pushing
 Note that the caller must specify filename = 'some/file/name' explicitly.}
 
-\item{use}{character the type of file transfer to use: duck, scp, cp or curl}
+\item{use}{character the type of file transfer to use:  scp, cp or curl}
 }
 \value{
 FileRefClass, NULL or ExceptionRefClass

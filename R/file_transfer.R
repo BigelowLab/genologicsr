@@ -1,4 +1,97 @@
-# file_transfer.R
+#' Make a remote directory specified by a URL using 
+#'  \code{cp}, \code{scp} or \code{curl}.
+#'
+#' \code{curl} builds paths as needed (recursively) so if you select
+#' \code{curl} we return success without doing anything.
+#'
+#' @family file_transfer
+#' @export
+#' @param uri character
+#' @param username the username (required)
+#' @param password the password (required for curl)
+#' @param verbose logical, if TRUE then echo the command string
+#' @param use character one of 'cp', 'scp' or 'curl'
+#' @return integer with 0 for success
+make_remote_directory <- function(uri, 
+  username = 'foo', password = 'bar',
+  use = c("cp", "scp", "curl")[2], 
+  verbose = FALSE){
+     
+  puri <- httr::parse_url(uri)
+  
+  r = switch(tolower(use[1]),
+      "scp" = {
+        if (remote_directory_exists(uri, username = username, use = 'scp', verbose = verbose) != 0){
+          r = 0
+        } else {
+          cmd <- paste('ssh',
+             paste0(username,'@',puri[['hostname']]), 
+             shQuote(paste('mkdir -p', paste0("/", puri[['path']] ) )) )
+          if (verbose) cat(cmd, "\n")
+          r = system(cmd)
+        }
+        r  
+      }, 
+      "curl" = 0,
+      "cp" = {
+        if (remote_directory_exists(uri, username = username, use = 'scp', verbose = verbose) != 0 ){
+          r = 0
+        } else {
+          cmd = paste('mkdir -p', paste0("/", puri[['path']] ) )
+          r = system(cmd)
+        }
+        r
+      },
+      stop("'use' argument not known:", use))
+      
+  if(verbose){
+    msg = sprintf("remote directory %s found/created: %s",
+      if (r == 0) "was" else "was not", uri)
+    cat(msg, "\n")
+  }
+  r
+}
+
+#' Test if a remote directory exists
+#'
+#' see https://stackoverflow.com/questions/15927911/how-to-check-if-dir-exists-over-ssh-and-return-results-to-host-machine
+#' @family file_transfer
+#' @export
+#' @param uri character
+#' @param username the username (required)
+#' @param password the password 
+#' @param verbose logical, if TRUE then echo the command string
+#' @param use character one of 'cp', 'scp' or 'curl'
+#' @return integer with 0 for success
+remote_directory_exists <- function(uri,
+  username = 'foo', password = 'bar',
+  use = c("cp", "scp", "curl")[2], 
+  verbose = FALSE){
+    
+  puri <- httr::parse_url(uri)
+  
+  r = switch(tolower(use[1]),
+      "scp" = {
+        cmd <- paste('ssh',
+           paste0(username,'@',puri[['hostname']]), 
+           shQuote(paste('[ -d', paste0("/", puri[['path']] ), "]" )) )
+        if (verbose) cat(cmd, "\n")
+        system(cmd)
+      }, 
+      "curl" = 0,
+      "cp" = {
+        cmd = paste('[ -d ', paste0("/", puri[['path']] ), ']' )
+        if (verbose) cat(cmd, "\n")
+        system(cmd)
+      },
+      stop("'use' argument not known:", use))
+  if(verbose){
+    msg = sprintf("remote directory %s found: %s",
+      if (r == 0) "was" else "was not", uri)
+    cat(msg, "\n")
+  }
+  r
+}
 
 
 #' Download files using system cp
@@ -59,8 +152,8 @@ rsync_download <- function(url, dest,
    stopifnot(!missing(url))
    if (missing(dest)) dest <- file.path(getwd(),basename(url[1]))
    destdir <- dirname(dest)
-   stopifnot(username != 'foo')
-   stopifnot(password != 'bar')  
+   #stopifnot(username != 'foo')
+   #stopifnot(password != 'bar')  
    
    p <- httr::parse_url(url)
    # first we copy the file to the destdir - it will hve the url basename
@@ -101,8 +194,8 @@ rsync_upload <- function(filename, url, username = "foo", password = "bar", extr
    stopifnot(!missing(filename))
    stopifnot(!missing(url))
    stopifnot(file.exists(filename))
-   stopifnot(username != 'foo')
-   stopifnot(password != 'bar')
+   #stopifnot(username != 'foo')
+   #stopifnot(password != 'bar')
    
    p <- httr::parse_url(url)
    
@@ -167,8 +260,8 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
    stopifnot(has_scp())
    stopifnot(!missing(url))
    if (missing(dest)) dest <- file.path(getwd(),basename(url[1]))
-   stopifnot(username != 'foo')
-   stopifnot(password != 'bar')  
+   #stopifnot(username != 'foo')
+   #stopifnot(password != 'bar')  
    
    p <- httr::parse_url(url)
    
@@ -201,27 +294,40 @@ scp_upload <- function(filename, url, username = "foo", password = "bar",
    stopifnot(has_scp())
    stopifnot(!missing(filename) && !missing(url))
    stopifnot(file.exists(filename))
-   stopifnot(username != 'foo')
-   stopifnot(password != 'bar')
+   #stopifnot(username != 'foo')
+   #stopifnot(password != 'bar')
+   
+   if (verbose) cat("scp_upload:", url, "\n")
+   
+   okdir = make_remote_directory(dirname(url),
+                                 username = username, password = password,
+                                 use = 'scp', verbose = verbose)
+   if (okdir != 0) {
+      cat("unable to create destination path:", dirname(url), "\n")
+      return(okdir)
+   }
    
    p <- httr::parse_url(url)
    
-   MKDIR <- paste('ssh',
-      paste0(username,'@',p$server), 
-      shQuote(paste('mkdir -p', paste0('/',dirname(p$path)))))
-   ok <- system(MKDIR)
-   if (ok != 0) {
-      cat("unable to create destination path:", p$path, "\n")
-      return(ok)
-   }
+   # MKDIR <- paste('ssh',
+   #    paste0(username,'@',p$server), 
+   #    shQuote(paste('mkdir -p', paste0('/',dirname(p$path)))))
+   # ok <- system(MKDIR)
+   # if (ok != 0) {
+   #    cat("unable to create destination path:", p$path, "\n")
+   #    return(ok)
+   # }
    
    CMD <- paste("scp",
       shQuote(filename[1]),
       paste0(username, '@', p$hostname, ':/', p$path))
       
-   if (verbose) cat(CMD, "\n")   
-   
-   system(CMD)
+   r = system(CMD)
+   if (verbose) {
+     cat(CMD, "\n")  
+     cat(sprintf("scp_upload %s successful", if (r == 0) "was" else "was not"), "\n")
+   }
+   return(r)
 }
 
 
@@ -252,8 +358,8 @@ duck_upload <- function(filename, url, username = "foo", password = "bar",
    stopifnot(has_duck())
    stopifnot(!missing(filename) && !missing(url))
    stopifnot(file.exists(filename))
-   stopifnot(username != 'foo')
-   stopifnot(password != 'bar')
+   #stopifnot(username != 'foo')
+   #stopifnot(password != 'bar')
    
    CMD <- paste("duck",
       "--username", username[1],
@@ -282,8 +388,8 @@ duck_download <- function(url, dest, username = "foo", password = "bar",
    stopifnot(has_duck())
    stopifnot(!missing(url))
    if (missing(dest)) dest <- file.path(getwd(),basename(url[1]))
-   stopifnot(username != 'foo')
-   stopifnot(password != 'bar')
+   #stopifnot(username != 'foo')
+   #stopifnot(password != 'bar')
 
    CMD <- paste("duck",
       "--username", username[1],

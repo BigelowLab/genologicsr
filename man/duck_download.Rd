@@ -30,6 +30,8 @@ Download a file using duck
 Other file_transfer: \code{\link{cp_download}},
   \code{\link{duck_upload}}, \code{\link{has_duck}},
   \code{\link{has_rsync}}, \code{\link{has_scp}},
+  \code{\link{make_remote_directory}},
+  \code{\link{remote_directory_exists}},
   \code{\link{rsync_download}}, \code{\link{rsync_upload}},
   \code{\link{scp_download}}, \code{\link{scp_upload}}
 }
