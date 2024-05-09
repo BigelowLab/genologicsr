@@ -27,7 +27,7 @@ make_remote_directory <- function(uri,
           cmd <- paste('ssh',
              paste0(username,'@',puri[['hostname']]), 
              shQuote(paste('mkdir -p', paste0("/", puri[['path']] ) )) )
-          if (verbose) cat(cmd, "\n")
+          if (verbose) cat("[make_remote_directory]", cmd, "\n")
           r = system(cmd)
         }
         r  
@@ -38,14 +38,15 @@ make_remote_directory <- function(uri,
           r = 0
         } else {
           cmd = paste('mkdir -p', paste0("/", puri[['path']] ) )
+          if (verbose) cat("[make_remote_directory]", cmd, "\n")
           r = system(cmd)
         }
         r
       },
-      stop("'use' argument not known:", use))
+      stop("[make_remote_directory] 'use' argument not known:", use))
       
   if(verbose){
-    msg = sprintf("remote directory %s found/created: %s",
+    msg = sprintf("[make_remote_directory] remote directory %s found or created: %s",
       if (r == 0) "was" else "was not", uri)
     cat(msg, "\n")
   }
@@ -75,21 +76,23 @@ remote_directory_exists <- function(uri,
         cmd <- paste('ssh',
            paste0(username,'@',puri[['hostname']]), 
            shQuote(paste('[ -d', paste0("/", puri[['path']] ), "]" )) )
-        if (verbose) cat(cmd, "\n")
+        if (verbose) cat("[remote_directory_exists]", cmd, "\n")
         system(cmd)
       }, 
       "curl" = 0,
       "cp" = {
         cmd = paste('[ -d ', paste0("/", puri[['path']] ), ']' )
-        if (verbose) cat(cmd, "\n")
+        if (verbose) cat("[remote_directory_exists]", cmd, "\n")
         system(cmd)
       },
-      stop("'use' argument not known:", use))
+      stop("[remote_directory_exists] 'use' argument not known:", use))
+      
   if(verbose){
-    msg = sprintf("remote directory %s found: %s",
-      if (r == 0) "was" else "was not", uri)
+    msg = sprintf("[remote_directory_exists] remote directory %s found: %s",
+                  if (r == 0) "was" else "was not", uri)
     cat(msg, "\n")
   }
+  
   r
 }
 
@@ -270,7 +273,7 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
       paste0(username, '@', p$hostname, ':/', p$path),
       shQuote(dest[1]))
       
-   if (verbose) cat(CMD, "\n")  
+   if (verbose) cat("[scp_download]", CMD, "\n")  
     
    system(CMD)
 }
@@ -297,13 +300,13 @@ scp_upload <- function(filename, url, username = "foo", password = "bar",
    #stopifnot(username != 'foo')
    #stopifnot(password != 'bar')
    
-   if (verbose) cat("scp_upload:", url, "\n")
+   if (verbose) cat("[scp_upload]", url, "\n")
    
    okdir = make_remote_directory(dirname(url),
                                  username = username, password = password,
                                  use = 'scp', verbose = verbose)
    if (okdir != 0) {
-      cat("unable to create destination path:", dirname(url), "\n")
+      cat("[scp_upload] unable to create destination path:", dirname(url), "\n")
       return(okdir)
    }
    
@@ -325,7 +328,7 @@ scp_upload <- function(filename, url, username = "foo", password = "bar",
    r = system(CMD)
    if (verbose) {
      cat(CMD, "\n")  
-     cat(sprintf("scp_upload %s successful", if (r == 0) "was" else "was not"), "\n")
+     cat(sprintf("[scp_upload] scp_upload %s successful", if (r == 0) "was" else "was not"), "\n")
    }
    return(r)
 }
