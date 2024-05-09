@@ -21,7 +21,7 @@ make_remote_directory <- function(uri,
   
   r = switch(tolower(use[1]),
       "scp" = {
-        if (remote_directory_exists(uri, username = username, use = 'scp', verbose = verbose) != 0){
+        if (remote_directory_exists(uri, username = username, use = 'scp', verbose = verbose) == 0){
           r = 0
         } else {
           cmd <- paste('ssh',
