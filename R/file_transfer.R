@@ -21,16 +21,11 @@ make_remote_directory <- function(uri,
   
   r = switch(tolower(use[1]),
       "scp" = {
-        if (remote_directory_exists(uri, username = username, use = 'scp', verbose = verbose) == 0){
-          r = 0
-        } else {
-          cmd <- paste('ssh',
-             paste0(username,'@',puri[['hostname']]), 
-             shQuote(paste('mkdir -p', paste0("/", puri[['path']] ) )) )
-          if (verbose) cat("[make_remote_directory]", cmd, "\n")
-          r = system(cmd)
-        }
-        r  
+        cmd <- paste('ssh',
+           paste0(username,'@',puri[['hostname']]), 
+           shQuote(paste('mkdir -p', paste0("/", puri[['path']] ) )) )
+        if (verbose) cat("[make_remote_directory]", cmd, "\n")
+        system(cmd)
       }, 
       "curl" = 0,
       "cp" = {
@@ -190,8 +185,10 @@ scp_upload <- function(filename, url, username = "foo", password = "bar",
    #    return(ok)
    # }
    
-   CMD <- paste("scp",
+   app = if(verbose) "scp -vvv" else "scp"
+   CMD <- paste(app,
       shQuote(filename[1]),
+      # paste0(username, '@', gsub("^sftp://", "", p$hostname), ':/', p$path))
       paste0(username, '@', p$hostname, ':/', p$path))
       
    r = system(CMD)
