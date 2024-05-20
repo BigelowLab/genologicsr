@@ -154,9 +154,11 @@ scp_download <- function(url, dest, username = 'foo', password = 'bar',
 #' @param username the username (required)
 #' @param password the password (required)
 #' @param verbose logical, if TRUE then echo the command string
+#' @param app char, the name of the scp app, use this to add -vvv to scp command
 #' @return integer 0 for success
 scp_upload <- function(filename, url, username = "foo", password = "bar",
-    verbose = FALSE){
+    verbose = FALSE,
+    app = "scp"){
 
    stopifnot(has_scp())
    stopifnot(!missing(filename) && !missing(url))
@@ -176,19 +178,8 @@ scp_upload <- function(filename, url, username = "foo", password = "bar",
    
    p <- httr::parse_url(url)
    
-   # MKDIR <- paste('ssh',
-   #    paste0(username,'@',p$server), 
-   #    shQuote(paste('mkdir -p', paste0('/',dirname(p$path)))))
-   # ok <- system(MKDIR)
-   # if (ok != 0) {
-   #    cat("unable to create destination path:", p$path, "\n")
-   #    return(ok)
-   # }
-   
-   app = if(verbose) "scp -vvv" else "scp"
    CMD <- paste(app,
       shQuote(filename[1]),
-      # paste0(username, '@', gsub("^sftp://", "", p$hostname), ':/', p$path))
       paste0(username, '@', p$hostname, ':/', p$path))
       
    r = system(CMD)
