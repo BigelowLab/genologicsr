@@ -563,11 +563,13 @@ LimsRefClass$methods(
 #' @param filename character, the fully qualified name of the file we are pushing
 #'  Note that the caller must specify filename = 'some/file/name' explicitly.
 #' @param use character the type of file transfer to use:  scp, cp or curl
+#' @param verbose logical, for debugging pruposes, output helpful messages
 #' @return FileRefClass, NULL or ExceptionRefClass
 NULL
 LimsRefClass$methods(
    ATTACH = function(x, filename = "", 
-      use = c( "scp", "cp", "curl")[2]){
+      use = c( "scp", "cp", "curl")[2],
+      verbose = FALSE){
       
       if (inherits(x, 'NodeRefClass')){
          if(!('ATTACH' %in% x$verbs)) {

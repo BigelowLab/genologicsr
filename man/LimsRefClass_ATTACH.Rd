@@ -10,6 +10,8 @@
 Note that the caller must specify filename = 'some/file/name' explicitly.}
 
 \item{use}{character the type of file transfer to use:  scp, cp or curl}
+
+\item{verbose}{logical, for debugging pruposes, output helpful messages}
 }
 \value{
 FileRefClass, NULL or ExceptionRefClass
